@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Fitness PRO | Трекер тренировок + Фото</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; }
         body { background: #eef2f5; padding: 16px; }
@@ -29,12 +30,12 @@
         .stat-item { background: white; border-radius: 24px; padding: 12px; text-align: center; flex: 1; min-width: 100px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #3b82f6; }
         .exercise-sets { background: white; border-radius: 20px; padding: 12px; margin-top: 8px; }
-        .set-row { display: flex; gap: 8px; align-items: center; margin: 8px 0; flex-wrap: wrap; }
-        .set-row input { width: 80px; padding: 6px; }
-        .add-set-btn { background: #10b981; padding: 6px 12px; font-size: 0.8rem; }
-        .exercise-item { border-bottom: 1px solid #e2e8f0; padding: 12px 0; }
-        .body-measure { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 10px 0; }
-        .week-plan-day { background: #eef2ff; border-radius: 20px; padding: 12px; margin-bottom: 12px; }
+        .set-row { display: flex; gap: 12px; align-items: flex-end; margin: 12px 0; flex-wrap: wrap; background: #f1f5f9; padding: 12px; border-radius: 20px; }
+        .set-row .field { display: flex; flex-direction: column; gap: 4px; }
+        .set-row label { font-size: 0.75rem; font-weight: 600; color: #475569; }
+        .set-row input { width: 100px; padding: 8px 10px; }
+        .add-set-btn { background: #10b981; padding: 8px 16px; font-size: 0.9rem; }
+        .remove-set-btn { background: #ef4444; padding: 6px 12px; margin-top: 0; }
         .exercise-card {
             background: #fefce8;
             border-left: 6px solid #3b82f6;
@@ -49,7 +50,14 @@
         }
         .exercise-photo img { max-width: 80px; max-height: 80px; border-radius: 16px; object-fit: cover; }
         .photo-preview { max-width: 100px; margin-top: 8px; }
-        @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
+        .photo-upload { display: flex; flex-direction: column; gap: 8px; }
+        .form-buttons { display: flex; gap: 12px; margin-top: 12px; }
+        .week-plan-day { background: #eef2ff; border-radius: 20px; padding: 12px; margin-bottom: 12px; }
+        .body-measure { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 10px 0; }
+        @media (max-width: 700px) {
+            .set-row { flex-direction: column; align-items: stretch; }
+            .set-row input { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -91,19 +99,18 @@
             <button data-tab="exercisesDB" class="tab-btn">📚 База упражнений</button>
         </div>
 
-        <!-- ВКЛАДКА ТРЕНИРОВКИ (логирование сетов + фото) -->
+        <!-- ВКЛАДКА ТРЕНИРОВКИ -->
         <div id="tabExercises" class="tab-content">
             <button id="showWorkoutFormBtn" class="btn-add" style="background:#10b981;">+ Записать тренировку</button>
             <div id="workoutForm" class="form-card hidden">
                 <h3>Новая тренировка</h3>
+                <label>Упражнение</label>
                 <select id="workoutExerciseSelect"></select>
+                <label>Дата</label>
                 <input type="date" id="workoutDate" value="">
+                <label>Подходы (сеты)</label>
                 <div id="setsContainer">
-                    <div class="set-row">
-                        <input type="number" placeholder="Вес (кг)" class="set-weight" value="0" step="2.5">
-                        <input type="number" placeholder="Повторы" class="set-reps" value="8">
-                        <button type="button" class="remove-set-btn" style="background:#ef4444; padding:6px 12px;">✖</button>
-                    </div>
+                    <!-- начальный пустой набор будет добавлен через addSetRow() -->
                 </div>
                 <button type="button" id="addSetBtn" class="add-set-btn">+ Добавить подход</button>
                 <div class="photo-upload">
@@ -111,7 +118,7 @@
                     <input type="file" id="workoutPhoto" accept="image/*">
                     <div id="photoPreview"></div>
                 </div>
-                <div class="form-buttons" style="display:flex; gap:12px; margin-top:12px;">
+                <div class="form-buttons">
                     <button id="saveWorkoutBtn">Сохранить тренировку</button>
                     <button id="cancelWorkoutBtn" class="btn-outline">Отмена</button>
                 </div>
@@ -135,7 +142,7 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА ПЛАН ТРЕНИРОВОК -->
+        <!-- ВКЛАДКА ПЛАН -->
         <div id="tabPlan" class="tab-content hidden">
             <div class="card">
                 <h3>📅 Расписание на неделю</h3>
@@ -217,7 +224,6 @@
 
     // DOM
     const authPage = document.getElementById('authPage'), appPage = document.getElementById('appPage');
-    const loginBtn = document.getElementById('doLoginBtn'), regBtn = document.getElementById('doRegisterBtn');
     const logoutBtn = document.getElementById('logoutBtn');
     const tabs = document.querySelectorAll('[data-tab]');
     const tabContents = { exercises: 'tabExercises', stats: 'tabStats', plan: 'tabPlan', body: 'tabBody', exercisesDB: 'tabExercisesDB' };
@@ -236,7 +242,7 @@
 
     function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=>({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
 
-    // Преобразование фото в base64
+    // Фото base64
     function getPhotoBase64(file) {
         return new Promise((resolve) => {
             if (!file) return resolve(null);
@@ -247,7 +253,7 @@
         });
     }
 
-    // ---------- ОТРИСОВКА ТРЕНИРОВОК (с сетами и фото) ----------
+    // ---------- ОТРИСОВКА ТРЕНИРОВОК ----------
     async function renderWorkouts() {
         let workouts = getWorkouts();
         let container = document.getElementById('workoutsList');
@@ -275,7 +281,6 @@
         let container = document.getElementById('setsContainer');
         container.innerHTML = '';
         w.sets.forEach(set => { addSetRow(set.weight, set.reps); });
-        // фото
         let previewDiv = document.getElementById('photoPreview');
         if(w.photoUrl) {
             previewDiv.innerHTML = `<img src="${w.photoUrl}" style="max-width:100px; border-radius:12px;"><button type="button" id="removePhotoBtn" style="background:#ef4444; padding:4px 8px; margin-left:8px;">Удалить фото</button>`;
@@ -290,7 +295,11 @@
     function addSetRow(weight=0, reps=8) {
         let div = document.createElement('div');
         div.className = 'set-row';
-        div.innerHTML = `<input type="number" placeholder="Вес" class="set-weight" value="${weight}" step="2.5"><input type="number" placeholder="Повторы" class="set-reps" value="${reps}"><button type="button" class="remove-set-btn" style="background:#ef4444; padding:6px 12px;">✖</button>`;
+        div.innerHTML = `
+            <div class="field"><label>Вес (кг)</label><input type="number" class="set-weight" value="${weight}" step="2.5"></div>
+            <div class="field"><label>Повторы</label><input type="number" class="set-reps" value="${reps}"></div>
+            <button type="button" class="remove-set-btn">✖ Удалить подход</button>
+        `;
         div.querySelector('.remove-set-btn').addEventListener('click', () => div.remove());
         document.getElementById('setsContainer').appendChild(div);
     }
@@ -307,7 +316,6 @@
             if(!isNaN(w) && !isNaN(r)) sets.push({weight:w, reps:r});
         }
         if(sets.length===0) { document.getElementById('workoutError').innerText='Добавьте хотя бы один подход'; return; }
-        // Фото
         let photoFile = document.getElementById('workoutPhoto').files[0];
         let photoUrl = null;
         if(photoFile) {
@@ -502,7 +510,7 @@
     document.getElementById('saveDbExerciseBtn').onclick = addExerciseToDB;
     document.getElementById('cancelDbBtn').onclick = ()=>document.getElementById('exerciseDbForm').classList.add('hidden');
 
-    // предпросмотр фото в форме
+    // Предпросмотр фото
     document.getElementById('workoutPhoto').addEventListener('change', (e) => {
         if(e.target.files.length) {
             let reader = new FileReader();
@@ -519,7 +527,13 @@
         }
     });
 
-    // начальная страница
+    // Telegram Web App
+    if (window.Telegram && window.Telegram.WebApp) {
+        window.Telegram.WebApp.ready();
+        window.Telegram.WebApp.expand();
+    }
+
+    // Старт
     authPage.classList.remove('hidden'); appPage.classList.add('hidden');
     document.getElementById('loginForm').classList.remove('hidden'); document.getElementById('registerForm').classList.add('hidden');
 </script>
