@@ -3,82 +3,38 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Workout Tracker | Личный дневник</title>
+    <title>Fitness PRO | Трекер тренировок + Фото</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
-        }
-        body {
-            background: #eef2f5;
-            padding: 16px;
-        }
-        .container {
-            max-width: 1000px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 36px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
-            padding: 24px;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, 'Segoe UI', Roboto, sans-serif; }
+        body { background: #eef2f5; padding: 16px; }
+        .container { max-width: 1200px; margin: 0 auto; background: white; border-radius: 36px; box-shadow: 0 12px 30px rgba(0,0,0,0.08); padding: 24px; }
         .page { transition: 0.2s; }
         .hidden { display: none !important; }
+        .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; }
+        .tab-btn { background: #e2e8f0; border: none; padding: 8px 20px; border-radius: 40px; font-weight: 600; cursor: pointer; }
+        .tab-btn.active { background: #3b82f6; color: white; }
         .logo { text-align: center; margin-bottom: 20px; }
         .logo h1 { color: #3b82f6; }
-        .tabs { display: flex; gap: 12px; margin-bottom: 24px; }
-        .tab-btn {
-            flex: 1;
-            background: #e2e8f0;
-            border: none;
-            padding: 12px;
-            border-radius: 48px;
-            font-weight: 600;
-            cursor: pointer;
-            font-size: 1rem;
-        }
-        .tab-btn.active { background: #3b82f6; color: white; }
-        .form-card {
-            background: #f8fafc;
-            border-radius: 28px;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-        input, select {
-            padding: 12px 16px;
-            border: 1px solid #cbd5e1;
-            border-radius: 32px;
-            font-size: 1rem;
-            outline: none;
-        }
-        input:focus { border-color: #3b82f6; }
-        button {
-            background: #3b82f6;
-            border: none;
-            padding: 12px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 1rem;
-            color: white;
-            cursor: pointer;
-            transition: 0.2s;
-        }
+        .form-card { background: #f8fafc; border-radius: 28px; padding: 20px; display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px; }
+        input, select, textarea { padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 32px; font-size: 1rem; outline: none; }
+        button { background: #3b82f6; border: none; padding: 12px; border-radius: 40px; font-weight: 600; color: white; cursor: pointer; }
         button:hover { background: #2563eb; }
         .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #1e293b; }
-        .btn-add { background: #10b981; width: fit-content; }
-        .error-msg { color: #ef4444; text-align: center; font-size: 0.9rem; }
-        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
-        .stats-section { background: #ffffff; border-radius: 28px; padding: 16px; margin-bottom: 28px; border: 1px solid #e2e8f0; }
-        .stat-controls { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; justify-content: space-between; align-items: center; }
-        .time-buttons { display: flex; gap: 8px; }
-        .period-btn { background: #e2e8f0; color: #1e293b; padding: 6px 12px; font-size: 0.8rem; }
-        .period-btn.active { background: #3b82f6; color: white; }
-        .chart-hint { font-size: 0.75rem; color: #64748b; margin-top: 8px; text-align: center; }
-        .exercises-grid { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+        .error-msg { color: #ef4444; text-align: center; }
+        .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 20px; margin-top: 20px; }
+        .card { background: #f8fafc; border-radius: 28px; padding: 20px; }
+        .stat-numbers { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; margin: 15px 0; }
+        .stat-item { background: white; border-radius: 24px; padding: 12px; text-align: center; flex: 1; min-width: 100px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .stat-value { font-size: 1.8rem; font-weight: 700; color: #3b82f6; }
+        .exercise-sets { background: white; border-radius: 20px; padding: 12px; margin-top: 8px; }
+        .set-row { display: flex; gap: 8px; align-items: center; margin: 8px 0; flex-wrap: wrap; }
+        .set-row input { width: 80px; padding: 6px; }
+        .add-set-btn { background: #10b981; padding: 6px 12px; font-size: 0.8rem; }
+        .exercise-item { border-bottom: 1px solid #e2e8f0; padding: 12px 0; }
+        .body-measure { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 10px 0; }
+        .week-plan-day { background: #eef2ff; border-radius: 20px; padding: 12px; margin-bottom: 12px; }
         .exercise-card {
             background: #fefce8;
             border-left: 6px solid #3b82f6;
@@ -89,31 +45,18 @@
             justify-content: space-between;
             align-items: center;
             gap: 12px;
+            margin-bottom: 12px;
         }
-        .exercise-info { flex: 3; }
-        .exercise-name { font-weight: 700; font-size: 1.2rem; }
-        .exercise-details { color: #334155; font-size: 0.9rem; margin-top: 4px; }
-        .exercise-photo img { max-width: 70px; max-height: 70px; border-radius: 16px; object-fit: cover; }
-        .exercise-actions { display: flex; gap: 8px; }
-        .edit-btn { background: #f59e0b; }
-        .delete-btn { background: #ef4444; }
-        .photo-upload { display: flex; flex-direction: column; gap: 8px; }
-        #photoPreview img { max-width: 80px; border-radius: 12px; margin-top: 6px; }
-        .form-buttons { display: flex; gap: 12px; }
-        @media (max-width: 640px) {
-            .exercise-card { flex-direction: column; align-items: flex-start; }
-            .exercise-actions { align-self: flex-end; }
-        }
+        .exercise-photo img { max-width: 80px; max-height: 80px; border-radius: 16px; object-fit: cover; }
+        .photo-preview { max-width: 100px; margin-top: 8px; }
+        @media (max-width: 700px) { .grid-2 { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 <div class="container">
     <!-- СТРАНИЦА АВТОРИЗАЦИИ -->
     <div id="authPage">
-        <div class="logo">
-            <h1>💪 Workout Tracker</h1>
-            <p>Твой личный дневник</p>
-        </div>
+        <div class="logo"><h1>💪 Fitness PRO</h1><p>Трекер тренировок + замеры + план + фото</p></div>
         <div class="tabs">
             <button id="loginTabBtn" class="tab-btn active">Вход</button>
             <button id="registerTabBtn" class="tab-btn">Регистрация</button>
@@ -125,8 +68,8 @@
             <p class="error-msg" id="authError"></p>
         </div>
         <div id="registerForm" class="form-card hidden">
-            <input type="text" id="regUsername" placeholder="Придумайте ник (мин 3 символа)">
-            <input type="password" id="regPassword" placeholder="Пароль (мин 3 символа)">
+            <input type="text" id="regUsername" placeholder="Ник (мин 3)">
+            <input type="password" id="regPassword" placeholder="Пароль (мин 3)">
             <button id="doRegisterBtn">Создать аккаунт</button>
             <p class="error-msg" id="regError"></p>
         </div>
@@ -135,226 +78,165 @@
     <!-- ГЛАВНОЕ ПРИЛОЖЕНИЕ -->
     <div id="appPage" class="hidden">
         <div class="app-header">
-            <h2>🏋️‍♂️ <span id="currentUser"></span></h2>
+            <h2>🏋️ <span id="currentUser"></span></h2>
             <button id="logoutBtn" class="btn-outline">Выйти</button>
         </div>
 
-        <div class="stats-section">
-            <h3>📈 Прогресс упражнения</h3>
-            <div class="stat-controls">
-                <select id="exerciseSelect"></select>
-                <div class="time-buttons">
-                    <button data-period="week" class="period-btn active">Неделя</button>
-                    <button data-period="month" class="period-btn">Месяц</button>
-                    <button data-period="year" class="period-btn">Год</button>
-                </div>
-            </div>
-            <canvas id="progressChart" width="400" height="200" style="max-width:100%; height:auto;"></canvas>
-            <p class="chart-hint">* Максимальный вес за тренировку</p>
+        <!-- НАВИГАЦИОННЫЕ ВКЛАДКИ -->
+        <div class="tabs">
+            <button data-tab="exercises" class="tab-btn active">🏋️ Тренировки</button>
+            <button data-tab="stats" class="tab-btn">📊 Статистика</button>
+            <button data-tab="plan" class="tab-btn">📅 План тренировок</button>
+            <button data-tab="body" class="tab-btn">📏 Замеры тела</button>
+            <button data-tab="exercisesDB" class="tab-btn">📚 База упражнений</button>
         </div>
 
-        <div class="exercises-section">
-            <h3>📋 Мои упражнения</h3>
-            <button id="showAddFormBtn" class="btn-add">+ Добавить упражнение</button>
-
-            <div id="exerciseForm" class="form-card hidden">
-                <h3 id="formTitle">Добавить упражнение</h3>
-                <input type="text" id="exName" placeholder="Название (например, Жим лёжа)" required>
-                <input type="number" id="exWeight" placeholder="Вес (кг)" step="0.5" required>
-                <input type="number" id="exReps" placeholder="Количество повторений" required>
-                <input type="number" id="exSets" placeholder="Количество подходов" required>
-                <input type="date" id="exDate" required>
+        <!-- ВКЛАДКА ТРЕНИРОВКИ (логирование сетов + фото) -->
+        <div id="tabExercises" class="tab-content">
+            <button id="showWorkoutFormBtn" class="btn-add" style="background:#10b981;">+ Записать тренировку</button>
+            <div id="workoutForm" class="form-card hidden">
+                <h3>Новая тренировка</h3>
+                <select id="workoutExerciseSelect"></select>
+                <input type="date" id="workoutDate" value="">
+                <div id="setsContainer">
+                    <div class="set-row">
+                        <input type="number" placeholder="Вес (кг)" class="set-weight" value="0" step="2.5">
+                        <input type="number" placeholder="Повторы" class="set-reps" value="8">
+                        <button type="button" class="remove-set-btn" style="background:#ef4444; padding:6px 12px;">✖</button>
+                    </div>
+                </div>
+                <button type="button" id="addSetBtn" class="add-set-btn">+ Добавить подход</button>
                 <div class="photo-upload">
                     <label>📸 Фото (необязательно)</label>
-                    <input type="file" id="exPhoto" accept="image/*">
+                    <input type="file" id="workoutPhoto" accept="image/*">
                     <div id="photoPreview"></div>
                 </div>
-                <div class="form-buttons">
-                    <button id="saveExerciseBtn">Сохранить</button>
-                    <button id="cancelFormBtn">Отмена</button>
+                <div class="form-buttons" style="display:flex; gap:12px; margin-top:12px;">
+                    <button id="saveWorkoutBtn">Сохранить тренировку</button>
+                    <button id="cancelWorkoutBtn" class="btn-outline">Отмена</button>
                 </div>
-                <p id="formError" class="error-msg"></p>
+                <p id="workoutError" class="error-msg"></p>
             </div>
+            <div id="workoutsList" class="exercises-grid" style="margin-top:20px;"></div>
+        </div>
 
-            <div id="exercisesList" class="exercises-grid"></div>
+        <!-- ВКЛАДКА СТАТИСТИКА -->
+        <div id="tabStats" class="tab-content hidden">
+            <div class="card">
+                <h3>Анализ прогресса</h3>
+                <select id="statsExerciseSelect"></select>
+                <div class="time-buttons" style="display:flex; gap:8px; margin:12px 0;">
+                    <button data-period="week" class="period-stats-btn active">Неделя</button>
+                    <button data-period="month" class="period-stats-btn">Месяц</button>
+                    <button data-period="year" class="period-stats-btn">Год</button>
+                </div>
+                <canvas id="statsChart" height="200"></canvas>
+                <div class="stat-numbers" id="statsNumbers"></div>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА ПЛАН ТРЕНИРОВОК -->
+        <div id="tabPlan" class="tab-content hidden">
+            <div class="card">
+                <h3>📅 Расписание на неделю</h3>
+                <div id="weekPlanContainer"></div>
+                <button id="editPlanBtn" class="btn-outline" style="margin-top:15px;">✏️ Редактировать план</button>
+                <div id="planEditor" class="hidden" style="margin-top:15px;">
+                    <div id="planDaysEditor"></div>
+                    <button id="savePlanBtn">Сохранить план</button>
+                    <button id="cancelPlanBtn" class="btn-outline">Отмена</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА ЗАМЕРЫ ТЕЛА -->
+        <div id="tabBody" class="tab-content hidden">
+            <div class="card">
+                <h3>📏 Измерения тела (см)</h3>
+                <div id="bodyMeasuresList"></div>
+                <button id="addMeasureBtn" class="btn-add">+ Добавить замер</button>
+                <div id="measureForm" class="hidden" style="margin-top:15px;">
+                    <input type="date" id="measureDate" value="">
+                    <div class="body-measure"><label>Грудь</label><input type="number" id="measureChest" placeholder="см"></div>
+                    <div class="body-measure"><label>Бицепс (л)</label><input type="number" id="measureBicepsL" placeholder="см"></div>
+                    <div class="body-measure"><label>Бицепс (п)</label><input type="number" id="measureBicepsR" placeholder="см"></div>
+                    <div class="body-measure"><label>Талия</label><input type="number" id="measureWaist" placeholder="см"></div>
+                    <div class="body-measure"><label>Бедро (л)</label><input type="number" id="measureThighL" placeholder="см"></div>
+                    <div class="body-measure"><label>Бедро (п)</label><input type="number" id="measureThighR" placeholder="см"></div>
+                    <button id="saveMeasureBtn">Сохранить замер</button>
+                    <button id="cancelMeasureBtn" class="btn-outline">Отмена</button>
+                </div>
+                <div id="measuresHistory" style="margin-top:20px;"></div>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА БАЗА УПРАЖНЕНИЙ -->
+        <div id="tabExercisesDB" class="tab-content hidden">
+            <div class="card">
+                <h3>📚 Мои упражнения</h3>
+                <button id="addExerciseDbBtn" class="btn-add">+ Добавить упражнение</button>
+                <div id="exerciseDbForm" class="hidden form-card" style="margin-top:15px;">
+                    <input type="text" id="dbExName" placeholder="Название упражнения">
+                    <select id="dbExMuscle">
+                        <option value="Грудь">Грудь</option><option value="Спина">Спина</option><option value="Ноги">Ноги</option>
+                        <option value="Плечи">Плечи</option><option value="Бицепс">Бицепс</option><option value="Трицепс">Трицепс</option>
+                        <option value="Пресс">Пресс</option><option value="Кардио">Кардио</option>
+                    </select>
+                    <div class="form-buttons"><button id="saveDbExerciseBtn">Сохранить</button><button id="cancelDbBtn" class="btn-outline">Отмена</button></div>
+                </div>
+                <div id="exercisesDbList" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;"></div>
+            </div>
         </div>
     </div>
 </div>
 
 <script>
     // ------------------- ХРАНИЛИЩЕ -------------------
-    const STORAGE_KEY = 'workout_users_pro';
+    const STORAGE_KEY = 'fitness_pro_userdata';
+    function getUsers() { let d = localStorage.getItem(STORAGE_KEY); return d ? JSON.parse(d) : {}; }
+    function saveUsers(u) { localStorage.setItem(STORAGE_KEY, JSON.stringify(u)); }
 
-    function getUsers() {
-        const data = localStorage.getItem(STORAGE_KEY);
-        if (!data) return {};
-        try { return JSON.parse(data); } catch(e) { return {}; }
-    }
-    function saveUsers(users) {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
-    }
-
-    // Регистрация
-    function register(username, password) {
-        const users = getUsers();
-        if (users[username]) return { success: false, error: 'Имя уже занято' };
-        if (username.length < 3 || password.length < 3) return { success: false, error: 'Ник и пароль минимум 3 символа' };
-        users[username] = { password: password, exercises: [] };
+    function register(username, pwd) {
+        let users = getUsers();
+        if (users[username]) return {success:false, error:'Уже есть'};
+        if (username.length<3 || pwd.length<3) return {success:false, error:'Мин 3 символа'};
+        users[username] = {password:pwd, workouts:[], plan:{}, bodyMeasures:[], exercisesDB:[]};
         saveUsers(users);
-        return { success: true };
+        return {success:true};
+    }
+    function login(username, pwd) {
+        let users = getUsers();
+        if (users[username] && users[username].password === pwd) return {success:true, username};
+        return {success:false, error:'Неверно'};
     }
 
-    // Вход
-    function login(username, password) {
-        const users = getUsers();
-        const user = users[username];
-        if (user && user.password === password) return { success: true, username };
-        return { success: false, error: 'Неверный логин или пароль' };
-    }
-
-    // Получить упражнения пользователя
-    function getUserExercises(username) {
-        const users = getUsers();
-        if (!users[username]) return [];
-        return users[username].exercises || [];
-    }
-
-    // Сохранить упражнения пользователя
-    function setUserExercises(username, exercises) {
-        const users = getUsers();
-        if (users[username]) {
-            users[username].exercises = exercises;
-            saveUsers(users);
-        }
-    }
-
-    // Добавить/обновить упражнение
-    function saveExercise(username, exerciseData, editId = null) {
-        let exercises = getUserExercises(username);
-        if (editId) {
-            const idx = exercises.findIndex(e => e.id == editId);
-            if (idx !== -1) exercises[idx] = { ...exerciseData, id: editId };
-        } else {
-            exercises.push({ ...exerciseData, id: Date.now() });
-        }
-        setUserExercises(username, exercises);
-    }
-
-    // Удалить упражнение
-    function deleteExercise(username, id) {
-        let exercises = getUserExercises(username);
-        exercises = exercises.filter(e => e.id != id);
-        setUserExercises(username, exercises);
-    }
-
-    // ------------------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ -------------------
     let currentUser = null;
-    let editId = null;
-    let chartInstance = null;
+    let currentWorkoutEditId = null;
+    let statsChart = null;
+    let currentPeriod = 'week';
 
-    // DOM элементы
-    const authPage = document.getElementById('authPage');
-    const appPage = document.getElementById('appPage');
-    const loginFormDiv = document.getElementById('loginForm');
-    const registerFormDiv = document.getElementById('registerForm');
-    const loginTabBtn = document.getElementById('loginTabBtn');
-    const registerTabBtn = document.getElementById('registerTabBtn');
-    const doLoginBtn = document.getElementById('doLoginBtn');
-    const doRegisterBtn = document.getElementById('doRegisterBtn');
-    const authError = document.getElementById('authError');
-    const regError = document.getElementById('regError');
+    // DOM
+    const authPage = document.getElementById('authPage'), appPage = document.getElementById('appPage');
+    const loginBtn = document.getElementById('doLoginBtn'), regBtn = document.getElementById('doRegisterBtn');
     const logoutBtn = document.getElementById('logoutBtn');
-    const currentUserSpan = document.getElementById('currentUser');
-    const exercisesListDiv = document.getElementById('exercisesList');
-    const exerciseFormDiv = document.getElementById('exerciseForm');
-    const showAddFormBtn = document.getElementById('showAddFormBtn');
-    const saveExerciseBtn = document.getElementById('saveExerciseBtn');
-    const cancelFormBtn = document.getElementById('cancelFormBtn');
-    const formTitle = document.getElementById('formTitle');
-    const exName = document.getElementById('exName');
-    const exWeight = document.getElementById('exWeight');
-    const exReps = document.getElementById('exReps');
-    const exSets = document.getElementById('exSets');
-    const exDate = document.getElementById('exDate');
-    const exPhoto = document.getElementById('exPhoto');
-    const photoPreview = document.getElementById('photoPreview');
-    const formError = document.getElementById('formError');
-    const exerciseSelect = document.getElementById('exerciseSelect');
-    const periodBtns = document.querySelectorAll('.period-btn');
-    const progressChartCanvas = document.getElementById('progressChart');
+    const tabs = document.querySelectorAll('[data-tab]');
+    const tabContents = { exercises: 'tabExercises', stats: 'tabStats', plan: 'tabPlan', body: 'tabBody', exercisesDB: 'tabExercisesDB' };
 
-    // ------------------- ОТРИСОВКА СПИСКА -------------------
-    function renderExercisesList() {
-        if (!currentUser) return;
-        const exercises = getUserExercises(currentUser);
-        if (exercises.length === 0) {
-            exercisesListDiv.innerHTML = '<div class="form-card" style="text-align:center;">Нет упражнений. Добавьте первое!</div>';
-            return;
-        }
-        exercisesListDiv.innerHTML = exercises.map(ex => `
-            <div class="exercise-card">
-                <div class="exercise-info">
-                    <div class="exercise-name">${escapeHtml(ex.name)}</div>
-                    <div class="exercise-details">
-                        🏋️ ${ex.weight} кг | 🔁 ${ex.reps} повт | 📋 ${ex.sets} подходов | 📅 ${ex.date}
-                    </div>
-                </div>
-                ${ex.photoUrl ? `<div class="exercise-photo"><img src="${ex.photoUrl}" alt="фото"></div>` : ''}
-                <div class="exercise-actions">
-                    <button class="edit-btn" data-id="${ex.id}">✏️ Изменить</button>
-                    <button class="delete-btn" data-id="${ex.id}">🗑️ Удалить</button>
-                </div>
-            </div>
-        `).join('');
+    // ---------- Вспомогательные ----------
+    function getUserData() { let u = getUsers(); return u[currentUser] || null; }
+    function saveUserData(data) { let u = getUsers(); u[currentUser] = data; saveUsers(u); }
+    function getWorkouts() { return getUserData()?.workouts || []; }
+    function saveWorkouts(w) { let d = getUserData(); d.workouts = w; saveUserData(d); }
+    function getPlan() { return getUserData()?.plan || {}; }
+    function savePlan(p) { let d = getUserData(); d.plan = p; saveUserData(d); }
+    function getBodyMeasures() { return getUserData()?.bodyMeasures || []; }
+    function saveBodyMeasures(b) { let d = getUserData(); d.bodyMeasures = b; saveUserData(d); }
+    function getExercisesDB() { return getUserData()?.exercisesDB || []; }
+    function saveExercisesDB(e) { let d = getUserData(); d.exercisesDB = e; saveUserData(d); }
 
-        document.querySelectorAll('.edit-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = parseInt(btn.dataset.id);
-                openEditForm(id);
-            });
-        });
-        document.querySelectorAll('.delete-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const id = parseInt(btn.dataset.id);
-                if (confirm('Удалить упражнение?')) {
-                    deleteExercise(currentUser, id);
-                    refreshAll();
-                }
-            });
-        });
-    }
+    function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=>({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
 
-    function openEditForm(id) {
-        const exercises = getUserExercises(currentUser);
-        const ex = exercises.find(e => e.id === id);
-        if (!ex) return;
-        editId = id;
-        formTitle.innerText = '✏️ Редактировать упражнение';
-        exName.value = ex.name;
-        exWeight.value = ex.weight;
-        exReps.value = ex.reps;
-        exSets.value = ex.sets;
-        exDate.value = ex.date;
-        photoPreview.innerHTML = ex.photoUrl ? `<img src="${ex.photoUrl}" style="max-width:80px;">` : '';
-        exerciseFormDiv.classList.remove('hidden');
-        exPhoto.value = '';
-    }
-
-    function resetForm() {
-        editId = null;
-        formTitle.innerText = '➕ Добавить упражнение';
-        exName.value = '';
-        exWeight.value = '';
-        exReps.value = '';
-        exSets.value = '';
-        exDate.value = new Date().toISOString().slice(0,10);
-        photoPreview.innerHTML = '';
-        exPhoto.value = '';
-        formError.innerText = '';
-        exerciseFormDiv.classList.add('hidden');
-    }
-
-    // Получение фото base64
+    // Преобразование фото в base64
     function getPhotoBase64(file) {
         return new Promise((resolve) => {
             if (!file) return resolve(null);
@@ -365,204 +247,281 @@
         });
     }
 
-    async function handleSave() {
-        if (!currentUser) return;
-        const name = exName.value.trim();
-        const weight = parseFloat(exWeight.value);
-        const reps = parseInt(exReps.value);
-        const sets = parseInt(exSets.value);
-        const date = exDate.value;
-        if (!name || isNaN(weight) || isNaN(reps) || isNaN(sets) || !date) {
-            formError.innerText = 'Заполните все поля!';
-            return;
+    // ---------- ОТРИСОВКА ТРЕНИРОВОК (с сетами и фото) ----------
+    async function renderWorkouts() {
+        let workouts = getWorkouts();
+        let container = document.getElementById('workoutsList');
+        if(!workouts.length) { container.innerHTML = '<div class="form-card">Нет тренировок. Добавьте первую!</div>'; return; }
+        container.innerHTML = workouts.map((w, idx) => {
+            let setsHtml = w.sets.map((s, i) => `<div>🔹 Подход ${i+1}: ${s.weight} кг × ${s.reps} повт</div>`).join('');
+            let photoHtml = w.photoUrl ? `<div class="exercise-photo"><img src="${w.photoUrl}" alt="фото"></div>` : '';
+            return `<div class="exercise-card">
+                <div class="exercise-info"><strong>${escapeHtml(w.exercise)}</strong> 📅 ${w.date}</div>
+                <div class="exercise-sets">${setsHtml}</div>
+                ${photoHtml}
+                <div class="exercise-actions"><button class="edit-workout" data-idx="${idx}">✏️</button><button class="delete-workout" data-idx="${idx}">🗑️</button></div>
+            </div>`;
+        }).join('');
+        document.querySelectorAll('.edit-workout').forEach(btn => btn.addEventListener('click', e=>{ let idx=parseInt(btn.dataset.idx); editWorkout(idx); }));
+        document.querySelectorAll('.delete-workout').forEach(btn => btn.addEventListener('click', e=>{ let idx=parseInt(btn.dataset.idx); if(confirm('Удалить?')){ let ww=getWorkouts(); ww.splice(idx,1); saveWorkouts(ww); renderWorkouts(); updateStatsSelect(); refreshStats(); } }));
+    }
+
+    async function editWorkout(idx) {
+        let workouts = getWorkouts();
+        let w = workouts[idx];
+        currentWorkoutEditId = idx;
+        document.getElementById('workoutExerciseSelect').value = w.exercise;
+        document.getElementById('workoutDate').value = w.date;
+        let container = document.getElementById('setsContainer');
+        container.innerHTML = '';
+        w.sets.forEach(set => { addSetRow(set.weight, set.reps); });
+        // фото
+        let previewDiv = document.getElementById('photoPreview');
+        if(w.photoUrl) {
+            previewDiv.innerHTML = `<img src="${w.photoUrl}" style="max-width:100px; border-radius:12px;"><button type="button" id="removePhotoBtn" style="background:#ef4444; padding:4px 8px; margin-left:8px;">Удалить фото</button>`;
+            document.getElementById('removePhotoBtn')?.addEventListener('click',()=>{
+                document.getElementById('workoutPhoto').value = '';
+                previewDiv.innerHTML = '';
+            });
+        } else previewDiv.innerHTML = '';
+        document.getElementById('workoutForm').classList.remove('hidden');
+    }
+
+    function addSetRow(weight=0, reps=8) {
+        let div = document.createElement('div');
+        div.className = 'set-row';
+        div.innerHTML = `<input type="number" placeholder="Вес" class="set-weight" value="${weight}" step="2.5"><input type="number" placeholder="Повторы" class="set-reps" value="${reps}"><button type="button" class="remove-set-btn" style="background:#ef4444; padding:6px 12px;">✖</button>`;
+        div.querySelector('.remove-set-btn').addEventListener('click', () => div.remove());
+        document.getElementById('setsContainer').appendChild(div);
+    }
+
+    async function saveWorkoutFromForm() {
+        let exName = document.getElementById('workoutExerciseSelect').value;
+        let date = document.getElementById('workoutDate').value;
+        if(!exName || !date) { document.getElementById('workoutError').innerText='Выберите упражнение и дату'; return; }
+        let setRows = document.querySelectorAll('#setsContainer .set-row');
+        let sets = [];
+        for(let row of setRows) {
+            let w = parseFloat(row.querySelector('.set-weight').value);
+            let r = parseInt(row.querySelector('.set-reps').value);
+            if(!isNaN(w) && !isNaN(r)) sets.push({weight:w, reps:r});
         }
+        if(sets.length===0) { document.getElementById('workoutError').innerText='Добавьте хотя бы один подход'; return; }
+        // Фото
+        let photoFile = document.getElementById('workoutPhoto').files[0];
         let photoUrl = null;
-        if (exPhoto.files.length > 0) {
-            photoUrl = await getPhotoBase64(exPhoto.files[0]);
-        } else if (editId) {
-            const oldEx = getUserExercises(currentUser).find(e => e.id === editId);
-            if (oldEx && oldEx.photoUrl) photoUrl = oldEx.photoUrl;
+        if(photoFile) {
+            photoUrl = await getPhotoBase64(photoFile);
+        } else if (currentWorkoutEditId !== null) {
+            let oldWorkout = getWorkouts()[currentWorkoutEditId];
+            if(oldWorkout && oldWorkout.photoUrl) photoUrl = oldWorkout.photoUrl;
         }
-        const exerciseData = { name, weight, reps, sets, date, photoUrl };
-        saveExercise(currentUser, exerciseData, editId);
-        resetForm();
-        refreshAll();
+        let workouts = getWorkouts();
+        let newWorkout = { exercise: exName, date, sets, photoUrl };
+        if(currentWorkoutEditId !== null) {
+            workouts[currentWorkoutEditId] = newWorkout;
+            currentWorkoutEditId = null;
+        } else workouts.push(newWorkout);
+        saveWorkouts(workouts);
+        document.getElementById('workoutForm').classList.add('hidden');
+        document.getElementById('workoutPhoto').value = '';
+        document.getElementById('photoPreview').innerHTML = '';
+        renderWorkouts();
+        updateStatsSelect();
+        refreshStats();
     }
 
-    // ------------------- ГРАФИК -------------------
-    function updateExerciseSelect() {
-        if (!currentUser) return;
-        const exercises = getUserExercises(currentUser);
-        const uniqueNames = [...new Map(exercises.map(ex => [ex.name, ex.name])).values()];
-        exerciseSelect.innerHTML = '<option value="">-- Выберите упражнение --</option>' +
-            uniqueNames.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
-        if (uniqueNames.length > 0 && !exerciseSelect.value) {
-            exerciseSelect.value = uniqueNames[0];
-            updateChart();
-        } else {
-            updateChart();
-        }
-    }
-
-    function updateChart() {
-        if (!currentUser) return;
-        const exerciseName = exerciseSelect.value;
-        if (!exerciseName) {
-            if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-            return;
-        }
-        const period = document.querySelector('.period-btn.active')?.dataset.period || 'week';
-        const exercises = getUserExercises(currentUser);
-        const filtered = exercises.filter(ex => ex.name === exerciseName);
-        if (filtered.length === 0) {
-            if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-            return;
-        }
-        filtered.sort((a,b) => new Date(a.date) - new Date(b.date));
-        const now = new Date();
-        let fromDate = new Date();
-        if (period === 'week') fromDate.setDate(now.getDate() - 7);
-        else if (period === 'month') fromDate.setMonth(now.getMonth() - 1);
-        else fromDate.setFullYear(now.getFullYear() - 1);
-
-        const dataPoints = filtered.filter(ex => new Date(ex.date) >= fromDate);
-        if (dataPoints.length === 0) {
-            if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-            return;
-        }
-        const labels = dataPoints.map(ex => ex.date);
-        const weights = dataPoints.map(ex => ex.weight);
-        if (chartInstance) chartInstance.destroy();
-        chartInstance = new Chart(progressChartCanvas, {
-            type: 'line',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: `Прогресс по ${exerciseName} (кг)`,
-                    data: weights,
-                    borderColor: '#3b82f6',
-                    backgroundColor: 'rgba(59,130,246,0.1)',
-                    tension: 0.2,
-                    fill: true,
-                    pointRadius: 5
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: true,
-                scales: { y: { title: { display: true, text: 'Вес (кг)' } }, x: { title: { display: true, text: 'Дата' } } }
-            }
+    function populateExerciseSelects() {
+        let db = getExercisesDB();
+        let names = db.map(e=>e.name);
+        if(names.length===0) names = ['Жим лёжа','Приседания','Тяга'];
+        let selects = ['workoutExerciseSelect', 'statsExerciseSelect'];
+        selects.forEach(id => {
+            let sel = document.getElementById(id);
+            if(sel) sel.innerHTML = names.map(n=>`<option value="${escapeHtml(n)}">${escapeHtml(n)}</option>`).join('');
         });
     }
 
-    function refreshAll() {
-        renderExercisesList();
-        updateExerciseSelect();
+    // ----- СТАТИСТИКА -----
+    function updateStatsSelect() { populateExerciseSelects(); refreshStats(); }
+    function refreshStats() {
+        let exercise = document.getElementById('statsExerciseSelect')?.value;
+        if(!exercise) return;
+        let workouts = getWorkouts();
+        let filtered = workouts.filter(w=>w.exercise===exercise);
+        if(filtered.length===0) { document.getElementById('statsNumbers').innerHTML='<div>Нет данных</div>'; if(statsChart) statsChart.destroy(); return; }
+        let now = new Date();
+        let fromDate = new Date();
+        if(currentPeriod==='week') fromDate.setDate(now.getDate()-7);
+        else if(currentPeriod==='month') fromDate.setMonth(now.getMonth()-1);
+        else fromDate.setFullYear(now.getFullYear()-1);
+        let data = filtered.filter(w=>new Date(w.date)>=fromDate).sort((a,b)=>new Date(a.date)-new Date(b.date));
+        if(data.length===0) { document.getElementById('statsNumbers').innerHTML='<div>Нет данных за период</div>'; return; }
+        let labels = data.map(d=>d.date);
+        let maxWeights = data.map(d=>Math.max(...d.sets.map(s=>s.weight)));
+        let totalVolume = data.reduce((sum,d)=>sum + d.sets.reduce((vol,s)=>vol + s.weight*s.reps,0),0);
+        let avgWeight = data.reduce((sum,d)=>sum + d.sets.reduce((wsum,s)=>wsum + s.weight,0)/d.sets.length,0)/data.length;
+        let maxAll = Math.max(...data.flatMap(d=>d.sets.map(s=>s.weight)));
+        let totalSets = data.reduce((sum,d)=>sum + d.sets.length,0);
+        document.getElementById('statsNumbers').innerHTML = `<div class="stat-item"><div class="stat-value">${totalVolume}</div><div>Объём (кг)</div></div>
+            <div class="stat-item"><div class="stat-value">${maxAll}</div><div>Макс вес (кг)</div></div>
+            <div class="stat-item"><div class="stat-value">${avgWeight.toFixed(1)}</div><div>Ср. вес (кг)</div></div>
+            <div class="stat-item"><div class="stat-value">${totalSets}</div><div>Всего подходов</div></div>`;
+        if(statsChart) statsChart.destroy();
+        statsChart = new Chart(document.getElementById('statsChart'), { type:'line', data:{ labels, datasets:[{ label:`${exercise} - макс. вес`, data:maxWeights, borderColor:'#3b82f6', fill:false }] } });
     }
 
-    // ------------------- АВТОРИЗАЦИЯ -------------------
+    // ----- ПЛАН ТРЕНИРОВОК -----
+    function renderPlan() {
+        let plan = getPlan();
+        let days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+        let container = document.getElementById('weekPlanContainer');
+        container.innerHTML = days.map(day => `<div class="week-plan-day"><strong>${day}</strong><br>${plan[day] || '— Отдых —'}</div>`).join('');
+    }
+    function openPlanEditor() {
+        let plan = getPlan();
+        let days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+        let editorDiv = document.getElementById('planDaysEditor');
+        editorDiv.innerHTML = days.map(day => `<div><label>${day}</label><input type="text" id="plan_${day}" value="${escapeHtml(plan[day] || '')}" placeholder="Например: Грудь+Бицепс"></div>`).join('');
+        document.getElementById('planEditor').classList.remove('hidden');
+    }
+    function savePlanChanges() {
+        let days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+        let newPlan = {};
+        days.forEach(day => { newPlan[day] = document.getElementById(`plan_${day}`).value; });
+        savePlan(newPlan);
+        document.getElementById('planEditor').classList.add('hidden');
+        renderPlan();
+    }
+
+    // ----- ЗАМЕРЫ ТЕЛА -----
+    function renderBodyMeasures() {
+        let measures = getBodyMeasures();
+        let historyDiv = document.getElementById('measuresHistory');
+        if(measures.length===0) historyDiv.innerHTML = '<div>Нет замеров</div>';
+        else {
+            historyDiv.innerHTML = measures.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(m=>`<div class="exercise-card"><div><b>${m.date}</b>: Груд. ${m.chest}см, Биц(л) ${m.bicepsL}см, Биц(п) ${m.bicepsR}см, Талия ${m.waist}см, Бедро(л) ${m.thighL}см, Бедро(п) ${m.thighR}см</div><button class="delete-measure" data-date="${m.date}">🗑️</button></div>`).join('');
+            document.querySelectorAll('.delete-measure').forEach(btn=>btn.addEventListener('click',()=>{ let nd = btn.dataset.date; let mm = getBodyMeasures().filter(m=>m.date!==nd); saveBodyMeasures(mm); renderBodyMeasures(); }));
+        }
+    }
+    function saveMeasure() {
+        let date = document.getElementById('measureDate').value;
+        if(!date) { alert('Выберите дату'); return; }
+        let newMeasure = {
+            date, chest: parseFloat(document.getElementById('measureChest').value)||0,
+            bicepsL: parseFloat(document.getElementById('measureBicepsL').value)||0,
+            bicepsR: parseFloat(document.getElementById('measureBicepsR').value)||0,
+            waist: parseFloat(document.getElementById('measureWaist').value)||0,
+            thighL: parseFloat(document.getElementById('measureThighL').value)||0,
+            thighR: parseFloat(document.getElementById('measureThighR').value)||0
+        };
+        let measures = getBodyMeasures();
+        measures.push(newMeasure);
+        saveBodyMeasures(measures);
+        document.getElementById('measureForm').classList.add('hidden');
+        renderBodyMeasures();
+    }
+
+    // ----- БАЗА УПРАЖНЕНИЙ -----
+    function renderExercisesDB() {
+        let db = getExercisesDB();
+        let container = document.getElementById('exercisesDbList');
+        if(db.length===0) container.innerHTML = '<div>Нет упражнений. Добавьте.</div>';
+        else {
+            container.innerHTML = db.map((ex,idx)=>`<div class="exercise-card"><div><strong>${escapeHtml(ex.name)}</strong> — ${ex.muscle}</div><button class="delete-exdb" data-idx="${idx}">🗑️</button></div>`).join('');
+            document.querySelectorAll('.delete-exdb').forEach(btn=>btn.addEventListener('click',()=>{ let i=parseInt(btn.dataset.idx); let newDb=getExercisesDB(); newDb.splice(i,1); saveExercisesDB(newDb); renderExercisesDB(); populateExerciseSelects(); renderWorkouts(); }));
+        }
+    }
+    function addExerciseToDB() {
+        let name = document.getElementById('dbExName').value.trim();
+        let muscle = document.getElementById('dbExMuscle').value;
+        if(!name) return;
+        let db = getExercisesDB();
+        db.push({name, muscle});
+        saveExercisesDB(db);
+        document.getElementById('dbExName').value='';
+        document.getElementById('exerciseDbForm').classList.add('hidden');
+        renderExercisesDB();
+        populateExerciseSelects();
+    }
+
+    // ---------- ИНИЦИАЛИЗАЦИЯ ПОЛЬЗОВАТЕЛЯ ----------
+    function loadUserDataIntoUI() {
+        if(!currentUser) return;
+        if(!getExercisesDB().length) saveExercisesDB([{name:'Жим лёжа',muscle:'Грудь'},{name:'Приседания',muscle:'Ноги'},{name:'Тяга штанги',muscle:'Спина'}]);
+        populateExerciseSelects();
+        renderWorkouts();
+        renderPlan();
+        renderBodyMeasures();
+        renderExercisesDB();
+        refreshStats();
+        document.getElementById('workoutDate').value = new Date().toISOString().slice(0,10);
+        document.getElementById('measureDate').value = new Date().toISOString().slice(0,10);
+    }
+
     function onLoginSuccess(username) {
         currentUser = username;
-        currentUserSpan.innerText = username;
+        document.getElementById('currentUser').innerText = username;
         authPage.classList.add('hidden');
         appPage.classList.remove('hidden');
-        refreshAll();
+        loadUserDataIntoUI();
     }
+    function logout() { currentUser=null; authPage.classList.remove('hidden'); appPage.classList.add('hidden'); }
 
-    function logout() {
-        currentUser = null;
-        authPage.classList.remove('hidden');
-        appPage.classList.add('hidden');
-        resetForm();
-        if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
-    }
+    // ----- СОБЫТИЯ -----
+    document.getElementById('doLoginBtn').onclick = ()=>{
+        let u = document.getElementById('loginUsername').value.trim(), p = document.getElementById('loginPassword').value;
+        let res = login(u,p);
+        if(res.success) onLoginSuccess(u);
+        else document.getElementById('authError').innerText = res.error;
+    };
+    document.getElementById('doRegisterBtn').onclick = ()=>{
+        let u = document.getElementById('regUsername').value.trim(), p = document.getElementById('regPassword').value;
+        let res = register(u,p);
+        if(res.success) { document.getElementById('regError').innerText='✅ Создан! Войдите.'; document.getElementById('loginTabBtn').click(); document.getElementById('loginUsername').value=u; }
+        else document.getElementById('regError').innerText=res.error;
+    };
+    logoutBtn.onclick = logout;
+    document.getElementById('loginTabBtn').onclick = ()=>{ document.getElementById('loginForm').classList.remove('hidden'); document.getElementById('registerForm').classList.add('hidden'); };
+    document.getElementById('registerTabBtn').onclick = ()=>{ document.getElementById('registerForm').classList.remove('hidden'); document.getElementById('loginForm').classList.add('hidden'); };
 
-    // Обработчики
-    doLoginBtn.addEventListener('click', () => {
-        const username = document.getElementById('loginUsername').value.trim();
-        const password = document.getElementById('loginPassword').value;
-        const res = login(username, password);
-        if (res.success) {
-            onLoginSuccess(username);
-        } else {
-            authError.innerText = res.error;
-        }
-    });
+    tabs.forEach(btn=>{ btn.onclick = ()=>{ let tab=btn.dataset.tab; for(let t in tabContents) document.getElementById(tabContents[t]).classList.add('hidden'); document.getElementById(tabContents[tab]).classList.remove('hidden'); tabs.forEach(b=>b.classList.remove('active')); btn.classList.add('active'); }; });
+    document.getElementById('showWorkoutFormBtn').onclick = ()=>{ currentWorkoutEditId=null; document.getElementById('workoutForm').classList.remove('hidden'); document.getElementById('setsContainer').innerHTML=''; addSetRow(); document.getElementById('photoPreview').innerHTML=''; document.getElementById('workoutPhoto').value=''; };
+    document.getElementById('addSetBtn').onclick = ()=>addSetRow();
+    document.getElementById('saveWorkoutBtn').onclick = saveWorkoutFromForm;
+    document.getElementById('cancelWorkoutBtn').onclick = ()=>{ document.getElementById('workoutForm').classList.add('hidden'); currentWorkoutEditId=null; };
+    document.querySelectorAll('.period-stats-btn').forEach(b=>{ b.onclick=()=>{ document.querySelectorAll('.period-stats-btn').forEach(bb=>bb.classList.remove('active')); b.classList.add('active'); currentPeriod=b.dataset.period; refreshStats(); }; });
+    document.getElementById('statsExerciseSelect').onchange = refreshStats;
+    document.getElementById('editPlanBtn').onclick = openPlanEditor;
+    document.getElementById('savePlanBtn').onclick = savePlanChanges;
+    document.getElementById('cancelPlanBtn').onclick = ()=>document.getElementById('planEditor').classList.add('hidden');
+    document.getElementById('addMeasureBtn').onclick = ()=>document.getElementById('measureForm').classList.remove('hidden');
+    document.getElementById('saveMeasureBtn').onclick = saveMeasure;
+    document.getElementById('cancelMeasureBtn').onclick = ()=>document.getElementById('measureForm').classList.add('hidden');
+    document.getElementById('addExerciseDbBtn').onclick = ()=>document.getElementById('exerciseDbForm').classList.remove('hidden');
+    document.getElementById('saveDbExerciseBtn').onclick = addExerciseToDB;
+    document.getElementById('cancelDbBtn').onclick = ()=>document.getElementById('exerciseDbForm').classList.add('hidden');
 
-    doRegisterBtn.addEventListener('click', () => {
-        const username = document.getElementById('regUsername').value.trim();
-        const password = document.getElementById('regPassword').value;
-        const res = register(username, password);
-        if (res.success) {
-            regError.innerText = '✅ Аккаунт создан! Теперь войдите.';
-            loginTabBtn.click();
-            document.getElementById('loginUsername').value = username;
-            document.getElementById('loginPassword').value = '';
-            authError.innerText = '';
-        } else {
-            regError.innerText = res.error;
-        }
-    });
-
-    loginTabBtn.addEventListener('click', () => {
-        loginTabBtn.classList.add('active');
-        registerTabBtn.classList.remove('active');
-        loginFormDiv.classList.remove('hidden');
-        registerFormDiv.classList.add('hidden');
-        authError.innerText = '';
-        regError.innerText = '';
-    });
-
-    registerTabBtn.addEventListener('click', () => {
-        registerTabBtn.classList.add('active');
-        loginTabBtn.classList.remove('active');
-        loginFormDiv.classList.add('hidden');
-        registerFormDiv.classList.remove('hidden');
-        authError.innerText = '';
-        regError.innerText = '';
-    });
-
-    showAddFormBtn.addEventListener('click', () => {
-        resetForm();
-        exerciseFormDiv.classList.remove('hidden');
-    });
-    cancelFormBtn.addEventListener('click', resetForm);
-    saveExerciseBtn.addEventListener('click', handleSave);
-    logoutBtn.addEventListener('click', logout);
-
-    exPhoto.addEventListener('change', (e) => {
-        if (e.target.files.length) {
-            const file = e.target.files[0];
-            const reader = new FileReader();
+    // предпросмотр фото в форме
+    document.getElementById('workoutPhoto').addEventListener('change', (e) => {
+        if(e.target.files.length) {
+            let reader = new FileReader();
             reader.onload = (ev) => {
-                photoPreview.innerHTML = `<img src="${ev.target.result}" style="max-width:80px; border-radius:12px;">`;
+                document.getElementById('photoPreview').innerHTML = `<img src="${ev.target.result}" style="max-width:100px; border-radius:12px;"><button type="button" id="clearPhotoPreview" style="background:#ef4444; padding:4px 8px; margin-left:8px;">Удалить</button>`;
+                document.getElementById('clearPhotoPreview')?.addEventListener('click',()=>{
+                    document.getElementById('workoutPhoto').value = '';
+                    document.getElementById('photoPreview').innerHTML = '';
+                });
             };
-            reader.readAsDataURL(file);
-        } else if (!editId) photoPreview.innerHTML = '';
+            reader.readAsDataURL(e.target.files[0]);
+        } else {
+            document.getElementById('photoPreview').innerHTML = '';
+        }
     });
 
-    periodBtns.forEach(btn => {
-        btn.addEventListener('click', () => {
-            periodBtns.forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            updateChart();
-        });
-    });
-    exerciseSelect.addEventListener('change', updateChart);
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, (m) => {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    // Старт
-    authPage.classList.remove('hidden');
-    appPage.classList.add('hidden');
+    // начальная страница
+    authPage.classList.remove('hidden'); appPage.classList.add('hidden');
+    document.getElementById('loginForm').classList.remove('hidden'); document.getElementById('registerForm').classList.add('hidden');
 </script>
 </body>
 </html>
