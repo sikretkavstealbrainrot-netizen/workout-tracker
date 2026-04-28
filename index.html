@@ -110,7 +110,6 @@
                 <input type="date" id="workoutDate" value="">
                 <label>Подходы (сеты)</label>
                 <div id="setsContainer">
-                    <!-- начальный пустой набор будет добавлен через addSetRow() -->
                 </div>
                 <button type="button" id="addSetBtn" class="add-set-btn">+ Добавить подход</button>
                 <div class="photo-upload">
@@ -185,9 +184,15 @@
                 <div id="exerciseDbForm" class="hidden form-card" style="margin-top:15px;">
                     <input type="text" id="dbExName" placeholder="Название упражнения">
                     <select id="dbExMuscle">
-                        <option value="Грудь">Грудь</option><option value="Спина">Спина</option><option value="Ноги">Ноги</option>
-                        <option value="Плечи">Плечи</option><option value="Бицепс">Бицепс</option><option value="Трицепс">Трицепс</option>
-                        <option value="Пресс">Пресс</option><option value="Кардио">Кардио</option>
+                        <option value="Груди">Груди</option>
+                        <option value="Спина">Спина</option>
+                        <option value="Ноги">Ноги</option>
+                        <option value="Сідниці">Сідниці (Ягодиці)</option>
+                        <option value="Плечі">Плечі</option>
+                        <option value="Біцепс">Біцепс</option>
+                        <option value="Тріцепс">Тріцепс</option>
+                        <option value="Прес">Прес</option>
+                        <option value="Кардіо">Кардіо</option>
                     </select>
                     <div class="form-buttons"><button id="saveDbExerciseBtn">Сохранить</button><button id="cancelDbBtn" class="btn-outline">Отмена</button></div>
                 </div>
@@ -456,7 +461,7 @@
     // ---------- ИНИЦИАЛИЗАЦИЯ ПОЛЬЗОВАТЕЛЯ ----------
     function loadUserDataIntoUI() {
         if(!currentUser) return;
-        if(!getExercisesDB().length) saveExercisesDB([{name:'Жим лёжа',muscle:'Грудь'},{name:'Приседания',muscle:'Ноги'},{name:'Тяга штанги',muscle:'Спина'}]);
+        if(!getExercisesDB().length) saveExercisesDB([{name:'Жим лёжа',muscle:'Груди'},{name:'Приседания',muscle:'Ноги'},{name:'Тяга штанги',muscle:'Спина'}]);
         populateExerciseSelects();
         renderWorkouts();
         renderPlan();
