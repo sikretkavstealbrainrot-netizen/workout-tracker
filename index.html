@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Мой фитнес-трекер</title>
+    <title>Workout Tracker | Личный дневник</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * {
@@ -17,7 +17,7 @@
             padding: 16px;
         }
         .container {
-            max-width: 900px;
+            max-width: 1000px;
             margin: 0 auto;
             background: white;
             border-radius: 36px;
@@ -73,7 +73,7 @@
         .error-msg { color: #ef4444; text-align: center; font-size: 0.9rem; }
         .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 12px; }
         .stats-section { background: #ffffff; border-radius: 28px; padding: 16px; margin-bottom: 28px; border: 1px solid #e2e8f0; }
-        .stat-controls { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; justify-content: space-between; }
+        .stat-controls { display: flex; flex-wrap: wrap; gap: 12px; margin: 12px 0; justify-content: space-between; align-items: center; }
         .time-buttons { display: flex; gap: 8px; }
         .period-btn { background: #e2e8f0; color: #1e293b; padding: 6px 12px; font-size: 0.8rem; }
         .period-btn.active { background: #3b82f6; color: white; }
@@ -107,9 +107,9 @@
     </style>
 </head>
 <body>
-<div class="container" id="app">
-    <!-- Страница входа / регистрации -->
-    <div id="authPage" class="page">
+<div class="container">
+    <!-- СТРАНИЦА АВТОРИЗАЦИИ -->
+    <div id="authPage">
         <div class="logo">
             <h1>💪 Workout Tracker</h1>
             <p>Твой личный дневник</p>
@@ -132,8 +132,8 @@
         </div>
     </div>
 
-    <!-- Главное приложение -->
-    <div id="appPage" class="page hidden">
+    <!-- ГЛАВНОЕ ПРИЛОЖЕНИЕ -->
+    <div id="appPage" class="hidden">
         <div class="app-header">
             <h2>🏋️‍♂️ <span id="currentUser"></span></h2>
             <button id="logoutBtn" class="btn-outline">Выйти</button>
@@ -182,10 +182,8 @@
 </div>
 
 <script>
-    // --------------------------------------------------------------
-    // 1. РАБОТА С ХРАНИЛИЩЕМ (localStorage)
-    // --------------------------------------------------------------
-    const STORAGE_KEY = 'workout_users';
+    // ------------------- ХРАНИЛИЩЕ -------------------
+    const STORAGE_KEY = 'workout_users_pro';
 
     function getUsers() {
         const data = localStorage.getItem(STORAGE_KEY);
@@ -249,13 +247,12 @@
         setUserExercises(username, exercises);
     }
 
-    // --------------------------------------------------------------
-    // 2. ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ И DOM
-    // --------------------------------------------------------------
+    // ------------------- ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ -------------------
     let currentUser = null;
     let editId = null;
     let chartInstance = null;
 
+    // DOM элементы
     const authPage = document.getElementById('authPage');
     const appPage = document.getElementById('appPage');
     const loginFormDiv = document.getElementById('loginForm');
@@ -286,9 +283,7 @@
     const periodBtns = document.querySelectorAll('.period-btn');
     const progressChartCanvas = document.getElementById('progressChart');
 
-    // --------------------------------------------------------------
-    // 3. ОТРИСОВКА СПИСКА УПРАЖНЕНИЙ
-    // --------------------------------------------------------------
+    // ------------------- ОТРИСОВКА СПИСКА -------------------
     function renderExercisesList() {
         if (!currentUser) return;
         const exercises = getUserExercises(currentUser);
@@ -312,7 +307,6 @@
             </div>
         `).join('');
 
-        // Обработчики кнопок
         document.querySelectorAll('.edit-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
                 const id = parseInt(btn.dataset.id);
@@ -360,6 +354,17 @@
         exerciseFormDiv.classList.add('hidden');
     }
 
+    // Получение фото base64
+    function getPhotoBase64(file) {
+        return new Promise((resolve) => {
+            if (!file) return resolve(null);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => resolve(null);
+        });
+    }
+
     async function handleSave() {
         if (!currentUser) return;
         const name = exName.value.trim();
@@ -384,9 +389,7 @@
         refreshAll();
     }
 
-    // --------------------------------------------------------------
-    // 4. ГРАФИК ПРОГРЕССА
-    // --------------------------------------------------------------
+    // ------------------- ГРАФИК -------------------
     function updateExerciseSelect() {
         if (!currentUser) return;
         const exercises = getUserExercises(currentUser);
@@ -395,6 +398,8 @@
             uniqueNames.map(name => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('');
         if (uniqueNames.length > 0 && !exerciseSelect.value) {
             exerciseSelect.value = uniqueNames[0];
+            updateChart();
+        } else {
             updateChart();
         }
     }
@@ -453,34 +458,9 @@
     function refreshAll() {
         renderExercisesList();
         updateExerciseSelect();
-        updateChart();
     }
 
-    // --------------------------------------------------------------
-    // 5. ФОТО И ВСПОМОГАТЕЛЬНЫЕ
-    // --------------------------------------------------------------
-    function getPhotoBase64(file) {
-        return new Promise((resolve) => {
-            if (!file) return resolve(null);
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = () => resolve(null);
-        });
-    }
-    function escapeHtml(str) {
-        if (!str) return '';
-        return str.replace(/[&<>]/g, function(m) {
-            if (m === '&') return '&amp;';
-            if (m === '<') return '&lt;';
-            if (m === '>') return '&gt;';
-            return m;
-        });
-    }
-
-    // --------------------------------------------------------------
-    // 6. АВТОРИЗАЦИЯ И ОБРАБОТЧИКИ
-    // --------------------------------------------------------------
+    // ------------------- АВТОРИЗАЦИЯ -------------------
     function onLoginSuccess(username) {
         currentUser = username;
         currentUserSpan.innerText = username;
@@ -497,6 +477,7 @@
         if (chartInstance) { chartInstance.destroy(); chartInstance = null; }
     }
 
+    // Обработчики
     doLoginBtn.addEventListener('click', () => {
         const username = document.getElementById('loginUsername').value.trim();
         const password = document.getElementById('loginPassword').value;
@@ -569,7 +550,17 @@
     });
     exerciseSelect.addEventListener('change', updateChart);
 
-    // Инициализация
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, (m) => {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+
+    // Старт
     authPage.classList.remove('hidden');
     appPage.classList.add('hidden');
 </script>
