@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Fitness PRO | Трекер тренировок + Фото</title>
+    <title>Fitness PRO | Группы мышц + Избранное</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -24,8 +24,7 @@
         .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #1e293b; }
         .error-msg { color: #ef4444; text-align: center; }
         .app-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
-        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px,1fr)); gap: 20px; margin-top: 20px; }
-        .card { background: #f8fafc; border-radius: 28px; padding: 20px; }
+        .card { background: #f8fafc; border-radius: 28px; padding: 20px; margin-bottom: 20px; }
         .stat-numbers { display: flex; flex-wrap: wrap; gap: 16px; justify-content: space-between; margin: 15px 0; }
         .stat-item { background: white; border-radius: 24px; padding: 12px; text-align: center; flex: 1; min-width: 100px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .stat-value { font-size: 1.8rem; font-weight: 700; color: #3b82f6; }
@@ -54,6 +53,18 @@
         .form-buttons { display: flex; gap: 12px; margin-top: 12px; }
         .week-plan-day { background: #eef2ff; border-radius: 20px; padding: 12px; margin-bottom: 12px; }
         .body-measure { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin: 10px 0; }
+        .muscle-group { background: white; border-radius: 24px; margin-bottom: 20px; overflow: hidden; border: 1px solid #e2e8f0; }
+        .muscle-header { background: #3b82f6; color: white; padding: 14px 20px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        .muscle-header:hover { background: #2563eb; }
+        .muscle-exercises { padding: 12px; display: none; }
+        .muscle-exercises.show { display: block; }
+        .ex-item { display: flex; justify-content: space-between; align-items: center; padding: 10px 12px; border-bottom: 1px solid #f1f5f9; }
+        .ex-name { font-weight: 500; }
+        .favorite-star { font-size: 1.4rem; cursor: pointer; background: none; border: none; padding: 0 8px; }
+        .favorite-star.active { color: #f59e0b; }
+        .add-ex-to-group { margin-top: 12px; display: flex; gap: 8px; }
+        .add-ex-to-group input { flex: 1; }
+        .small-btn { background: #10b981; padding: 6px 12px; font-size: 0.8rem; }
         @media (max-width: 700px) {
             .set-row { flex-direction: column; align-items: stretch; }
             .set-row input { width: 100%; }
@@ -64,7 +75,7 @@
 <div class="container">
     <!-- СТРАНИЦА АВТОРИЗАЦИИ -->
     <div id="authPage">
-        <div class="logo"><h1>💪 Fitness PRO</h1><p>Трекер тренировок + замеры + план + фото</p></div>
+        <div class="logo"><h1>💪 Fitness PRO</h1><p>Группы мышц | Избранное | Тренировки</p></div>
         <div class="tabs">
             <button id="loginTabBtn" class="tab-btn active">Вход</button>
             <button id="registerTabBtn" class="tab-btn">Регистрация</button>
@@ -94,9 +105,10 @@
         <div class="tabs">
             <button data-tab="exercises" class="tab-btn active">🏋️ Тренировки</button>
             <button data-tab="stats" class="tab-btn">📊 Статистика</button>
-            <button data-tab="plan" class="tab-btn">📅 План тренировок</button>
-            <button data-tab="body" class="tab-btn">📏 Замеры тела</button>
-            <button data-tab="exercisesDB" class="tab-btn">📚 База упражнений</button>
+            <button data-tab="plan" class="tab-btn">📅 План</button>
+            <button data-tab="body" class="tab-btn">📏 Замеры</button>
+            <button data-tab="muscles" class="tab-btn">💪 Группы мышц</button>
+            <button data-tab="favorites" class="tab-btn">⭐ Избранное</button>
         </div>
 
         <!-- ВКЛАДКА ТРЕНИРОВКИ -->
@@ -109,16 +121,15 @@
                 <label>Дата</label>
                 <input type="date" id="workoutDate" value="">
                 <label>Подходы (сеты)</label>
-                <div id="setsContainer">
-                </div>
+                <div id="setsContainer"></div>
                 <button type="button" id="addSetBtn" class="add-set-btn">+ Добавить подход</button>
                 <div class="photo-upload">
-                    <label>📸 Фото (необязательно)</label>
+                    <label>📸 Фото</label>
                     <input type="file" id="workoutPhoto" accept="image/*">
                     <div id="photoPreview"></div>
                 </div>
                 <div class="form-buttons">
-                    <button id="saveWorkoutBtn">Сохранить тренировку</button>
+                    <button id="saveWorkoutBtn">Сохранить</button>
                     <button id="cancelWorkoutBtn" class="btn-outline">Отмена</button>
                 </div>
                 <p id="workoutError" class="error-msg"></p>
@@ -146,10 +157,10 @@
             <div class="card">
                 <h3>📅 Расписание на неделю</h3>
                 <div id="weekPlanContainer"></div>
-                <button id="editPlanBtn" class="btn-outline" style="margin-top:15px;">✏️ Редактировать план</button>
+                <button id="editPlanBtn" class="btn-outline">✏️ Редактировать</button>
                 <div id="planEditor" class="hidden" style="margin-top:15px;">
                     <div id="planDaysEditor"></div>
-                    <button id="savePlanBtn">Сохранить план</button>
+                    <button id="savePlanBtn">Сохранить</button>
                     <button id="cancelPlanBtn" class="btn-outline">Отмена</button>
                 </div>
             </div>
@@ -169,34 +180,26 @@
                     <div class="body-measure"><label>Талия</label><input type="number" id="measureWaist" placeholder="см"></div>
                     <div class="body-measure"><label>Бедро (л)</label><input type="number" id="measureThighL" placeholder="см"></div>
                     <div class="body-measure"><label>Бедро (п)</label><input type="number" id="measureThighR" placeholder="см"></div>
-                    <button id="saveMeasureBtn">Сохранить замер</button>
+                    <button id="saveMeasureBtn">Сохранить</button>
                     <button id="cancelMeasureBtn" class="btn-outline">Отмена</button>
                 </div>
                 <div id="measuresHistory" style="margin-top:20px;"></div>
             </div>
         </div>
 
-        <!-- ВКЛАДКА БАЗА УПРАЖНЕНИЙ -->
-        <div id="tabExercisesDB" class="tab-content hidden">
+        <!-- ВКЛАДКА ГРУППЫ МЫШЦ (база упражнений) -->
+        <div id="tabMuscles" class="tab-content hidden">
             <div class="card">
-                <h3>📚 Мои упражнения</h3>
-                <button id="addExerciseDbBtn" class="btn-add">+ Добавить упражнение</button>
-                <div id="exerciseDbForm" class="hidden form-card" style="margin-top:15px;">
-                    <input type="text" id="dbExName" placeholder="Название упражнения">
-                    <select id="dbExMuscle">
-                        <option value="Груди">Груди</option>
-                        <option value="Спина">Спина</option>
-                        <option value="Ноги">Ноги</option>
-                        <option value="Сідниці">Сідниці (Ягодиці)</option>
-                        <option value="Плечі">Плечі</option>
-                        <option value="Біцепс">Біцепс</option>
-                        <option value="Тріцепс">Тріцепс</option>
-                        <option value="Прес">Прес</option>
-                        <option value="Кардіо">Кардіо</option>
-                    </select>
-                    <div class="form-buttons"><button id="saveDbExerciseBtn">Сохранить</button><button id="cancelDbBtn" class="btn-outline">Отмена</button></div>
-                </div>
-                <div id="exercisesDbList" style="margin-top:20px; display:flex; flex-direction:column; gap:10px;"></div>
+                <h3>💪 Упражнения по группам мышц</h3>
+                <div id="musclesContainer"></div>
+            </div>
+        </div>
+
+        <!-- ВКЛАДКА ИЗБРАННОЕ -->
+        <div id="tabFavorites" class="tab-content hidden">
+            <div class="card">
+                <h3>⭐ Избранные упражнения</h3>
+                <div id="favoritesList"></div>
             </div>
         </div>
     </div>
@@ -204,21 +207,42 @@
 
 <script>
     // ------------------- ХРАНИЛИЩЕ -------------------
-    const STORAGE_KEY = 'fitness_pro_userdata';
-    function getUsers() { let d = localStorage.getItem(STORAGE_KEY); return d ? JSON.parse(d) : {}; }
-    function saveUsers(u) { localStorage.setItem(STORAGE_KEY, JSON.stringify(u)); }
+    const STORAGE_KEY = 'fitness_pro_v2';
+    const MUSCLE_GROUPS = ['Груди', 'Спина', 'Ноги', 'Сідниці', 'Плечі', 'Біцепс', 'Тріцепс', 'Прес'];
+
+    function getData() { let d = localStorage.getItem(STORAGE_KEY); return d ? JSON.parse(d) : {}; }
+    function saveData(data) { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
 
     function register(username, pwd) {
-        let users = getUsers();
-        if (users[username]) return {success:false, error:'Уже есть'};
+        let data = getData();
+        if (data[username]) return {success:false, error:'Уже есть'};
         if (username.length<3 || pwd.length<3) return {success:false, error:'Мин 3 символа'};
-        users[username] = {password:pwd, workouts:[], plan:{}, bodyMeasures:[], exercisesDB:[]};
-        saveUsers(users);
+        data[username] = {
+            password: pwd,
+            workouts: [],
+            plan: {},
+            bodyMeasures: [],
+            exercisesByMuscle: {}
+        };
+        // Инициализация групп мышц
+        for (let g of MUSCLE_GROUPS) data[username].exercisesByMuscle[g] = [];
+        // Стартовые упражнения
+        data[username].exercisesByMuscle['Груди'] = ['Жим лёжа', 'Жим гантелей'];
+        data[username].exercisesByMuscle['Спина'] = ['Тяга штанги', 'Подтягивания'];
+        data[username].exercisesByMuscle['Ноги'] = ['Приседания', 'Выпады'];
+        data[username].exercisesByMuscle['Сідниці'] = ['Румунська тяга', 'Ягодичный мост'];
+        data[username].exercisesByMuscle['Плечі'] = ['Жим штанги стоя', 'Махи гантелями'];
+        data[username].exercisesByMuscle['Біцепс'] = ['Подъём штанги на бицепс', 'Молотки'];
+        data[username].exercisesByMuscle['Тріцепс'] = ['Французский жим', 'Разгибания на блоке'];
+        data[username].exercisesByMuscle['Прес'] = ['Скручивания', 'Планка'];
+        data[username].favorites = ['Жим лёжа', 'Приседания'];
+        saveData(data);
         return {success:true};
     }
+
     function login(username, pwd) {
-        let users = getUsers();
-        if (users[username] && users[username].password === pwd) return {success:true, username};
+        let data = getData();
+        if (data[username] && data[username].password === pwd) return {success:true, username};
         return {success:false, error:'Неверно'};
     }
 
@@ -227,27 +251,26 @@
     let statsChart = null;
     let currentPeriod = 'week';
 
-    // DOM
     const authPage = document.getElementById('authPage'), appPage = document.getElementById('appPage');
     const logoutBtn = document.getElementById('logoutBtn');
     const tabs = document.querySelectorAll('[data-tab]');
-    const tabContents = { exercises: 'tabExercises', stats: 'tabStats', plan: 'tabPlan', body: 'tabBody', exercisesDB: 'tabExercisesDB' };
+    const tabContents = { exercises: 'tabExercises', stats: 'tabStats', plan: 'tabPlan', body: 'tabBody', muscles: 'tabMuscles', favorites: 'tabFavorites' };
 
-    // ---------- Вспомогательные ----------
-    function getUserData() { let u = getUsers(); return u[currentUser] || null; }
-    function saveUserData(data) { let u = getUsers(); u[currentUser] = data; saveUsers(u); }
+    function getUserData() { let d = getData(); return d[currentUser] || null; }
+    function saveUserData(data) { let d = getData(); d[currentUser] = data; saveData(d); }
     function getWorkouts() { return getUserData()?.workouts || []; }
     function saveWorkouts(w) { let d = getUserData(); d.workouts = w; saveUserData(d); }
     function getPlan() { return getUserData()?.plan || {}; }
     function savePlan(p) { let d = getUserData(); d.plan = p; saveUserData(d); }
     function getBodyMeasures() { return getUserData()?.bodyMeasures || []; }
     function saveBodyMeasures(b) { let d = getUserData(); d.bodyMeasures = b; saveUserData(d); }
-    function getExercisesDB() { return getUserData()?.exercisesDB || []; }
-    function saveExercisesDB(e) { let d = getUserData(); d.exercisesDB = e; saveUserData(d); }
+    function getExercisesByMuscle() { return getUserData()?.exercisesByMuscle || {}; }
+    function saveExercisesByMuscle(obj) { let d = getUserData(); d.exercisesByMuscle = obj; saveUserData(d); }
+    function getFavorites() { return getUserData()?.favorites || []; }
+    function saveFavorites(fav) { let d = getUserData(); d.favorites = fav; saveUserData(d); }
 
     function escapeHtml(s) { if(!s) return ''; return s.replace(/[&<>]/g, m=>({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
 
-    // Фото base64
     function getPhotoBase64(file) {
         return new Promise((resolve) => {
             if (!file) return resolve(null);
@@ -300,11 +323,9 @@
     function addSetRow(weight=0, reps=8) {
         let div = document.createElement('div');
         div.className = 'set-row';
-        div.innerHTML = `
-            <div class="field"><label>Вес (кг)</label><input type="number" class="set-weight" value="${weight}" step="2.5"></div>
+        div.innerHTML = `<div class="field"><label>Вес (кг)</label><input type="number" class="set-weight" value="${weight}" step="2.5"></div>
             <div class="field"><label>Повторы</label><input type="number" class="set-reps" value="${reps}"></div>
-            <button type="button" class="remove-set-btn">✖ Удалить подход</button>
-        `;
+            <button type="button" class="remove-set-btn">✖ Удалить подход</button>`;
         div.querySelector('.remove-set-btn').addEventListener('click', () => div.remove());
         document.getElementById('setsContainer').appendChild(div);
     }
@@ -322,19 +343,15 @@
         }
         if(sets.length===0) { document.getElementById('workoutError').innerText='Добавьте хотя бы один подход'; return; }
         let photoFile = document.getElementById('workoutPhoto').files[0];
-        let photoUrl = null;
-        if(photoFile) {
-            photoUrl = await getPhotoBase64(photoFile);
-        } else if (currentWorkoutEditId !== null) {
+        let photoUrl = await getPhotoBase64(photoFile);
+        if(!photoUrl && currentWorkoutEditId !== null) {
             let oldWorkout = getWorkouts()[currentWorkoutEditId];
             if(oldWorkout && oldWorkout.photoUrl) photoUrl = oldWorkout.photoUrl;
         }
         let workouts = getWorkouts();
         let newWorkout = { exercise: exName, date, sets, photoUrl };
-        if(currentWorkoutEditId !== null) {
-            workouts[currentWorkoutEditId] = newWorkout;
-            currentWorkoutEditId = null;
-        } else workouts.push(newWorkout);
+        if(currentWorkoutEditId !== null) { workouts[currentWorkoutEditId] = newWorkout; currentWorkoutEditId = null; }
+        else workouts.push(newWorkout);
         saveWorkouts(workouts);
         document.getElementById('workoutForm').classList.add('hidden');
         document.getElementById('workoutPhoto').value = '';
@@ -344,10 +361,16 @@
         refreshStats();
     }
 
+    function getAllExerciseNames() {
+        let byMuscle = getExercisesByMuscle();
+        let names = [];
+        for (let g in byMuscle) names.push(...byMuscle[g]);
+        return [...new Set(names)];
+    }
+
     function populateExerciseSelects() {
-        let db = getExercisesDB();
-        let names = db.map(e=>e.name);
-        if(names.length===0) names = ['Жим лёжа','Приседания','Тяга'];
+        let names = getAllExerciseNames();
+        if(names.length === 0) names = ['Жим лёжа', 'Приседания'];
         let selects = ['workoutExerciseSelect', 'statsExerciseSelect'];
         selects.forEach(id => {
             let sel = document.getElementById(id);
@@ -384,7 +407,7 @@
         statsChart = new Chart(document.getElementById('statsChart'), { type:'line', data:{ labels, datasets:[{ label:`${exercise} - макс. вес`, data:maxWeights, borderColor:'#3b82f6', fill:false }] } });
     }
 
-    // ----- ПЛАН ТРЕНИРОВОК -----
+    // ----- ПЛАН -----
     function renderPlan() {
         let plan = getPlan();
         let days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
@@ -435,38 +458,105 @@
         renderBodyMeasures();
     }
 
-    // ----- БАЗА УПРАЖНЕНИЙ -----
-    function renderExercisesDB() {
-        let db = getExercisesDB();
-        let container = document.getElementById('exercisesDbList');
-        if(db.length===0) container.innerHTML = '<div>Нет упражнений. Добавьте.</div>';
-        else {
-            container.innerHTML = db.map((ex,idx)=>`<div class="exercise-card"><div><strong>${escapeHtml(ex.name)}</strong> — ${ex.muscle}</div><button class="delete-exdb" data-idx="${idx}">🗑️</button></div>`).join('');
-            document.querySelectorAll('.delete-exdb').forEach(btn=>btn.addEventListener('click',()=>{ let i=parseInt(btn.dataset.idx); let newDb=getExercisesDB(); newDb.splice(i,1); saveExercisesDB(newDb); renderExercisesDB(); populateExerciseSelects(); renderWorkouts(); }));
-        }
-    }
-    function addExerciseToDB() {
-        let name = document.getElementById('dbExName').value.trim();
-        let muscle = document.getElementById('dbExMuscle').value;
-        if(!name) return;
-        let db = getExercisesDB();
-        db.push({name, muscle});
-        saveExercisesDB(db);
-        document.getElementById('dbExName').value='';
-        document.getElementById('exerciseDbForm').classList.add('hidden');
-        renderExercisesDB();
+    // ----- ГРУППЫ МЫШЦ И ИЗБРАННОЕ -----
+    function toggleFavorite(exName) {
+        let favs = getFavorites();
+        if(favs.includes(exName)) favs = favs.filter(f => f !== exName);
+        else favs.push(exName);
+        saveFavorites(favs);
+        renderMuscleGroups();
+        renderFavorites();
         populateExerciseSelects();
     }
 
-    // ---------- ИНИЦИАЛИЗАЦИЯ ПОЛЬЗОВАТЕЛЯ ----------
+    function renderMuscleGroups() {
+        let byMuscle = getExercisesByMuscle();
+        let container = document.getElementById('musclesContainer');
+        container.innerHTML = '';
+        for (let muscle of MUSCLE_GROUPS) {
+            let exercises = byMuscle[muscle] || [];
+            let favs = getFavorites();
+            let exHtml = exercises.map(ex => `<div class="ex-item">
+                <span class="ex-name">${escapeHtml(ex)}</span>
+                <button class="favorite-star ${favs.includes(ex) ? 'active' : ''}" data-ex="${escapeHtml(ex)}">${favs.includes(ex) ? '★' : '☆'}</button>
+            </div>`).join('');
+            container.innerHTML += `<div class="muscle-group">
+                <div class="muscle-header" data-muscle="${muscle}">
+                    <span>💪 ${muscle}</span>
+                    <span>▼</span>
+                </div>
+                <div class="muscle-exercises" id="muscle-${muscle.replace(/\s/g,'')}">
+                    ${exHtml}
+                    <div class="add-ex-to-group">
+                        <input type="text" placeholder="Новое упражнение" id="newEx-${muscle.replace(/\s/g,'')}">
+                        <button class="small-btn add-ex-btn" data-muscle="${muscle}">+ Добавить</button>
+                    </div>
+                </div>
+            </div>`;
+        }
+        // Обработчики раскрытия групп
+        document.querySelectorAll('.muscle-header').forEach(header => {
+            header.addEventListener('click', () => {
+                let muscle = header.dataset.muscle;
+                let div = document.getElementById(`muscle-${muscle.replace(/\s/g,'')}`);
+                div.classList.toggle('show');
+            });
+        });
+        // Обработчики звёзд
+        document.querySelectorAll('.favorite-star').forEach(star => {
+            star.addEventListener('click', (e) => {
+                e.stopPropagation();
+                let exName = star.dataset.ex;
+                toggleFavorite(exName);
+            });
+        });
+        // Обработчики добавления упражнений
+        document.querySelectorAll('.add-ex-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                let muscle = btn.dataset.muscle;
+                let input = document.getElementById(`newEx-${muscle.replace(/\s/g,'')}`);
+                let newEx = input.value.trim();
+                if(newEx) {
+                    let byMuscleNew = getExercisesByMuscle();
+                    if(!byMuscleNew[muscle].includes(newEx)) {
+                        byMuscleNew[muscle].push(newEx);
+                        saveExercisesByMuscle(byMuscleNew);
+                        input.value = '';
+                        renderMuscleGroups();
+                        renderFavorites();
+                        populateExerciseSelects();
+                    } else alert('Такое упражнение уже есть в этой группе');
+                }
+            });
+        });
+    }
+
+    function renderFavorites() {
+        let favs = getFavorites();
+        let container = document.getElementById('favoritesList');
+        if(favs.length === 0) { container.innerHTML = '<div class="form-card">Нет избранных упражнений. Добавьте звёздочку в разделе "Группы мышц"</div>'; return; }
+        container.innerHTML = `<div class="exercises-grid">${favs.map(ex => `<div class="exercise-card"><div><strong>${escapeHtml(ex)}</strong></div><button class="remove-fav" data-ex="${escapeHtml(ex)}">🗑️ Убрать</button></div>`).join('')}</div>`;
+        document.querySelectorAll('.remove-fav').forEach(btn => {
+            btn.addEventListener('click', () => {
+                let ex = btn.dataset.ex;
+                let favsNew = getFavorites().filter(f => f !== ex);
+                saveFavorites(favsNew);
+                renderMuscleGroups();
+                renderFavorites();
+                populateExerciseSelects();
+            });
+        });
+    }
+
+    // ---------- ИНИЦИАЛИЗАЦИЯ ----------
     function loadUserDataIntoUI() {
         if(!currentUser) return;
-        if(!getExercisesDB().length) saveExercisesDB([{name:'Жим лёжа',muscle:'Груди'},{name:'Приседания',muscle:'Ноги'},{name:'Тяга штанги',muscle:'Спина'}]);
-        populateExerciseSelects();
         renderWorkouts();
         renderPlan();
         renderBodyMeasures();
-        renderExercisesDB();
+        renderMuscleGroups();
+        renderFavorites();
+        populateExerciseSelects();
         refreshStats();
         document.getElementById('workoutDate').value = new Date().toISOString().slice(0,10);
         document.getElementById('measureDate').value = new Date().toISOString().slice(0,10);
@@ -511,34 +601,15 @@
     document.getElementById('addMeasureBtn').onclick = ()=>document.getElementById('measureForm').classList.remove('hidden');
     document.getElementById('saveMeasureBtn').onclick = saveMeasure;
     document.getElementById('cancelMeasureBtn').onclick = ()=>document.getElementById('measureForm').classList.add('hidden');
-    document.getElementById('addExerciseDbBtn').onclick = ()=>document.getElementById('exerciseDbForm').classList.remove('hidden');
-    document.getElementById('saveDbExerciseBtn').onclick = addExerciseToDB;
-    document.getElementById('cancelDbBtn').onclick = ()=>document.getElementById('exerciseDbForm').classList.add('hidden');
-
-    // Предпросмотр фото
     document.getElementById('workoutPhoto').addEventListener('change', (e) => {
         if(e.target.files.length) {
             let reader = new FileReader();
-            reader.onload = (ev) => {
-                document.getElementById('photoPreview').innerHTML = `<img src="${ev.target.result}" style="max-width:100px; border-radius:12px;"><button type="button" id="clearPhotoPreview" style="background:#ef4444; padding:4px 8px; margin-left:8px;">Удалить</button>`;
-                document.getElementById('clearPhotoPreview')?.addEventListener('click',()=>{
-                    document.getElementById('workoutPhoto').value = '';
-                    document.getElementById('photoPreview').innerHTML = '';
-                });
-            };
+            reader.onload = (ev) => { document.getElementById('photoPreview').innerHTML = `<img src="${ev.target.result}" style="max-width:100px;">`; };
             reader.readAsDataURL(e.target.files[0]);
-        } else {
-            document.getElementById('photoPreview').innerHTML = '';
-        }
+        } else document.getElementById('photoPreview').innerHTML = '';
     });
 
-    // Telegram Web App
-    if (window.Telegram && window.Telegram.WebApp) {
-        window.Telegram.WebApp.ready();
-        window.Telegram.WebApp.expand();
-    }
-
-    // Старт
+    if (window.Telegram && window.Telegram.WebApp) { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
     authPage.classList.remove('hidden'); appPage.classList.add('hidden');
     document.getElementById('loginForm').classList.remove('hidden'); document.getElementById('registerForm').classList.add('hidden');
 </script>
