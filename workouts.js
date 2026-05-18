@@ -1,5 +1,4 @@
 import { getUserData, saveUserData } from './storage.js';
-import { getLastSetForExercise } from './utils.js';
 
 export function getWorkouts(username) {
     const userData = getUserData(username);
@@ -28,9 +27,4 @@ export function deleteWorkout(username, index) {
     const workouts = getWorkouts(username);
     workouts.splice(index, 1);
     saveWorkouts(username, workouts);
-}
-
-export function getLastWeightAndReps(username, exerciseName) {
-    const workouts = getWorkouts(username);
-    return getLastSetForExercise(workouts, exerciseName);
 }
