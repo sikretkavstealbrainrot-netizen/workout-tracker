@@ -12,7 +12,10 @@
 <div class="container">
     <!-- СТРАНИЦА АВТОРИЗАЦИИ -->
     <div id="authPage">
-        <div class="logo"><h1>💪 Fitness PRO</h1><p>Трекер тренировок | Группы мышц | Избранное</p></div>
+        <div class="logo">
+            <h1>💪 Fitness PRO</h1>
+            <p>Трекер тренировок | Группы мышц | Избранное</p>
+        </div>
         <div class="tabs">
             <button id="loginTabBtn" class="tab-btn active">Вход</button>
             <button id="registerTabBtn" class="tab-btn">Регистрация</button>
@@ -38,7 +41,6 @@
             <button id="logoutBtn" class="btn-outline">Выйти</button>
         </div>
 
-        <!-- НАВИГАЦИОННЫЕ ВКЛАДКИ -->
         <div class="tabs">
             <button data-tab="exercises" class="tab-btn active">🏋️ Тренировки</button>
             <button data-tab="stats" class="tab-btn">📊 Статистика</button>
@@ -48,40 +50,33 @@
             <button data-tab="favorites" class="tab-btn">⭐ Избранное</button>
         </div>
 
-        <!-- ВКЛАДКА ТРЕНИРОВКИ -->
+        <!-- ТРЕНИРОВКИ -->
         <div id="tabExercises" class="tab-content">
-            <button id="showWorkoutFormBtn" class="btn-add" style="background:#10b981;">+ Записать тренировку</button>
+            <button id="showWorkoutFormBtn" class="btn-add">+ Записать тренировку</button>
             <div id="workoutForm" class="form-card hidden">
                 <h3>Новая тренировка</h3>
-                <label>Группа мышц</label>
                 <select id="workoutMuscleGroup"></select>
-                <label>Упражнение</label>
                 <select id="workoutExerciseSelect"></select>
-                <label>Дата</label>
-                <input type="date" id="workoutDate" value="">
-                <label>Подходы (сеты)</label>
+                <input type="date" id="workoutDate">
                 <div id="setsContainer"></div>
                 <button type="button" id="addSetBtn" class="add-set-btn">+ Добавить подход</button>
-                <div class="photo-upload">
-                    <label>📸 Фото упражнения (схема)</label>
-                    <input type="file" id="workoutPhoto" accept="image/*">
-                    <div id="photoPreview"></div>
-                </div>
+                <input type="file" id="workoutPhoto" accept="image/*">
+                <div id="photoPreview"></div>
                 <div class="form-buttons">
                     <button id="saveWorkoutBtn">Сохранить</button>
                     <button id="cancelWorkoutBtn" class="btn-outline">Отмена</button>
                 </div>
                 <p id="workoutError" class="error-msg"></p>
             </div>
-            <div id="workoutsList" class="exercises-grid" style="margin-top:20px;"></div>
+            <div id="workoutsList"></div>
         </div>
 
-        <!-- ВКЛАДКА СТАТИСТИКА -->
+        <!-- СТАТИСТИКА -->
         <div id="tabStats" class="tab-content hidden">
             <div class="card">
                 <h3>Анализ прогресса</h3>
                 <select id="statsExerciseSelect"></select>
-                <div class="time-buttons" style="display:flex; gap:8px; margin:12px 0;">
+                <div class="time-buttons">
                     <button data-period="week" class="period-stats-btn active">Неделя</button>
                     <button data-period="month" class="period-stats-btn">Месяц</button>
                     <button data-period="year" class="period-stats-btn">Год</button>
@@ -91,13 +86,13 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА ПЛАН -->
+        <!-- ПЛАН -->
         <div id="tabPlan" class="tab-content hidden">
             <div class="card">
                 <h3>📅 Расписание на неделю</h3>
                 <div id="weekPlanContainer"></div>
                 <button id="editPlanBtn" class="btn-outline">✏️ Редактировать</button>
-                <div id="planEditor" class="hidden" style="margin-top:15px;">
+                <div id="planEditor" class="hidden">
                     <div id="planDaysEditor"></div>
                     <button id="savePlanBtn">Сохранить</button>
                     <button id="cancelPlanBtn" class="btn-outline">Отмена</button>
@@ -105,32 +100,31 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА ЗАМЕРЫ ТЕЛА -->
+        <!-- ЗАМЕРЫ -->
         <div id="tabBody" class="tab-content hidden">
             <div class="card">
                 <h3>📏 Измерения тела (см)</h3>
-                <div id="bodyMeasuresList"></div>
                 <button id="addMeasureBtn" class="btn-add">+ Добавить замер</button>
-                <div id="measureForm" class="hidden" style="margin-top:15px;">
-                    <input type="date" id="measureDate" value="">
-                    <div class="body-measure"><label>Грудь</label><input type="number" id="measureChest" placeholder="см"></div>
-                    <div class="body-measure"><label>Бицепс (л)</label><input type="number" id="measureBicepsL" placeholder="см"></div>
-                    <div class="body-measure"><label>Бицепс (п)</label><input type="number" id="measureBicepsR" placeholder="см"></div>
-                    <div class="body-measure"><label>Талия</label><input type="number" id="measureWaist" placeholder="см"></div>
-                    <div class="body-measure"><label>Бедро (л)</label><input type="number" id="measureThighL" placeholder="см"></div>
-                    <div class="body-measure"><label>Бедро (п)</label><input type="number" id="measureThighR" placeholder="см"></div>
+                <div id="measureForm" class="hidden">
+                    <input type="date" id="measureDate">
+                    <div class="measure-row"><label>Грудь</label><input type="number" id="measureChest" placeholder="см"></div>
+                    <div class="measure-row"><label>Бицепс (л)</label><input type="number" id="measureBicepsL" placeholder="см"></div>
+                    <div class="measure-row"><label>Бицепс (п)</label><input type="number" id="measureBicepsR" placeholder="см"></div>
+                    <div class="measure-row"><label>Талия</label><input type="number" id="measureWaist" placeholder="см"></div>
+                    <div class="measure-row"><label>Бедро (л)</label><input type="number" id="measureThighL" placeholder="см"></div>
+                    <div class="measure-row"><label>Бедро (п)</label><input type="number" id="measureThighR" placeholder="см"></div>
                     <button id="saveMeasureBtn">Сохранить</button>
                     <button id="cancelMeasureBtn" class="btn-outline">Отмена</button>
                 </div>
-                <div id="measuresHistory" style="margin-top:20px;"></div>
+                <div id="measuresHistory"></div>
             </div>
         </div>
 
-        <!-- ВКЛАДКА ГРУППЫ МЫШЦ -->
+        <!-- ГРУППЫ МЫШЦ -->
         <div id="tabMuscles" class="tab-content hidden">
             <div class="card">
                 <h3>💪 Управление группами мышц</h3>
-                <div class="add-group-section">
+                <div class="add-group">
                     <input type="text" id="newGroupName" placeholder="Название новой группы">
                     <button id="addGroupBtn" class="small-btn">+ Добавить группу</button>
                 </div>
@@ -138,7 +132,7 @@
             </div>
         </div>
 
-        <!-- ВКЛАДКА ИЗБРАННОЕ -->
+        <!-- ИЗБРАННОЕ -->
         <div id="tabFavorites" class="tab-content hidden">
             <div class="card">
                 <h3>⭐ Избранные упражнения</h3>
