@@ -21,14 +21,3 @@ export function getPhotoBase64(file) {
 export function formatDate(date = new Date()) {
     return date.toISOString().slice(0, 10);
 }
-
-export function getLastSetForExercise(workouts, exerciseName) {
-    const lastWorkout = [...workouts]
-        .filter(w => w.exercise === exerciseName)
-        .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-    if (lastWorkout && lastWorkout.sets.length > 0) {
-        const lastSet = lastWorkout.sets[lastWorkout.sets.length - 1];
-        return { weight: lastSet.weight, reps: lastSet.reps };
-    }
-    return { weight: 0, reps: 8 };
-}
