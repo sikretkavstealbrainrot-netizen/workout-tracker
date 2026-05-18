@@ -1,0 +1,1142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Fitness PRO | Трекер тренировок</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: system-ui, 'Segoe UI', Roboto, sans-serif;
+        }
+        body {
+            background: #eef2f5;
+            padding: 16px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 36px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.08);
+            padding: 24px;
+        }
+        .hidden { display: none !important; }
+        .logo { text-align: center; margin-bottom: 20px; }
+        .logo h1 { color: #3b82f6; }
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 12px;
+        }
+        .tab-btn {
+            background: #e2e8f0;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 40px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .tab-btn.active { background: #3b82f6; color: white; }
+        .form-card {
+            background: #f8fafc;
+            border-radius: 28px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            margin-bottom: 20px;
+        }
+        input, select {
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 32px;
+            font-size: 1rem;
+            outline: none;
+        }
+        button {
+            background: #3b82f6;
+            border: none;
+            padding: 12px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover { background: #2563eb; }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+            color: #1e293b;
+        }
+        .btn-add {
+            background: #10b981;
+            width: fit-content;
+        }
+        .small-btn {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        .error-msg {
+            color: #ef4444;
+            text-align: center;
+        }
+        .app-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .card {
+            background: #f8fafc;
+            border-radius: 28px;
+            padding: 20px;
+        }
+        .stat-numbers {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 15px 0;
+        }
+        .stat-item {
+            background: white;
+            border-radius: 24px;
+            padding: 12px;
+            text-align: center;
+            flex: 1;
+            min-width: 100px;
+        }
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #3b82f6;
+        }
+        .set-row {
+            display: flex;
+            gap: 12px;
+            align-items: flex-end;
+            margin: 12px 0;
+            flex-wrap: wrap;
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 20px;
+        }
+        .set-row .field {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .set-row label {
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #475569;
+        }
+        .set-row input {
+            width: 100px;
+            padding: 8px 10px;
+        }
+        .add-set-btn {
+            background: #10b981;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+        }
+        .remove-set-btn {
+            background: #ef4444;
+            padding: 6px 12px;
+        }
+        .exercise-card {
+            background: #fefce8;
+            border-left: 6px solid #3b82f6;
+            border-radius: 24px;
+            padding: 16px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+        .exercise-photo img {
+            max-width: 80px;
+            border-radius: 16px;
+        }
+        .week-plan-day {
+            background: #eef2ff;
+            border-radius: 20px;
+            padding: 12px;
+            margin-bottom: 12px;
+        }
+        .measure-row {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin: 10px 0;
+            flex-wrap: wrap;
+        }
+        .muscle-group {
+            background: white;
+            border-radius: 24px;
+            margin-bottom: 16px;
+            border: 1px solid #e2e8f0;
+        }
+        .muscle-header {
+            background: #3b82f6;
+            color: white;
+            padding: 14px 16px;
+            font-weight: 600;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+        .muscle-exercises {
+            padding: 12px;
+            display: none;
+        }
+        .muscle-exercises.show {
+            display: block;
+        }
+        .ex-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .favorite-star {
+            font-size: 1.4rem;
+            cursor: pointer;
+            background: none;
+            border: none;
+        }
+        .favorite-star.active {
+            color: #f59e0b;
+        }
+        .add-ex-to-group {
+            margin-top: 12px;
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .add-ex-to-group input {
+            flex: 1;
+        }
+        .add-group {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        .add-group input {
+            flex: 1;
+        }
+        .form-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        #photoPreview img {
+            max-width: 100px;
+            border-radius: 12px;
+        }
+        @media (max-width: 700px) {
+            .set-row { flex-direction: column; align-items: stretch; }
+            .set-row input { width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <!-- СТРАНИЦА АВТОРИЗАЦИИ -->
+    <div id="authPage">
+        <div class="logo">
+            <h1>💪 Fitness PRO</h1>
+            <p>Трекер тренировок | Группы мышц | Избранное</p>
+        </div>
+        <div class="tabs">
+            <button id="loginTabBtn" class="tab-btn active">Вход</button>
+            <button id="registerTabBtn" class="tab-btn">Регистрация</button>
+        </div>
+        <div id="loginForm" class="form-card">
+            <input type="text" id="loginUsername" placeholder="Имя пользователя">
+            <input type="password" id="loginPassword" placeholder="Пароль">
+            <button id="doLoginBtn">Войти</button>
+            <p class="error-msg" id="authError"></p>
+        </div>
+        <div id="registerForm" class="form-card hidden">
+            <input type="text" id="regUsername" placeholder="Ник (мин 3)">
+            <input type="password" id="regPassword" placeholder="Пароль (мин 3)">
+            <button id="doRegisterBtn">Создать аккаунт</button>
+            <p class="error-msg" id="regError"></p>
+        </div>
+    </div>
+
+    <!-- ГЛАВНОЕ ПРИЛОЖЕНИЕ -->
+    <div id="appPage" class="hidden">
+        <div class="app-header">
+            <h2>🏋️ <span id="currentUser"></span></h2>
+            <button id="logoutBtn" class="btn-outline">Выйти</button>
+        </div>
+
+        <div class="tabs">
+            <button data-tab="exercises" class="tab-btn active">🏋️ Тренировки</button>
+            <button data-tab="stats" class="tab-btn">📊 Статистика</button>
+            <button data-tab="plan" class="tab-btn">📅 План</button>
+            <button data-tab="body" class="tab-btn">📏 Замеры</button>
+            <button data-tab="muscles" class="tab-btn">💪 Группы мышц</button>
+            <button data-tab="favorites" class="tab-btn">⭐ Избранное</button>
+        </div>
+
+        <!-- ТРЕНИРОВКИ -->
+        <div id="tabExercises" class="tab-content">
+            <button id="showWorkoutFormBtn" class="btn-add">+ Записать тренировку</button>
+            <div id="workoutForm" class="form-card hidden">
+                <h3>Новая тренировка</h3>
+                <select id="workoutMuscleGroup"><option value="">-- Выберите группу --</option></select>
+                <select id="workoutExerciseSelect"><option value="">-- Сначала выберите группу --</option></select>
+                <input type="date" id="workoutDate">
+                <div id="setsContainer"></div>
+                <button type="button" id="addSetBtn" class="add-set-btn">+ Добавить подход</button>
+                <div class="photo-upload">
+                    <label>📸 Схематическая картинка (фото упражнения)</label>
+                    <input type="file" id="workoutPhoto" accept="image/*">
+                    <div id="photoPreview"></div>
+                </div>
+                <div class="form-buttons">
+                    <button id="saveWorkoutBtn">Сохранить</button>
+                    <button id="cancelWorkoutBtn" class="btn-outline">Отмена</button>
+                </div>
+                <p id="workoutError" class="error-msg"></p>
+            </div>
+            <div id="workoutsList"></div>
+        </div>
+
+        <!-- СТАТИСТИКА -->
+        <div id="tabStats" class="tab-content hidden">
+            <div class="card">
+                <h3>Анализ прогресса</h3>
+                <select id="statsExerciseSelect"></select>
+                <div class="time-buttons" style="display:flex; gap:8px; margin:12px 0;">
+                    <button data-period="week" class="period-stats-btn active">Неделя</button>
+                    <button data-period="month" class="period-stats-btn">Месяц</button>
+                    <button data-period="year" class="period-stats-btn">Год</button>
+                </div>
+                <canvas id="statsChart" height="200"></canvas>
+                <div class="stat-numbers" id="statsNumbers"></div>
+            </div>
+        </div>
+
+        <!-- ПЛАН -->
+        <div id="tabPlan" class="tab-content hidden">
+            <div class="card">
+                <h3>📅 Расписание на неделю</h3>
+                <div id="weekPlanContainer"></div>
+                <button id="editPlanBtn" class="btn-outline">✏️ Редактировать</button>
+                <div id="planEditor" class="hidden" style="margin-top:15px;">
+                    <div id="planDaysEditor"></div>
+                    <button id="savePlanBtn">Сохранить</button>
+                    <button id="cancelPlanBtn" class="btn-outline">Отмена</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ЗАМЕРЫ -->
+        <div id="tabBody" class="tab-content hidden">
+            <div class="card">
+                <h3>📏 Измерения тела (см)</h3>
+                <button id="addMeasureBtn" class="btn-add">+ Добавить замер</button>
+                <div id="measureForm" class="hidden" style="margin-top:15px;">
+                    <input type="date" id="measureDate">
+                    <div class="measure-row"><label>Грудь</label><input type="number" id="measureChest" placeholder="см"></div>
+                    <div class="measure-row"><label>Бицепс (л)</label><input type="number" id="measureBicepsL" placeholder="см"></div>
+                    <div class="measure-row"><label>Бицепс (п)</label><input type="number" id="measureBicepsR" placeholder="см"></div>
+                    <div class="measure-row"><label>Талия</label><input type="number" id="measureWaist" placeholder="см"></div>
+                    <div class="measure-row"><label>Бедро (л)</label><input type="number" id="measureThighL" placeholder="см"></div>
+                    <div class="measure-row"><label>Бедро (п)</label><input type="number" id="measureThighR" placeholder="см"></div>
+                    <button id="saveMeasureBtn">Сохранить</button>
+                    <button id="cancelMeasureBtn" class="btn-outline">Отмена</button>
+                </div>
+                <div id="measuresHistory" style="margin-top:20px;"></div>
+            </div>
+        </div>
+
+        <!-- ГРУППЫ МЫШЦ -->
+        <div id="tabMuscles" class="tab-content hidden">
+            <div class="card">
+                <h3>💪 Управление группами мышц</h3>
+                <div class="add-group">
+                    <input type="text" id="newGroupName" placeholder="Название новой группы (например: Предплечья)">
+                    <button id="addGroupBtn" class="small-btn">+ Добавить группу</button>
+                </div>
+                <div id="musclesContainer"></div>
+            </div>
+        </div>
+
+        <!-- ИЗБРАННОЕ -->
+        <div id="tabFavorites" class="tab-content hidden">
+            <div class="card">
+                <h3>⭐ Избранные упражнения</h3>
+                <div id="favoritesList"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ==================== ХРАНИЛИЩЕ ====================
+    const STORAGE_KEY = 'fitness_pro_final';
+    const SESSION_KEY = 'fitness_session_final';
+    
+    const DEFAULT_MUSCLE_GROUPS = ['Груди', 'Спина', 'Ноги', 'Сідниці', 'Плечі', 'Біцепс', 'Тріцепс', 'Прес'];
+    
+    function getData() {
+        const data = localStorage.getItem(STORAGE_KEY);
+        return data ? JSON.parse(data) : {};
+    }
+    
+    function saveData(data) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+    
+    function getUserData(username) {
+        const data = getData();
+        return data[username] || null;
+    }
+    
+    function saveUserData(username, userData) {
+        const data = getData();
+        data[username] = userData;
+        saveData(data);
+    }
+    
+    function getSession() {
+        const session = localStorage.getItem(SESSION_KEY);
+        return session ? JSON.parse(session) : null;
+    }
+    
+    function setSession(username) {
+        localStorage.setItem(SESSION_KEY, JSON.stringify({ username, timestamp: Date.now() }));
+    }
+    
+    function clearSession() {
+        localStorage.removeItem(SESSION_KEY);
+    }
+    
+    // ==================== АВТОРИЗАЦИЯ ====================
+    function register(username, password) {
+        const data = getData();
+        if (data[username]) return { success: false, error: 'Имя уже занято' };
+        if (username.length < 3 || password.length < 3) {
+            return { success: false, error: 'Ник и пароль минимум 3 символа' };
+        }
+        
+        const exercisesByMuscle = {};
+        for (let g of DEFAULT_MUSCLE_GROUPS) {
+            exercisesByMuscle[g] = [];
+        }
+        exercisesByMuscle['Груди'] = ['Жим лёжа', 'Жим гантелей'];
+        exercisesByMuscle['Спина'] = ['Тяга штанги', 'Подтягивания'];
+        exercisesByMuscle['Ноги'] = ['Приседания', 'Выпады'];
+        exercisesByMuscle['Сідниці'] = ['Румунська тяга', 'Ягодичный мост'];
+        exercisesByMuscle['Плечі'] = ['Жим штанги стоя', 'Махи гантелями'];
+        exercisesByMuscle['Біцепс'] = ['Подъём штанги', 'Молотки'];
+        exercisesByMuscle['Тріцепс'] = ['Французский жим', 'Разгибания'];
+        exercisesByMuscle['Прес'] = ['Скручивания', 'Планка'];
+        
+        data[username] = {
+            password: password,
+            workouts: [],
+            plan: {},
+            bodyMeasures: [],
+            exercisesByMuscle: exercisesByMuscle,
+            muscleGroups: [...DEFAULT_MUSCLE_GROUPS],
+            favorites: ['Жим лёжа', 'Приседания'],
+            exerciseImages: {}
+        };
+        saveData(data);
+        return { success: true };
+    }
+    
+    function login(username, password) {
+        const data = getData();
+        const user = data[username];
+        if (user && user.password === password) {
+            setSession(username);
+            return { success: true, username };
+        }
+        return { success: false, error: 'Неверный логин или пароль' };
+    }
+    
+    function logout() {
+        clearSession();
+    }
+    
+    function checkSession() {
+        const session = getSession();
+        if (session && session.username) {
+            const data = getData();
+            if (data[session.username]) {
+                return { success: true, username: session.username };
+            }
+            clearSession();
+        }
+        return { success: false };
+    }
+    
+    // ==================== УПРАЖНЕНИЯ ====================
+    function getMuscleGroups(username) {
+        const userData = getUserData(username);
+        return userData?.muscleGroups || [];
+    }
+    
+    function getExercisesByMuscle(username) {
+        const userData = getUserData(username);
+        return userData?.exercisesByMuscle || {};
+    }
+    
+    function addMuscleGroup(username, groupName) {
+        if (!groupName || groupName.trim() === '') return false;
+        const groups = getMuscleGroups(username);
+        if (!groups.includes(groupName)) {
+            groups.push(groupName);
+            const userData = getUserData(username);
+            userData.muscleGroups = groups;
+            userData.exercisesByMuscle[groupName] = [];
+            saveUserData(username, userData);
+            return true;
+        }
+        return false;
+    }
+    
+    function addExerciseToGroup(username, muscleGroup, exerciseName) {
+        const userData = getUserData(username);
+        if (!userData.exercisesByMuscle[muscleGroup]) userData.exercisesByMuscle[muscleGroup] = [];
+        if (!userData.exercisesByMuscle[muscleGroup].includes(exerciseName)) {
+            userData.exercisesByMuscle[muscleGroup].push(exerciseName);
+            saveUserData(username, userData);
+            return true;
+        }
+        return false;
+    }
+    
+    function getFavorites(username) {
+        const userData = getUserData(username);
+        return userData?.favorites || [];
+    }
+    
+    function toggleFavorite(username, exerciseName) {
+        const userData = getUserData(username);
+        let favs = userData.favorites || [];
+        if (favs.includes(exerciseName)) {
+            favs = favs.filter(f => f !== exerciseName);
+        } else {
+            favs.push(exerciseName);
+        }
+        userData.favorites = favs;
+        saveUserData(username, userData);
+        return favs;
+    }
+    
+    function getAllExerciseNames(username) {
+        const byMuscle = getExercisesByMuscle(username);
+        const names = [];
+        for (let g in byMuscle) {
+            names.push(...byMuscle[g]);
+        }
+        return [...new Set(names)];
+    }
+    
+    function getExerciseImage(username, exerciseName) {
+        const userData = getUserData(username);
+        return userData?.exerciseImages?.[exerciseName] || null;
+    }
+    
+    function setExerciseImage(username, exerciseName, imageUrl) {
+        const userData = getUserData(username);
+        if (!userData.exerciseImages) userData.exerciseImages = {};
+        userData.exerciseImages[exerciseName] = imageUrl;
+        saveUserData(username, userData);
+    }
+    
+    // ==================== ТРЕНИРОВКИ ====================
+    function getWorkouts(username) {
+        const userData = getUserData(username);
+        return userData?.workouts || [];
+    }
+    
+    function addWorkout(username, workout) {
+        const userData = getUserData(username);
+        userData.workouts.push(workout);
+        saveUserData(username, userData);
+    }
+    
+    function updateWorkout(username, index, workout) {
+        const userData = getUserData(username);
+        userData.workouts[index] = workout;
+        saveUserData(username, userData);
+    }
+    
+    function deleteWorkout(username, index) {
+        const userData = getUserData(username);
+        userData.workouts.splice(index, 1);
+        saveUserData(username, userData);
+    }
+    
+    function getLastWeightAndReps(username, exerciseName) {
+        const workouts = getWorkouts(username);
+        const lastWorkout = [...workouts]
+            .filter(w => w.exercise === exerciseName)
+            .sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+        if (lastWorkout && lastWorkout.sets.length > 0) {
+            const lastSet = lastWorkout.sets[lastWorkout.sets.length - 1];
+            return { weight: lastSet.weight, reps: lastSet.reps };
+        }
+        return { weight: 0, reps: 8 };
+    }
+    
+    // ==================== СТАТИСТИКА ====================
+    function getStatsForExercise(username, exerciseName, period) {
+        const workouts = getWorkouts(username);
+        const filtered = workouts.filter(w => w.exercise === exerciseName);
+        if (filtered.length === 0) return null;
+        
+        const now = new Date();
+        let fromDate = new Date();
+        if (period === 'week') fromDate.setDate(now.getDate() - 7);
+        else if (period === 'month') fromDate.setMonth(now.getMonth() - 1);
+        else fromDate.setFullYear(now.getFullYear() - 1);
+        
+        const data = filtered
+            .filter(w => new Date(w.date) >= fromDate)
+            .sort((a, b) => new Date(a.date) - new Date(b.date));
+        
+        if (data.length === 0) return null;
+        
+        const labels = data.map(d => d.date);
+        const maxWeights = data.map(d => Math.max(...d.sets.map(s => s.weight)));
+        const totalVolume = data.reduce((sum, d) => sum + d.sets.reduce((vol, s) => vol + s.weight * s.reps, 0), 0);
+        const avgWeight = data.reduce((sum, d) => sum + d.sets.reduce((wsum, s) => wsum + s.weight, 0) / d.sets.length, 0) / data.length;
+        const maxAll = Math.max(...data.flatMap(d => d.sets.map(s => s.weight)));
+        const totalSets = data.reduce((sum, d) => sum + d.sets.length, 0);
+        
+        return { labels, maxWeights, totalVolume, avgWeight, maxAll, totalSets, dataLength: data.length };
+    }
+    
+    // ==================== ПЛАН И ЗАМЕРЫ ====================
+    function getPlan(username) {
+        const userData = getUserData(username);
+        return userData?.plan || {};
+    }
+    
+    function savePlan(username, plan) {
+        const userData = getUserData(username);
+        userData.plan = plan;
+        saveUserData(username, userData);
+    }
+    
+    function getBodyMeasures(username) {
+        const userData = getUserData(username);
+        return userData?.bodyMeasures || [];
+    }
+    
+    function addBodyMeasure(username, measure) {
+        const userData = getUserData(username);
+        userData.bodyMeasures.push(measure);
+        saveUserData(username, userData);
+    }
+    
+    function deleteBodyMeasure(username, date) {
+        const userData = getUserData(username);
+        userData.bodyMeasures = userData.bodyMeasures.filter(m => m.date !== date);
+        saveUserData(username, userData);
+    }
+    
+    // ==================== ВСПОМОГАТЕЛЬНЫЕ ====================
+    function escapeHtml(str) {
+        if (!str) return '';
+        return str.replace(/[&<>]/g, (m) => {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    function getPhotoBase64(file) {
+        return new Promise((resolve) => {
+            if (!file) return resolve(null);
+            const reader = new FileReader();
+            reader.readAsDataURL(file);
+            reader.onload = () => resolve(reader.result);
+            reader.onerror = () => resolve(null);
+        });
+    }
+    
+    function formatDate(date = new Date()) {
+        return date.toISOString().slice(0, 10);
+    }
+    
+    // ==================== DOM ЭЛЕМЕНТЫ ====================
+    const authPage = document.getElementById('authPage');
+    const appPage = document.getElementById('appPage');
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
+    const loginTabBtn = document.getElementById('loginTabBtn');
+    const registerTabBtn = document.getElementById('registerTabBtn');
+    const doLoginBtn = document.getElementById('doLoginBtn');
+    const doRegisterBtn = document.getElementById('doRegisterBtn');
+    const authError = document.getElementById('authError');
+    const regError = document.getElementById('regError');
+    const logoutBtn = document.getElementById('logoutBtn');
+    const currentUserSpan = document.getElementById('currentUser');
+    const workoutsListDiv = document.getElementById('workoutsList');
+    const workoutForm = document.getElementById('workoutForm');
+    const showWorkoutFormBtn = document.getElementById('showWorkoutFormBtn');
+    const saveWorkoutBtn = document.getElementById('saveWorkoutBtn');
+    const cancelWorkoutBtn = document.getElementById('cancelWorkoutBtn');
+    const workoutMuscleGroup = document.getElementById('workoutMuscleGroup');
+    const workoutExerciseSelect = document.getElementById('workoutExerciseSelect');
+    const workoutDate = document.getElementById('workoutDate');
+    const setsContainer = document.getElementById('setsContainer');
+    const addSetBtn = document.getElementById('addSetBtn');
+    const workoutPhoto = document.getElementById('workoutPhoto');
+    const photoPreview = document.getElementById('photoPreview');
+    const workoutError = document.getElementById('workoutError');
+    const statsExerciseSelect = document.getElementById('statsExerciseSelect');
+    const periodBtns = document.querySelectorAll('.period-stats-btn');
+    const statsChartCanvas = document.getElementById('statsChart');
+    const statsNumbers = document.getElementById('statsNumbers');
+    const musclesContainer = document.getElementById('musclesContainer');
+    const addGroupBtn = document.getElementById('addGroupBtn');
+    const newGroupName = document.getElementById('newGroupName');
+    const favoritesList = document.getElementById('favoritesList');
+    const weekPlanContainer = document.getElementById('weekPlanContainer');
+    const editPlanBtn = document.getElementById('editPlanBtn');
+    const planEditor = document.getElementById('planEditor');
+    const planDaysEditor = document.getElementById('planDaysEditor');
+    const savePlanBtn = document.getElementById('savePlanBtn');
+    const cancelPlanBtn = document.getElementById('cancelPlanBtn');
+    const addMeasureBtn = document.getElementById('addMeasureBtn');
+    const measureForm = document.getElementById('measureForm');
+    const saveMeasureBtn = document.getElementById('saveMeasureBtn');
+    const cancelMeasureBtn = document.getElementById('cancelMeasureBtn');
+    const measuresHistory = document.getElementById('measuresHistory');
+    const measureDate = document.getElementById('measureDate');
+    const measureChest = document.getElementById('measureChest');
+    const measureBicepsL = document.getElementById('measureBicepsL');
+    const measureBicepsR = document.getElementById('measureBicepsR');
+    const measureWaist = document.getElementById('measureWaist');
+    const measureThighL = document.getElementById('measureThighL');
+    const measureThighR = document.getElementById('measureThighR');
+    
+    let currentUser = null;
+    let currentEditIndex = null;
+    let statsChart = null;
+    let currentPeriod = 'week';
+    
+    const tabs = document.querySelectorAll('[data-tab]');
+    const tabContents = {
+        exercises: 'tabExercises',
+        stats: 'tabStats',
+        plan: 'tabPlan',
+        body: 'tabBody',
+        muscles: 'tabMuscles',
+        favorites: 'tabFavorites'
+    };
+    
+    // ==================== ОТРИСОВКА ====================
+    function renderWorkoutsList() {
+        const workouts = getWorkouts(currentUser);
+        if (!workouts.length) {
+            workoutsListDiv.innerHTML = '<div class="form-card">Нет тренировок. Добавьте первую!</div>';
+            return;
+        }
+        workoutsListDiv.innerHTML = workouts.map((w, idx) => {
+            const setsHtml = w.sets.map((s, i) => `<div>🔹 Подход ${i+1}: ${s.weight} кг × ${s.reps} повт</div>`).join('');
+            const photoHtml = w.photoUrl ? `<div class="exercise-photo"><img src="${w.photoUrl}"></div>` : '';
+            return `<div class="exercise-card">
+                <div><strong>${escapeHtml(w.exercise)}</strong> 📅 ${w.date}</div>
+                <div class="exercise-sets">${setsHtml}</div>
+                ${photoHtml}
+                <div><button class="edit-workout" data-idx="${idx}">✏️ Изменить</button> <button class="delete-workout" data-idx="${idx}">🗑️ Удалить</button></div>
+            </div>`;
+        }).join('');
+        
+        document.querySelectorAll('.edit-workout').forEach(btn => {
+            btn.addEventListener('click', () => openEditWorkout(parseInt(btn.dataset.idx)));
+        });
+        document.querySelectorAll('.delete-workout').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (confirm('Удалить тренировку?')) {
+                    deleteWorkout(currentUser, parseInt(btn.dataset.idx));
+                    refreshAll();
+                }
+            });
+        });
+    }
+    
+    function updateMuscleGroupsSelect() {
+        const groups = getMuscleGroups(currentUser);
+        workoutMuscleGroup.innerHTML = '<option value="">-- Выберите группу --</option>' + groups.map(g => `<option value="${escapeHtml(g)}">${escapeHtml(g)}</option>`).join('');
+    }
+    
+    function updateExerciseSelectByMuscle(muscleGroup) {
+        const exercises = getExercisesByMuscle(currentUser);
+        const list = exercises[muscleGroup] || [];
+        workoutExerciseSelect.innerHTML = '<option value="">-- Выберите упражнение --</option>' + list.map(ex => `<option value="${escapeHtml(ex)}">${escapeHtml(ex)}</option>`).join('');
+    }
+    
+    function renderMuscleGroups() {
+        const groups = getMuscleGroups(currentUser);
+        const byMuscle = getExercisesByMuscle(currentUser);
+        const favs = getFavorites(currentUser);
+        
+        musclesContainer.innerHTML = groups.map(muscle => {
+            const exercises = byMuscle[muscle] || [];
+            const exHtml = exercises.map(ex => `<div class="ex-item">
+                <span>${escapeHtml(ex)} ${getExerciseImage(currentUser, ex) ? '📷' : ''}</span>
+                <button class="favorite-star ${favs.includes(ex) ? 'active' : ''}" data-ex="${escapeHtml(ex)}">${favs.includes(ex) ? '★' : '☆'}</button>
+            </div>`).join('');
+            return `<div class="muscle-group">
+                <div class="muscle-header" data-muscle="${muscle}">💪 ${escapeHtml(muscle)} <span>▼</span></div>
+                <div class="muscle-exercises" id="muscle-${muscle.replace(/\s/g, '')}">
+                    ${exHtml || '<div class="ex-item">Нет упражнений</div>'}
+                    <div class="add-ex-to-group">
+                        <input type="text" id="newEx-${muscle.replace(/\s/g, '')}" placeholder="Новое упражнение">
+                        <button class="small-btn add-ex-btn" data-muscle="${muscle}">+ Добавить</button>
+                    </div>
+                </div>
+            </div>`;
+        }).join('');
+        
+        document.querySelectorAll('.muscle-header').forEach(h => {
+            h.addEventListener('click', () => {
+                const id = `muscle-${h.dataset.muscle.replace(/\s/g, '')}`;
+                document.getElementById(id).classList.toggle('show');
+            });
+        });
+        document.querySelectorAll('.favorite-star').forEach(star => {
+            star.addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleFavorite(currentUser, star.dataset.ex);
+                renderMuscleGroups();
+                renderFavoritesList();
+                refreshStatsSelect();
+            });
+        });
+        document.querySelectorAll('.add-ex-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const muscle = btn.dataset.muscle;
+                const input = document.getElementById(`newEx-${muscle.replace(/\s/g, '')}`);
+                const newEx = input.value.trim();
+                if (newEx) {
+                    addExerciseToGroup(currentUser, muscle, newEx);
+                    input.value = '';
+                    renderMuscleGroups();
+                    refreshStatsSelect();
+                }
+            });
+        });
+    }
+    
+    function renderFavoritesList() {
+        const favs = getFavorites(currentUser);
+        if (!favs.length) {
+            favoritesList.innerHTML = '<div class="form-card">⭐ Нет избранных упражнений. Добавьте звезду в разделе "Группы мышц"</div>';
+            return;
+        }
+        favoritesList.innerHTML = favs.map(ex => `<div class="exercise-card"><div>⭐ ${escapeHtml(ex)} ${getExerciseImage(currentUser, ex) ? '📷' : ''}</div><button class="remove-fav" data-ex="${escapeHtml(ex)}">🗑️ Убрать</button></div>`).join('');
+        document.querySelectorAll('.remove-fav').forEach(btn => {
+            btn.addEventListener('click', () => {
+                toggleFavorite(currentUser, btn.dataset.ex);
+                renderFavoritesList();
+                renderMuscleGroups();
+                refreshStatsSelect();
+            });
+        });
+    }
+    
+    function refreshStatsSelect() {
+        const all = getAllExerciseNames(currentUser);
+        const options = '<option value="">-- Выберите упражнение --</option>' + all.map(ex => `<option value="${escapeHtml(ex)}">${escapeHtml(ex)}</option>`).join('');
+        statsExerciseSelect.innerHTML = options;
+        workoutExerciseSelect.innerHTML = '<option value="">-- Сначала выберите группу --</option>';
+    }
+    
+    function renderPlanUI() {
+        const plan = getPlan(currentUser);
+        const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+        weekPlanContainer.innerHTML = days.map(day => `<div class="week-plan-day"><strong>📅 ${day}</strong><br>${plan[day] || '— Отдых / Свободная тренировка —'}</div>`).join('');
+    }
+    
+    function renderBodyMeasuresUI() {
+        const measures = getBodyMeasures(currentUser);
+        if (!measures.length) {
+            measuresHistory.innerHTML = '<div class="form-card">📏 Нет замеров тела. Добавьте первый!</div>';
+            return;
+        }
+        measuresHistory.innerHTML = measures.sort((a,b)=>new Date(b.date)-new Date(a.date)).map(m => `<div class="exercise-card"><div><b>${m.date}</b>: Груд. ${m.chest}см, Биц(л) ${m.bicepsL}см, Биц(п) ${m.bicepsR}см, Тал. ${m.waist}см, Бедр(л) ${m.thighL}см, Бедр(п) ${m.thighR}см</div><button class="delete-measure" data-date="${m.date}">🗑️ Удалить</button></div>`).join('');
+        document.querySelectorAll('.delete-measure').forEach(btn => {
+            btn.addEventListener('click', () => {
+                deleteBodyMeasure(currentUser, btn.dataset.date);
+                renderBodyMeasuresUI();
+            });
+        });
+    }
+    
+    function updateChart() {
+        const exercise = statsExerciseSelect.value;
+        if (!exercise) {
+            statsNumbers.innerHTML = '<div class="form-card">📊 Выберите упражнение для статистики</div>';
+            if (statsChart) statsChart.destroy();
+            return;
+        }
+        const stats = getStatsForExercise(currentUser, exercise, currentPeriod);
+        if (!stats) {
+            statsNumbers.innerHTML = '<div class="form-card">📭 Нет данных за выбранный период</div>';
+            if (statsChart) statsChart.destroy();
+            return;
+        }
+        statsNumbers.innerHTML = `<div class="stat-item"><div class="stat-value">${stats.totalVolume}</div><div>📊 Объём (кг)</div></div>
+            <div class="stat-item"><div class="stat-value">${stats.maxAll}</div><div>🏆 Макс вес</div></div>
+            <div class="stat-item"><div class="stat-value">${stats.avgWeight.toFixed(1)}</div><div>📈 Ср. вес</div></div>
+            <div class="stat-item"><div class="stat-value">${stats.totalSets}</div><div>🔹 Подходов</div></div>`;
+        if (statsChart) statsChart.destroy();
+        statsChart = new Chart(statsChartCanvas, {
+            type: 'line',
+            data: { labels: stats.labels, datasets: [{ label: `${exercise} - макс. вес (кг)`, data: stats.maxWeights, borderColor: '#3b82f6', fill: false, tension: 0.2 }] }
+        });
+    }
+    
+    function addSetRow(weight = 0, reps = 8) {
+        const div = document.createElement('div');
+        div.className = 'set-row';
+        div.innerHTML = `<div class="field"><label>🏋️ Вес (кг)</label><input type="number" class="set-weight" value="${weight}" step="2.5" placeholder="кг"></div>
+            <div class="field"><label>🔄 Повторы</label><input type="number" class="set-reps" value="${reps}" placeholder="раз"></div>
+            <button type="button" class="remove-set-btn" style="background:#ef4444; padding:6px 12px;">✖ Удалить</button>`;
+        div.querySelector('.remove-set-btn').addEventListener('click', () => div.remove());
+        setsContainer.appendChild(div);
+    }
+    
+    function resetWorkoutForm() {
+        workoutForm.classList.add('hidden');
+        setsContainer.innerHTML = '';
+        workoutPhoto.value = '';
+        photoPreview.innerHTML = '';
+        workoutError.innerText = '';
+        currentEditIndex = null;
+        addSetRow();
+        workoutMuscleGroup.value = '';
+        workoutExerciseSelect.innerHTML = '<option value="">-- Сначала выберите группу --</option>';
+        workoutDate.value = formatDate();
+    }
+    
+    async function saveWorkout() {
+        const muscleGroup = workoutMuscleGroup.value;
+        const exercise = workoutExerciseSelect.value;
+        const date = workoutDate.value;
+        if (!muscleGroup || !exercise || !date) {
+            workoutError.innerText = '❌ Заполните все поля';
+            return;
+        }
+        const setRows = document.querySelectorAll('#setsContainer .set-row');
+        const sets = [];
+        for (let row of setRows) {
+            const weight = parseFloat(row.querySelector('.set-weight').value);
+            const reps = parseInt(row.querySelector('.set-reps').value);
+            if (!isNaN(weight) && !isNaN(reps) && weight > 0 && reps > 0) sets.push({ weight, reps });
+        }
+        if (sets.length === 0) {
+            workoutError.innerText = '❌ Добавьте хотя бы один подход';
+            return;
+        }
+        let photoUrl = null;
+        if (workoutPhoto.files.length > 0) {
+            photoUrl = await getPhotoBase64(workoutPhoto.files[0]);
+            if (photoUrl) setExerciseImage(currentUser, exercise, photoUrl);
+        }
+        const workout = { exercise, muscleGroup, date, sets, photoUrl };
+        if (currentEditIndex !== null) {
+            updateWorkout(currentUser, currentEditIndex, workout);
+            currentEditIndex = null;
+        } else {
+            addWorkout(currentUser, workout);
+        }
+        resetWorkoutForm();
+        refreshAll();
+    }
+    
+    function openEditWorkout(index) {
+        const workouts = getWorkouts(currentUser);
+        const workout = workouts[index];
+        currentEditIndex = index;
+        workoutMuscleGroup.value = workout.muscleGroup;
+        updateExerciseSelectByMuscle(workout.muscleGroup);
+        setTimeout(() => { workoutExerciseSelect.value = workout.exercise; }, 50);
+        workoutDate.value = workout.date;
+        setsContainer.innerHTML = '';
+        workout.sets.forEach(set => addSetRow(set.weight, set.reps));
+        if (workout.photoUrl) photoPreview.innerHTML = `<img src="${workout.photoUrl}" style="max-width:100px;">`;
+        workoutForm.classList.remove('hidden');
+    }
+    
+    function refreshAll() {
+        if (!currentUser) return;
+        renderWorkoutsList();
+        renderMuscleGroups();
+        renderFavoritesList();
+        refreshStatsSelect();
+        updateMuscleGroupsSelect();
+        renderPlanUI();
+        renderBodyMeasuresUI();
+        updateChart();
+    }
+    
+    function onLoginSuccess(username) {
+        currentUser = username;
+        currentUserSpan.innerText = username;
+        authPage.classList.add('hidden');
+        appPage.classList.remove('hidden');
+        workoutDate.value = formatDate();
+        measureDate.value = formatDate();
+        setsContainer.innerHTML = '';
+        addSetRow();
+        refreshAll();
+        
+        workoutMuscleGroup.addEventListener('change', () => {
+            if (workoutMuscleGroup.value) {
+                updateExerciseSelectByMuscle(workoutMuscleGroup.value);
+                setTimeout(() => {
+                    const exercise = workoutExerciseSelect.value;
+                    if (exercise) {
+                        const lastData = getLastWeightAndReps(currentUser, exercise);
+                        if (lastData.weight > 0 && setsContainer.children.length > 0) {
+                            setsContainer.children[0].querySelector('.set-weight').value = lastData.weight;
+                            setsContainer.children[0].querySelector('.set-reps').value = lastData.reps;
+                        }
+                    }
+                }, 10);
+            }
+        });
+        
+        workoutExerciseSelect.addEventListener('change', () => {
+            const exercise = workoutExerciseSelect.value;
+            if (exercise) {
+                const lastData = getLastWeightAndReps(currentUser, exercise);
+                if (lastData.weight > 0 && setsContainer.children.length > 0) {
+                    setsContainer.children[0].querySelector('.set-weight').value = lastData.weight;
+                    setsContainer.children[0].querySelector('.set-reps').value = lastData.reps;
+                }
+            }
+        });
+    }
+    
+    function logoutUser() {
+        logout();
+        currentUser = null;
+        authPage.classList.remove('hidden');
+        appPage.classList.add('hidden');
+        if (statsChart) { statsChart.destroy(); statsChart = null; }
+    }
+    
+    // ==================== СОБЫТИЯ ====================
+    doLoginBtn.onclick = () => {
+        const res = login(document.getElementById('loginUsername').value.trim(), document.getElementById('loginPassword').value);
+        res.success ? onLoginSuccess(res.username) : authError.innerText = res.error;
+    };
+    doRegisterBtn.onclick = () => {
+        const res = register(document.getElementById('regUsername').value.trim(), document.getElementById('regPassword').value);
+        if (res.success) {
+            regError.innerText = '✅ Аккаунт создан! Теперь войдите.';
+            loginTabBtn.click();
+            document.getElementById('loginUsername').value = document.getElementById('regUsername').value;
+            document.getElementById('loginPassword').value = '';
+        } else regError.innerText = res.error;
+    };
+    logoutBtn.onclick = logoutUser;
+    loginTabBtn.onclick = () => { loginForm.classList.remove('hidden'); registerForm.classList.add('hidden'); loginTabBtn.classList.add('active'); registerTabBtn.classList.remove('active'); };
+    registerTabBtn.onclick = () => { registerForm.classList.remove('hidden'); loginForm.classList.add('hidden'); registerTabBtn.classList.add('active'); loginTabBtn.classList.remove('active'); };
+    tabs.forEach(btn => btn.onclick = () => {
+        for (let t in tabContents) document.getElementById(tabContents[t]).classList.add('hidden');
+        document.getElementById(tabContents[btn.dataset.tab]).classList.remove('hidden');
+        tabs.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    });
+    showWorkoutFormBtn.onclick = () => { resetWorkoutForm(); workoutForm.classList.remove('hidden'); };
+    addSetBtn.onclick = () => addSetRow();
+    saveWorkoutBtn.onclick = saveWorkout;
+    cancelWorkoutBtn.onclick = resetWorkoutForm;
+    periodBtns.forEach(b => b.onclick = () => {
+        periodBtns.forEach(bb => bb.classList.remove('active'));
+        b.classList.add('active');
+        currentPeriod = b.dataset.period;
+        updateChart();
+    });
+    statsExerciseSelect.onchange = updateChart;
+    editPlanBtn.onclick = () => {
+        const plan = getPlan(currentUser);
+        const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+        planDaysEditor.innerHTML = days.map(day => `<div style="margin-bottom:12px;"><label>${day}</label><input type="text" id="plan_${day}" value="${escapeHtml(plan[day] || '')}" style="width:100%; padding:10px; border-radius:20px; border:1px solid #cbd5e1;"></div>`).join('');
+        planEditor.classList.remove('hidden');
+    };
+    savePlanBtn.onclick = () => {
+        const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+        const newPlan = {};
+        days.forEach(day => { newPlan[day] = document.getElementById(`plan_${day}`).value; });
+        savePlan(currentUser, newPlan);
+        planEditor.classList.add('hidden');
+        renderPlanUI();
+    };
+    cancelPlanBtn.onclick = () => planEditor.classList.add('hidden');
+    addMeasureBtn.onclick = () => measureForm.classList.remove('hidden');
+    saveMeasureBtn.onclick = () => {
+        const date = measureDate.value;
+        if (!date) { alert('Выберите дату'); return; }
+        addBodyMeasure(currentUser, {
+            date, chest: parseFloat(measureChest.value)||0, bicepsL: parseFloat(measureBicepsL.value)||0,
+            bicepsR: parseFloat(measureBicepsR.value)||0, waist: parseFloat(measureWaist.value)||0,
+            thighL: parseFloat(measureThighL.value)||0, thighR: parseFloat(measureThighR.value)||0
+        });
+        measureForm.classList.add('hidden');
+        measureChest.value = measureBicepsL.value = measureBicepsR.value = measureWaist.value = measureThighL.value = measureThighR.value = '';
+        renderBodyMeasuresUI();
+    };
+    cancelMeasureBtn.onclick = () => measureForm.classList.add('hidden');
+    addGroupBtn.onclick = () => {
+        const name = newGroupName.value.trim();
+        if (name) {
+            if (addMuscleGroup(currentUser, name)) {
+                newGroupName.value = '';
+                refreshAll();
+                updateMuscleGroupsSelect();
+            } else alert('Такая группа уже существует');
+        } else alert('Введите название группы');
+    };
+    workoutPhoto.onchange = (e) => {
+        if (e.target.files.length) {
+            const reader = new FileReader();
+            reader.onload = (ev) => photoPreview.innerHTML = `<img src="${ev.target.result}" style="max-width:100px;"><button type="button" id="clearPhoto" style="background:#ef4444; padding:4px 8px; margin-left:8px;">✖</button>`;
+            reader.readAsDataURL(e.target.files[0]);
+            setTimeout(() => {
+                const clearBtn = document.getElementById('clearPhoto');
+                if (clearBtn) clearBtn.onclick = () => { workoutPhoto.value = ''; photoPreview.innerHTML = ''; };
+            }, 100);
+        } else photoPreview.innerHTML = '';
+    };
+    
+    // ==================== ЗАПУСК ====================
+    const sessionCheck = checkSession();
+    if (sessionCheck.success) onLoginSuccess(sessionCheck.username);
+    else { authPage.classList.remove('hidden'); appPage.classList.add('hidden'); }
+    
+    if (window.Telegram?.WebApp) { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
+</script>
+</body>
+</html>
