@@ -1,9 +1,9 @@
-const STORAGE_KEY = 'fitness_pro_v3';
-const SESSION_KEY = 'fitness_current_session';
+const STORAGE_KEY = 'fitness_pro_v4';
+const SESSION_KEY = 'fitness_session';
 
 export function getData() {
-    let d = localStorage.getItem(STORAGE_KEY);
-    return d ? JSON.parse(d) : {};
+    const data = localStorage.getItem(STORAGE_KEY);
+    return data ? JSON.parse(data) : {};
 }
 
 export function saveData(data) {
@@ -21,12 +21,12 @@ export function saveUserData(username, userData) {
     saveData(data);
 }
 
-export function getCurrentSession() {
+export function getSession() {
     const session = localStorage.getItem(SESSION_KEY);
     return session ? JSON.parse(session) : null;
 }
 
-export function setCurrentSession(username) {
+export function setSession(username) {
     localStorage.setItem(SESSION_KEY, JSON.stringify({ username, timestamp: Date.now() }));
 }
 
