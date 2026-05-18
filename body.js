@@ -33,9 +33,3 @@ export function deleteBodyMeasure(username, date) {
     measures = measures.filter(m => m.date !== date);
     saveBodyMeasures(username, measures);
 }
-
-export function renderPlan(container, username) {
-    const plan = getPlan(username);
-    const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
-    container.innerHTML = days.map(day => `<div class="week-plan-day"><strong>${day}</strong><br>${plan[day] || '— Отдых —'}</div>`).join('');
-}
