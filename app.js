@@ -1,8 +1,8 @@
-import { getCurrentSession, clearSession } from './storage.js';
-import { login, register, logout as authLogout } from './auth.js';
-import { getWorkouts, addWorkout, updateWorkout, getLastWeightAndReps } from './workouts.js';
-import { getMuscleGroups, getAllExerciseNames, getExerciseImage, setExerciseImage } from './exercises.js';
-import { getPlan, savePlan, getBodyMeasures, addBodyMeasure, deleteBodyMeasure, renderPlan } from './body.js';
+import { getCurrentSession, clearSession, getUserData } from './storage.js';
+import { login, register, logout as authLogout, checkSession } from './auth.js';
+import { getWorkouts, addWorkout, updateWorkout, deleteWorkout, getLastWeightAndReps } from './workouts.js';
+import { getMuscleGroups, getAllExerciseNames, getExerciseImage, setExerciseImage, addMuscleGroup } from './exercises.js';
+import { getPlan, savePlan, getBodyMeasures, addBodyMeasure, deleteBodyMeasure } from './body.js';
 import { getStatsForExercise } from './stats.js';
 import { setUIContext, renderWorkoutsList, updateMuscleGroupsSelect, updateExerciseSelectByMuscle, renderMuscleGroups, renderFavoritesList, populateExerciseSelects } from './ui.js';
 import { getPhotoBase64, formatDate } from './utils.js';
@@ -52,6 +52,13 @@ const measureForm = document.getElementById('measureForm');
 const saveMeasureBtn = document.getElementById('saveMeasureBtn');
 const cancelMeasureBtn = document.getElementById('cancelMeasureBtn');
 const measuresHistory = document.getElementById('measuresHistory');
+const measureDate = document.getElementById('measureDate');
+const measureChest = document.getElementById('measureChest');
+const measureBicepsL = document.getElementById('measureBicepsL');
+const measureBicepsR = document.getElementById('measureBicepsR');
+const measureWaist = document.getElementById('measureWaist');
+const measureThighL = document.getElementById('measureThighL');
+const measureThighR = document.getElementById('measureThighR');
 
 let currentUser = null;
 let currentEditIndex = null;
@@ -68,6 +75,8 @@ const tabContents = {
     favorites: 'tabFavorites'
 };
 
+// ==================== ОСНОВНЫЕ ФУНКЦИИ ====================
+
 function refreshAll() {
     if (!currentUser) return;
     renderWorkoutsList(workoutsListDiv, () => refreshAll());
@@ -78,8 +87,8 @@ function refreshAll() {
     if (workoutMuscleGroup.value) {
         updateExerciseSelectByMuscle(workoutExerciseSelect, workoutMuscleGroup.value);
     }
-    renderPlan(weekPlanContainer, currentUser);
-    renderBodyMeasures();
+    renderPlanUI();
+    renderBodyMeasuresUI();
     updateChart();
 }
 
@@ -87,9 +96,9 @@ function addSetRow(weight = 0, reps = 8) {
     const div = document.createElement('div');
     div.className = 'set-row';
     div.innerHTML = `
-        <div class="field"><label>Вес (кг)</label><input type="number" class="set-weight" value="${weight}" step="2.5"></div>
-        <div class="field"><label>Повторы</label><input type="number" class="set-reps" value="${reps}"></div>
-        <button type="button" class="remove-set-btn">✖ Удалить</button>
+        <div class="field"><label>🏋️ Вес (кг)</label><input type="number" class="set-weight" value="${weight}" step="2.5" placeholder="кг"></div>
+        <div class="field"><label>🔄 Повторы</label><input type="number" class="set-reps" value="${reps}" placeholder="раз"></div>
+        <button type="button" class="remove-set-btn" title="Удалить подход">✖ Удалить</button>
     `;
     div.querySelector('.remove-set-btn').addEventListener('click', () => div.remove());
     setsContainer.appendChild(div);
@@ -100,8 +109,16 @@ async function saveWorkout() {
     const exercise = workoutExerciseSelect.value;
     const date = workoutDate.value;
     
-    if (!muscleGroup || !exercise || !date) {
-        workoutError.innerText = 'Заполните все поля';
+    if (!muscleGroup) {
+        workoutError.innerText = '❌ Выберите группу мышц';
+        return;
+    }
+    if (!exercise) {
+        workoutError.innerText = '❌ Выберите упражнение';
+        return;
+    }
+    if (!date) {
+        workoutError.innerText = '❌ Выберите дату';
         return;
     }
     
@@ -110,13 +127,13 @@ async function saveWorkout() {
     for (let row of setRows) {
         const weight = parseFloat(row.querySelector('.set-weight').value);
         const reps = parseInt(row.querySelector('.set-reps').value);
-        if (!isNaN(weight) && !isNaN(reps)) {
+        if (!isNaN(weight) && !isNaN(reps) && weight > 0 && reps > 0) {
             sets.push({ weight, reps });
         }
     }
     
     if (sets.length === 0) {
-        workoutError.innerText = 'Добавьте хотя бы один подход';
+        workoutError.innerText = '❌ Добавьте хотя бы один подход с весом и повторами';
         return;
     }
     
@@ -131,6 +148,8 @@ async function saveWorkout() {
     const workout = { exercise, muscleGroup, date, sets, photoUrl };
     
     if (currentEditIndex !== null) {
+        const workouts = getWorkouts(currentUser);
+        workouts[currentEditIndex] = workout;
         updateWorkout(currentUser, currentEditIndex, workout);
         currentEditIndex = null;
     } else {
@@ -139,6 +158,7 @@ async function saveWorkout() {
     
     resetWorkoutForm();
     refreshAll();
+    workoutError.innerText = '';
 }
 
 function resetWorkoutForm() {
@@ -149,6 +169,9 @@ function resetWorkoutForm() {
     workoutError.innerText = '';
     currentEditIndex = null;
     addSetRow();
+    workoutMuscleGroup.value = '';
+    workoutExerciseSelect.innerHTML = '<option value="">-- Сначала выберите группу --</option>';
+    workoutDate.value = formatDate();
 }
 
 function openEditWorkout(index) {
@@ -164,27 +187,33 @@ function openEditWorkout(index) {
     setsContainer.innerHTML = '';
     workout.sets.forEach(set => addSetRow(set.weight, set.reps));
     if (workout.photoUrl) {
-        photoPreview.innerHTML = `<img src="${workout.photoUrl}" style="max-width:100px;">`;
+        photoPreview.innerHTML = `<img src="${workout.photoUrl}" style="max-width:100px; border-radius:12px;">`;
     }
     workoutForm.classList.remove('hidden');
 }
 
+// ==================== СТАТИСТИКА ====================
+
 function updateChart() {
     const exercise = statsExerciseSelect.value;
-    if (!exercise) return;
+    if (!exercise) {
+        statsNumbers.innerHTML = '<div class="form-card">📊 Выберите упражнение для статистики</div>';
+        if (statsChart) statsChart.destroy();
+        return;
+    }
     
     const stats = getStatsForExercise(currentUser, exercise, currentPeriod);
     if (!stats || stats.dataLength === 0) {
-        statsNumbers.innerHTML = '<div>Нет данных за период</div>';
+        statsNumbers.innerHTML = '<div class="form-card">📭 Нет данных за выбранный период</div>';
         if (statsChart) statsChart.destroy();
         return;
     }
     
     statsNumbers.innerHTML = `
-        <div class="stat-item"><div class="stat-value">${stats.totalVolume}</div><div>Объём (кг)</div></div>
-        <div class="stat-item"><div class="stat-value">${stats.maxAll}</div><div>Макс вес (кг)</div></div>
-        <div class="stat-item"><div class="stat-value">${stats.avgWeight.toFixed(1)}</div><div>Ср. вес (кг)</div></div>
-        <div class="stat-item"><div class="stat-value">${stats.totalSets}</div><div>Всего подходов</div></div>
+        <div class="stat-item"><div class="stat-value">${stats.totalVolume}</div><div>📊 Объём (кг)</div></div>
+        <div class="stat-item"><div class="stat-value">${stats.maxAll}</div><div>🏆 Макс вес (кг)</div></div>
+        <div class="stat-item"><div class="stat-value">${stats.avgWeight.toFixed(1)}</div><div>📈 Ср. вес (кг)</div></div>
+        <div class="stat-item"><div class="stat-value">${stats.totalSets}</div><div>🔹 Всего подходов</div></div>
     `;
     
     if (statsChart) statsChart.destroy();
@@ -193,64 +222,47 @@ function updateChart() {
         data: {
             labels: stats.labels,
             datasets: [{
-                label: `${exercise} - макс. вес (кг)`,
+                label: `${exercise} - максимальный вес (кг)`,
                 data: stats.maxWeights,
                 borderColor: '#3b82f6',
                 backgroundColor: 'rgba(59,130,246,0.1)',
                 fill: true,
-                tension: 0.2
+                tension: 0.2,
+                pointRadius: 5,
+                pointHoverRadius: 7
             }]
         },
         options: {
             responsive: true,
-            maintainAspectRatio: true
+            maintainAspectRatio: true,
+            plugins: {
+                legend: { position: 'top' }
+            }
         }
     });
 }
 
-function renderBodyMeasures() {
-    const measures = getBodyMeasures(currentUser);
-    if (measures.length === 0) {
-        measuresHistory.innerHTML = '<div>Нет замеров</div>';
-        return;
-    }
-    measuresHistory.innerHTML = measures.sort((a, b) => new Date(b.date) - new Date(a.date)).map(m => `
-        <div class="exercise-card">
-            <div><b>${m.date}</b>: Груд. ${m.chest}см, Биц(л) ${m.bicepsL}см, Биц(п) ${m.bicepsR}см, Талия ${m.waist}см, Бедро(л) ${m.thighL}см, Бедро(п) ${m.thighR}см</div>
-            <button class="delete-measure" data-date="${m.date}">🗑️</button>
+// ==================== ПЛАН ТРЕНИРОВОК ====================
+
+function renderPlanUI() {
+    const plan = getPlan(currentUser);
+    const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
+    weekPlanContainer.innerHTML = days.map(day => `
+        <div class="week-plan-day">
+            <strong>📅 ${day}</strong><br>
+            ${plan[day] || '— Отдых / Свободная тренировка —'}
         </div>
     `).join('');
-    
-    document.querySelectorAll('.delete-measure').forEach(btn => {
-        btn.addEventListener('click', () => {
-            deleteBodyMeasure(currentUser, btn.dataset.date);
-            renderBodyMeasures();
-        });
-    });
-}
-
-function saveBodyMeasure() {
-    const date = document.getElementById('measureDate').value;
-    if (!date) return;
-    const measure = {
-        date,
-        chest: parseFloat(document.getElementById('measureChest').value) || 0,
-        bicepsL: parseFloat(document.getElementById('measureBicepsL').value) || 0,
-        bicepsR: parseFloat(document.getElementById('measureBicepsR').value) || 0,
-        waist: parseFloat(document.getElementById('measureWaist').value) || 0,
-        thighL: parseFloat(document.getElementById('measureThighL').value) || 0,
-        thighR: parseFloat(document.getElementById('measureThighR').value) || 0
-    };
-    addBodyMeasure(currentUser, measure);
-    measureForm.classList.add('hidden');
-    renderBodyMeasures();
 }
 
 function openPlanEditor() {
     const plan = getPlan(currentUser);
     const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
     planDaysEditor.innerHTML = days.map(day => `
-        <div><label>${day}</label><input type="text" id="plan_${day}" value="${plan[day] || ''}" placeholder="Группа мышц"></div>
+        <div style="margin-bottom: 12px;">
+            <label style="display: block; margin-bottom: 4px;">${day}</label>
+            <input type="text" id="plan_${day}" value="${escapeHtml(plan[day] || '')}" placeholder="Например: Грудь+Бицепс" style="width: 100%;">
+        </div>
     `).join('');
     planEditor.classList.remove('hidden');
 }
@@ -263,8 +275,65 @@ function savePlanChanges() {
     });
     savePlan(currentUser, newPlan);
     planEditor.classList.add('hidden');
-    renderPlan(weekPlanContainer, currentUser);
+    renderPlanUI();
 }
+
+// ==================== ЗАМЕРЫ ТЕЛА ====================
+
+function renderBodyMeasuresUI() {
+    const measures = getBodyMeasures(currentUser);
+    if (measures.length === 0) {
+        measuresHistory.innerHTML = '<div class="form-card">📏 Нет замеров тела. Добавьте первый!</div>';
+        return;
+    }
+    measuresHistory.innerHTML = measures.sort((a, b) => new Date(b.date) - new Date(a.date)).map(m => `
+        <div class="exercise-card">
+            <div>
+                <strong>📅 ${m.date}</strong><br>
+                🏋️ Грудь: ${m.chest} см | 💪 Бицепс(л): ${m.bicepsL} см | 💪 Бицепс(п): ${m.bicepsR} см<br>
+                📏 Талия: ${m.waist} см | 🦵 Бедро(л): ${m.thighL} см | 🦵 Бедро(п): ${m.thighR} см
+            </div>
+            <button class="delete-measure btn-danger" data-date="${m.date}" style="background:#ef4444;">🗑️ Удалить</button>
+        </div>
+    `).join('');
+    
+    document.querySelectorAll('.delete-measure').forEach(btn => {
+        btn.addEventListener('click', () => {
+            if (confirm('Удалить замер?')) {
+                deleteBodyMeasure(currentUser, btn.dataset.date);
+                renderBodyMeasuresUI();
+            }
+        });
+    });
+}
+
+function saveBodyMeasure() {
+    const date = measureDate.value;
+    if (!date) {
+        alert('Выберите дату');
+        return;
+    }
+    const measure = {
+        date,
+        chest: parseFloat(measureChest.value) || 0,
+        bicepsL: parseFloat(measureBicepsL.value) || 0,
+        bicepsR: parseFloat(measureBicepsR.value) || 0,
+        waist: parseFloat(measureWaist.value) || 0,
+        thighL: parseFloat(measureThighL.value) || 0,
+        thighR: parseFloat(measureThighR.value) || 0
+    };
+    addBodyMeasure(currentUser, measure);
+    measureForm.classList.add('hidden');
+    measureChest.value = '';
+    measureBicepsL.value = '';
+    measureBicepsR.value = '';
+    measureWaist.value = '';
+    measureThighL.value = '';
+    measureThighR.value = '';
+    renderBodyMeasuresUI();
+}
+
+// ==================== АВТОРИЗАЦИЯ ====================
 
 function onLoginSuccess(username) {
     currentUser = username;
@@ -274,7 +343,7 @@ function onLoginSuccess(username) {
     appPage.classList.remove('hidden');
     
     workoutDate.value = formatDate();
-    document.getElementById('measureDate').value = formatDate();
+    measureDate.value = formatDate();
     setsContainer.innerHTML = '';
     addSetRow();
     
@@ -282,20 +351,26 @@ function onLoginSuccess(username) {
     
     workoutMuscleGroup.addEventListener('change', () => {
         updateExerciseSelectByMuscle(workoutExerciseSelect, workoutMuscleGroup.value);
-        const lastData = getLastWeightAndReps(currentUser, workoutExerciseSelect.value);
-        if (lastData && setsContainer.children.length > 0) {
-            const firstRow = setsContainer.children[0];
-            firstRow.querySelector('.set-weight').value = lastData.weight;
-            firstRow.querySelector('.set-reps').value = lastData.reps;
+        const exercise = workoutExerciseSelect.value;
+        if (exercise) {
+            const lastData = getLastWeightAndReps(currentUser, exercise);
+            if (lastData && lastData.weight > 0 && setsContainer.children.length > 0) {
+                const firstRow = setsContainer.children[0];
+                firstRow.querySelector('.set-weight').value = lastData.weight;
+                firstRow.querySelector('.set-reps').value = lastData.reps;
+            }
         }
     });
     
     workoutExerciseSelect.addEventListener('change', () => {
-        const lastData = getLastWeightAndReps(currentUser, workoutExerciseSelect.value);
-        if (lastData && setsContainer.children.length > 0) {
-            const firstRow = setsContainer.children[0];
-            firstRow.querySelector('.set-weight').value = lastData.weight;
-            firstRow.querySelector('.set-reps').value = lastData.reps;
+        const exercise = workoutExerciseSelect.value;
+        if (exercise) {
+            const lastData = getLastWeightAndReps(currentUser, exercise);
+            if (lastData && lastData.weight > 0 && setsContainer.children.length > 0) {
+                const firstRow = setsContainer.children[0];
+                firstRow.querySelector('.set-weight').value = lastData.weight;
+                firstRow.querySelector('.set-reps').value = lastData.reps;
+            }
         }
     });
 }
@@ -305,9 +380,24 @@ function logout() {
     currentUser = null;
     authPage.classList.remove('hidden');
     appPage.classList.add('hidden');
+    if (statsChart) {
+        statsChart.destroy();
+        statsChart = null;
+    }
 }
 
-// События
+function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, (m) => {
+        if (m === '&') return '&amp;';
+        if (m === '<') return '&lt;';
+        if (m === '>') return '&gt;';
+        return m;
+    });
+}
+
+// ==================== СОБЫТИЯ ====================
+
 doLoginBtn.addEventListener('click', () => {
     const username = document.getElementById('loginUsername').value.trim();
     const password = document.getElementById('loginPassword').value;
@@ -327,6 +417,8 @@ doRegisterBtn.addEventListener('click', () => {
         regError.innerText = '✅ Аккаунт создан! Теперь войдите.';
         loginTabBtn.click();
         document.getElementById('loginUsername').value = username;
+        document.getElementById('loginPassword').value = '';
+        authError.innerText = '';
     } else {
         regError.innerText = res.error;
     }
@@ -356,9 +448,11 @@ tabs.forEach(btn => {
     btn.addEventListener('click', () => {
         const tab = btn.dataset.tab;
         for (let t in tabContents) {
-            document.getElementById(tabContents[t]).classList.add('hidden');
+            const el = document.getElementById(tabContents[t]);
+            if (el) el.classList.add('hidden');
         }
-        document.getElementById(tabContents[tab]).classList.remove('hidden');
+        const activeTab = document.getElementById(tabContents[tab]);
+        if (activeTab) activeTab.classList.remove('hidden');
         tabs.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
     });
@@ -386,6 +480,7 @@ statsExerciseSelect.addEventListener('change', updateChart);
 editPlanBtn.addEventListener('click', openPlanEditor);
 savePlanBtn.addEventListener('click', savePlanChanges);
 cancelPlanBtn.addEventListener('click', () => planEditor.classList.add('hidden'));
+
 addMeasureBtn.addEventListener('click', () => measureForm.classList.remove('hidden'));
 saveMeasureBtn.addEventListener('click', saveBodyMeasure);
 cancelMeasureBtn.addEventListener('click', () => measureForm.classList.add('hidden'));
@@ -393,10 +488,15 @@ cancelMeasureBtn.addEventListener('click', () => measureForm.classList.add('hidd
 addGroupBtn.addEventListener('click', () => {
     const groupName = newGroupName.value.trim();
     if (groupName) {
-        const { addMuscleGroup } = require('./exercises.js');
-        addMuscleGroup(currentUser, groupName);
-        newGroupName.value = '';
-        refreshAll();
+        const success = addMuscleGroup(currentUser, groupName);
+        if (success) {
+            newGroupName.value = '';
+            refreshAll();
+        } else {
+            alert('Такая группа уже существует');
+        }
+    } else {
+        alert('Введите название группы мышц');
     }
 });
 
@@ -404,7 +504,14 @@ workoutPhoto.addEventListener('change', (e) => {
     if (e.target.files.length) {
         const reader = new FileReader();
         reader.onload = (ev) => {
-            photoPreview.innerHTML = `<img src="${ev.target.result}" style="max-width:100px;">`;
+            photoPreview.innerHTML = `<img src="${ev.target.result}" style="max-width:100px; border-radius:12px;"><button type="button" id="clearPreview" style="background:#ef4444; padding:4px 8px; margin-left:8px;">✖</button>`;
+            const clearBtn = document.getElementById('clearPreview');
+            if (clearBtn) {
+                clearBtn.addEventListener('click', () => {
+                    workoutPhoto.value = '';
+                    photoPreview.innerHTML = '';
+                });
+            }
         };
         reader.readAsDataURL(e.target.files[0]);
     } else {
@@ -412,22 +519,16 @@ workoutPhoto.addEventListener('change', (e) => {
     }
 });
 
-// Проверка сохранённой сессии
-const session = getCurrentSession();
-if (session && session.username) {
-    const userData = getUserData(session.username);
-    if (userData) {
-        onLoginSuccess(session.username);
-    } else {
-        clearSession();
-        authPage.classList.remove('hidden');
-        appPage.classList.add('hidden');
-    }
+// ==================== ПРОВЕРКА СЕССИИ ====================
+const sessionCheck = checkSession();
+if (sessionCheck.success) {
+    onLoginSuccess(sessionCheck.username);
 } else {
     authPage.classList.remove('hidden');
     appPage.classList.add('hidden');
 }
 
+// Telegram Web App
 if (window.Telegram && window.Telegram.WebApp) {
     window.Telegram.WebApp.ready();
     window.Telegram.WebApp.expand();
