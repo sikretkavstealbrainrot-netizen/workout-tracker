@@ -23,6 +23,7 @@ export function saveMuscleGroups(username, groups) {
 }
 
 export function addMuscleGroup(username, groupName) {
+    if (!groupName || groupName.trim() === '') return false;
     const groups = getMuscleGroups(username);
     if (!groups.includes(groupName)) {
         groups.push(groupName);
@@ -30,7 +31,9 @@ export function addMuscleGroup(username, groupName) {
         const exercisesByMuscle = getExercisesByMuscle(username);
         exercisesByMuscle[groupName] = [];
         saveExercisesByMuscle(username, exercisesByMuscle);
+        return true;
     }
+    return false;
 }
 
 export function addExerciseToGroup(username, muscleGroup, exerciseName) {
@@ -41,7 +44,9 @@ export function addExerciseToGroup(username, muscleGroup, exerciseName) {
     if (!exercisesByMuscle[muscleGroup].includes(exerciseName)) {
         exercisesByMuscle[muscleGroup].push(exerciseName);
         saveExercisesByMuscle(username, exercisesByMuscle);
+        return true;
     }
+    return false;
 }
 
 export function getFavorites(username) {
