@@ -1,11 +1,11 @@
 import { getCurrentSession, clearSession, getUserData } from './storage.js';
 import { login, register, logout as authLogout, checkSession } from './auth.js';
 import { getWorkouts, addWorkout, updateWorkout, deleteWorkout, getLastWeightAndReps } from './workouts.js';
-import { getMuscleGroups, getAllExerciseNames, getExerciseImage, setExerciseImage, addMuscleGroup } from './exercises.js';
+import { getMuscleGroups, getAllExerciseNames, getExerciseImage, setExerciseImage, addMuscleGroup, getExercisesByMuscle } from './exercises.js';
 import { getPlan, savePlan, getBodyMeasures, addBodyMeasure, deleteBodyMeasure } from './body.js';
 import { getStatsForExercise } from './stats.js';
 import { setUIContext, renderWorkoutsList, updateMuscleGroupsSelect, updateExerciseSelectByMuscle, renderMuscleGroups, renderFavoritesList, populateExerciseSelects } from './ui.js';
-import { getPhotoBase64, formatDate } from './utils.js';
+import { getPhotoBase64, formatDate, escapeHtml } from './utils.js';
 
 // DOM элементы
 const authPage = document.getElementById('authPage');
@@ -79,11 +79,13 @@ const tabContents = {
 
 function refreshAll() {
     if (!currentUser) return;
+    console.log('Refreshing UI for user:', currentUser);
     renderWorkoutsList(workoutsListDiv, () => refreshAll());
     renderMuscleGroups(musclesContainer, () => refreshAll());
     renderFavoritesList(favoritesList);
     populateExerciseSelects(workoutExerciseSelect, statsExerciseSelect);
     updateMuscleGroupsSelect(workoutMuscleGroup);
+    // Автоматически обновляем список упражнений при выборе группы
     if (workoutMuscleGroup.value) {
         updateExerciseSelectByMuscle(workoutExerciseSelect, workoutMuscleGroup.value);
     }
@@ -98,7 +100,7 @@ function addSetRow(weight = 0, reps = 8) {
     div.innerHTML = `
         <div class="field"><label>🏋️ Вес (кг)</label><input type="number" class="set-weight" value="${weight}" step="2.5" placeholder="кг"></div>
         <div class="field"><label>🔄 Повторы</label><input type="number" class="set-reps" value="${reps}" placeholder="раз"></div>
-        <button type="button" class="remove-set-btn" title="Удалить подход">✖ Удалить</button>
+        <button type="button" class="remove-set-btn" style="background:#ef4444; padding:6px 12px;">✖ Удалить</button>
     `;
     div.querySelector('.remove-set-btn').addEventListener('click', () => div.remove());
     setsContainer.appendChild(div);
@@ -182,7 +184,7 @@ function openEditWorkout(index) {
     updateExerciseSelectByMuscle(workoutExerciseSelect, workout.muscleGroup);
     setTimeout(() => {
         workoutExerciseSelect.value = workout.exercise;
-    }, 10);
+    }, 50);
     workoutDate.value = workout.date;
     setsContainer.innerHTML = '';
     workout.sets.forEach(set => addSetRow(set.weight, set.reps));
@@ -261,7 +263,7 @@ function openPlanEditor() {
     planDaysEditor.innerHTML = days.map(day => `
         <div style="margin-bottom: 12px;">
             <label style="display: block; margin-bottom: 4px;">${day}</label>
-            <input type="text" id="plan_${day}" value="${escapeHtml(plan[day] || '')}" placeholder="Например: Грудь+Бицепс" style="width: 100%;">
+            <input type="text" id="plan_${day}" value="${escapeHtml(plan[day] || '')}" placeholder="Например: Грудь+Бицепс" style="width: 100%; padding: 10px; border-radius: 20px; border: 1px solid #cbd5e1;">
         </div>
     `).join('');
     planEditor.classList.remove('hidden');
@@ -293,7 +295,7 @@ function renderBodyMeasuresUI() {
                 🏋️ Грудь: ${m.chest} см | 💪 Бицепс(л): ${m.bicepsL} см | 💪 Бицепс(п): ${m.bicepsR} см<br>
                 📏 Талия: ${m.waist} см | 🦵 Бедро(л): ${m.thighL} см | 🦵 Бедро(п): ${m.thighR} см
             </div>
-            <button class="delete-measure btn-danger" data-date="${m.date}" style="background:#ef4444;">🗑️ Удалить</button>
+            <button class="delete-measure" data-date="${m.date}" style="background:#ef4444; padding: 6px 12px;">🗑️ Удалить</button>
         </div>
     `).join('');
     
@@ -349,30 +351,32 @@ function onLoginSuccess(username) {
     
     refreshAll();
     
-    workoutMuscleGroup.addEventListener('change', () => {
-        updateExerciseSelectByMuscle(workoutExerciseSelect, workoutMuscleGroup.value);
-        const exercise = workoutExerciseSelect.value;
-        if (exercise) {
-            const lastData = getLastWeightAndReps(currentUser, exercise);
-            if (lastData && lastData.weight > 0 && setsContainer.children.length > 0) {
-                const firstRow = setsContainer.children[0];
-                firstRow.querySelector('.set-weight').value = lastData.weight;
-                firstRow.querySelector('.set-reps').value = lastData.reps;
-            }
-        }
-    });
+    // Обработчик изменения группы мышц
+    workoutMuscleGroup.removeEventListener('change', muscleGroupChangeHandler);
+    workoutMuscleGroup.addEventListener('change', muscleGroupChangeHandler);
     
-    workoutExerciseSelect.addEventListener('change', () => {
-        const exercise = workoutExerciseSelect.value;
-        if (exercise) {
-            const lastData = getLastWeightAndReps(currentUser, exercise);
-            if (lastData && lastData.weight > 0 && setsContainer.children.length > 0) {
-                const firstRow = setsContainer.children[0];
-                firstRow.querySelector('.set-weight').value = lastData.weight;
-                firstRow.querySelector('.set-reps').value = lastData.reps;
-            }
+    // Обработчик изменения упражнения
+    workoutExerciseSelect.removeEventListener('change', exerciseChangeHandler);
+    workoutExerciseSelect.addEventListener('change', exerciseChangeHandler);
+}
+
+function muscleGroupChangeHandler() {
+    const group = workoutMuscleGroup.value;
+    if (group) {
+        updateExerciseSelectByMuscle(workoutExerciseSelect, group);
+    }
+}
+
+function exerciseChangeHandler() {
+    const exercise = workoutExerciseSelect.value;
+    if (exercise) {
+        const lastData = getLastWeightAndReps(currentUser, exercise);
+        if (lastData && lastData.weight > 0 && setsContainer.children.length > 0) {
+            const firstRow = setsContainer.children[0];
+            firstRow.querySelector('.set-weight').value = lastData.weight;
+            firstRow.querySelector('.set-reps').value = lastData.reps;
         }
-    });
+    }
 }
 
 function logout() {
@@ -384,16 +388,6 @@ function logout() {
         statsChart.destroy();
         statsChart = null;
     }
-}
-
-function escapeHtml(str) {
-    if (!str) return '';
-    return str.replace(/[&<>]/g, (m) => {
-        if (m === '&') return '&amp;';
-        if (m === '<') return '&lt;';
-        if (m === '>') return '&gt;';
-        return m;
-    });
 }
 
 // ==================== СОБЫТИЯ ====================
@@ -492,6 +486,8 @@ addGroupBtn.addEventListener('click', () => {
         if (success) {
             newGroupName.value = '';
             refreshAll();
+            // Обновляем список групп в форме тренировки
+            updateMuscleGroupsSelect(workoutMuscleGroup);
         } else {
             alert('Такая группа уже существует');
         }
@@ -533,3 +529,5 @@ if (window.Telegram && window.Telegram.WebApp) {
     window.Telegram.WebApp.ready();
     window.Telegram.WebApp.expand();
 }
+
+console.log('App loaded successfully');
