@@ -1,4 +1,4 @@
-import { getData, saveData, setCurrentSession } from './storage.js';
+import { getData, saveData, setCurrentSession, clearSession } from './storage.js';
 
 export function register(username, password) {
     const data = getData();
@@ -48,5 +48,17 @@ export function login(username, password) {
 }
 
 export function logout() {
-    localStorage.removeItem('fitness_current_session');
+    clearSession();
+}
+
+export function checkSession() {
+    const session = getCurrentSession();
+    if (session && session.username) {
+        const data = getData();
+        if (data[session.username]) {
+            return { success: true, username: session.username };
+        }
+        clearSession();
+    }
+    return { success: false };
 }
