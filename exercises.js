@@ -1,24 +1,18 @@
 import { getUserData, saveUserData } from './storage.js';
 
-export function getExercisesByMuscle(username) {
-    const userData = getUserData(username);
-    return userData?.exercisesByMuscle || {};
-}
-
-export function saveExercisesByMuscle(username, exercisesByMuscle) {
-    const userData = getUserData(username);
-    userData.exercisesByMuscle = exercisesByMuscle;
-    saveUserData(username, userData);
-}
-
 export function getMuscleGroups(username) {
     const userData = getUserData(username);
     return userData?.muscleGroups || [];
 }
 
-export function saveMuscleGroups(username, groups) {
+export function getExercisesByMuscle(username) {
     const userData = getUserData(username);
-    userData.muscleGroups = groups;
+    return userData?.exercisesByMuscle || {};
+}
+
+export function saveExercisesByMuscle(username, data) {
+    const userData = getUserData(username);
+    userData.exercisesByMuscle = data;
     saveUserData(username, userData);
 }
 
@@ -27,23 +21,21 @@ export function addMuscleGroup(username, groupName) {
     const groups = getMuscleGroups(username);
     if (!groups.includes(groupName)) {
         groups.push(groupName);
-        saveMuscleGroups(username, groups);
-        const exercisesByMuscle = getExercisesByMuscle(username);
-        exercisesByMuscle[groupName] = [];
-        saveExercisesByMuscle(username, exercisesByMuscle);
+        const userData = getUserData(username);
+        userData.muscleGroups = groups;
+        userData.exercisesByMuscle[groupName] = [];
+        saveUserData(username, userData);
         return true;
     }
     return false;
 }
 
 export function addExerciseToGroup(username, muscleGroup, exerciseName) {
-    const exercisesByMuscle = getExercisesByMuscle(username);
-    if (!exercisesByMuscle[muscleGroup]) {
-        exercisesByMuscle[muscleGroup] = [];
-    }
-    if (!exercisesByMuscle[muscleGroup].includes(exerciseName)) {
-        exercisesByMuscle[muscleGroup].push(exerciseName);
-        saveExercisesByMuscle(username, exercisesByMuscle);
+    const exercises = getExercisesByMuscle(username);
+    if (!exercises[muscleGroup]) exercises[muscleGroup] = [];
+    if (!exercises[muscleGroup].includes(exerciseName)) {
+        exercises[muscleGroup].push(exerciseName);
+        saveExercisesByMuscle(username, exercises);
         return true;
     }
     return false;
@@ -69,7 +61,7 @@ export function toggleFavorite(username, exerciseName) {
 
 export function getAllExerciseNames(username) {
     const byMuscle = getExercisesByMuscle(username);
-    let names = [];
+    const names = [];
     for (let g in byMuscle) {
         names.push(...byMuscle[g]);
     }
