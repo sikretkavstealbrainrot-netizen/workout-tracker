@@ -1,4 +1,5 @@
 const STORAGE_KEY = 'fitness_pro_v3';
+const SESSION_KEY = 'fitness_current_session';
 
 export function getData() {
     let d = localStorage.getItem(STORAGE_KEY);
@@ -21,14 +22,14 @@ export function saveUserData(username, userData) {
 }
 
 export function getCurrentSession() {
-    const session = localStorage.getItem('fitness_current_session');
+    const session = localStorage.getItem(SESSION_KEY);
     return session ? JSON.parse(session) : null;
 }
 
 export function setCurrentSession(username) {
-    localStorage.setItem('fitness_current_session', JSON.stringify({ username, timestamp: Date.now() }));
+    localStorage.setItem(SESSION_KEY, JSON.stringify({ username, timestamp: Date.now() }));
 }
 
 export function clearSession() {
-    localStorage.removeItem('fitness_current_session');
+    localStorage.removeItem(SESSION_KEY);
 }
