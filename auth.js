@@ -1,17 +1,16 @@
-import { getData, saveData, setCurrentSession, clearSession } from './storage.js';
+import { getData, saveData, setSession, clearSession } from './storage.js';
+
+const DEFAULT_MUSCLE_GROUPS = ['Груди', 'Спина', 'Ноги', 'Сідниці', 'Плечі', 'Біцепс', 'Тріцепс', 'Прес'];
 
 export function register(username, password) {
     const data = getData();
-    if (data[username]) {
-        return { success: false, error: 'Имя пользователя уже занято' };
-    }
+    if (data[username]) return { success: false, error: 'Имя уже занято' };
     if (username.length < 3 || password.length < 3) {
-        return { success: false, error: 'Ник и пароль должны быть не менее 3 символов' };
+        return { success: false, error: 'Ник и пароль минимум 3 символа' };
     }
     
-    const defaultMuscleGroups = ['Груди', 'Спина', 'Ноги', 'Сідниці', 'Плечі', 'Біцепс', 'Тріцепс', 'Прес'];
     const exercisesByMuscle = {};
-    for (let g of defaultMuscleGroups) {
+    for (let g of DEFAULT_MUSCLE_GROUPS) {
         exercisesByMuscle[g] = [];
     }
     exercisesByMuscle['Груди'] = ['Жим лёжа', 'Жим гантелей'];
@@ -19,8 +18,8 @@ export function register(username, password) {
     exercisesByMuscle['Ноги'] = ['Приседания', 'Выпады'];
     exercisesByMuscle['Сідниці'] = ['Румунська тяга', 'Ягодичный мост'];
     exercisesByMuscle['Плечі'] = ['Жим штанги стоя', 'Махи гантелями'];
-    exercisesByMuscle['Біцепс'] = ['Подъём штанги на бицепс', 'Молотки'];
-    exercisesByMuscle['Тріцепс'] = ['Французский жим', 'Разгибания на блоке'];
+    exercisesByMuscle['Біцепс'] = ['Подъём штанги', 'Молотки'];
+    exercisesByMuscle['Тріцепс'] = ['Французский жим', 'Разгибания'];
     exercisesByMuscle['Прес'] = ['Скручивания', 'Планка'];
     
     data[username] = {
@@ -29,7 +28,7 @@ export function register(username, password) {
         plan: {},
         bodyMeasures: [],
         exercisesByMuscle: exercisesByMuscle,
-        muscleGroups: defaultMuscleGroups,
+        muscleGroups: DEFAULT_MUSCLE_GROUPS,
         favorites: ['Жим лёжа', 'Приседания'],
         exerciseImages: {}
     };
@@ -41,10 +40,10 @@ export function login(username, password) {
     const data = getData();
     const user = data[username];
     if (user && user.password === password) {
-        setCurrentSession(username);
+        setSession(username);
         return { success: true, username };
     }
-    return { success: false, error: 'Неверное имя или пароль' };
+    return { success: false, error: 'Неверный логин или пароль' };
 }
 
 export function logout() {
@@ -52,7 +51,7 @@ export function logout() {
 }
 
 export function checkSession() {
-    const session = getCurrentSession();
+    const session = getSession();
     if (session && session.username) {
         const data = getData();
         if (data[session.username]) {
