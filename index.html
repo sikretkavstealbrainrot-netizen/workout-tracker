@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Fitness PRO | План + Запомнить меня</title>
+    <title>Fitness PRO | План + Все упражнения</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -57,13 +57,16 @@
         .sync-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; padding: 4px 12px; background: #dcfce7; color: #166534; border-radius: 40px; }
         .remember-me { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #475569; cursor: pointer; }
         .remember-me input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .plan-editor-day { margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 20px; padding: 12px; }
+        .plan-exercise-list { margin: 8px 0; }
+        .plan-exercise-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
         @media (max-width: 700px) { .set-row { flex-direction: column; align-items: stretch; } .set-row input { width: 100%; } }
     </style>
 </head>
 <body>
 <div class="container">
     <div id="authPage">
-        <div class="logo"><h1>💪 Fitness PRO</h1><p>План тренировок + Запомнить меня</p></div>
+        <div class="logo"><h1>💪 Fitness PRO</h1><p>План с упражнениями + Все упражнения</p></div>
         <div class="tabs">
             <button id="loginTabBtn" class="tab-btn active">Вход</button>
             <button id="registerTabBtn" class="tab-btn">Регистрация</button>
@@ -128,7 +131,7 @@
 
         <div id="tabPlan" class="tab-content hidden">
             <div class="card"><h3>📅 Расписание на неделю</h3><div id="weekPlanContainer"></div><button id="editPlanBtn" class="btn-outline">✏️ Редактировать план</button>
-                <div id="planEditor" class="hidden" style="margin-top:15px;"><div id="planDaysEditor"></div><button id="savePlanBtn">Сохранить</button><button id="cancelPlanBtn" class="btn-outline">Отмена</button></div>
+                <div id="planEditor" class="hidden" style="margin-top:15px;"><div id="planDaysEditor"></div><button id="savePlanBtn" class="btn-add">Сохранить и закрыть</button><button id="cancelPlanBtn" class="btn-outline">Отмена</button></div>
             </div>
         </div>
 
@@ -257,6 +260,13 @@
             const snapshot = await get(ref(db, `users/${username}`));
             if (snapshot.exists()) {
                 currentUserData = snapshot.val();
+                // Убедимся, что план имеет все дни
+                const days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+                let plan = currentUserData.plan || {};
+                for (let d of days) {
+                    if (!plan[d]) plan[d] = [];
+                }
+                currentUserData.plan = plan;
             } else {
                 initDefaultUserData(username);
                 await saveToCloud();
@@ -268,6 +278,13 @@
             unsubscribe = onValue(ref(db, `users/${username}`), (snap) => {
                 if (snap.exists() && !isSyncing) {
                     currentUserData = snap.val();
+                    // Опять проверяем структуру плана
+                    const days = ['Понедельник','Вторник','Среда','Четверг','Пятница','Суббота','Воскресенье'];
+                    let plan = currentUserData.plan || {};
+                    for (let d of days) {
+                        if (!plan[d]) plan[d] = [];
+                    }
+                    currentUserData.plan = plan;
                     refreshAllUI();
                     syncStatus.innerHTML = '☁️ Синхронизировано';
                 }
@@ -358,7 +375,7 @@
     function getLastWeightAndReps(ex) { const w = getWorkouts().filter(w=>w.exercise===ex).sort((a,b)=>new Date(b.date)-new Date(a.date))[0]; if(w && w.sets.length) { const ls = w.sets[w.sets.length-1]; return { weight: ls.weight, reps: ls.reps }; } return { weight: 0, reps: 8 }; }
     function getStatsForExercise(ex, period) { const ww = getWorkouts().filter(w=>w.exercise===ex); if(!ww.length) return null; const now=new Date(); let from=new Date(); if(period==='week') from.setDate(now.getDate()-7); else if(period==='month') from.setMonth(now.getMonth()-1); else from.setFullYear(now.getFullYear()-1); const data = ww.filter(w=>new Date(w.date)>=from).sort((a,b)=>new Date(a.date)-new Date(b.date)); if(!data.length) return null; return { labels: data.map(d=>d.date), maxWeights: data.map(d=>Math.max(...d.sets.map(s=>s.weight))), totalVolume: data.reduce((s,d)=>s+d.sets.reduce((vol,set)=>vol+set.weight*set.reps,0),0), avgWeight: data.reduce((s,d)=>s+d.sets.reduce((ws,set)=>ws+set.weight,0)/d.sets.length,0)/data.length, maxAll: Math.max(...data.flatMap(d=>d.sets.map(s=>s.weight))), totalSets: data.reduce((s,d)=>s+d.sets.length,0), dataLength: data.length }; }
     
-    // ==================== ПЛАН С УПРАЖНЕНИЯМИ ====================
+    // ==================== ПЛАН С УПРАЖНЕНИЯМИ (исправленный) ====================
     function renderPlanUI() {
         const plan = getPlan();
         const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
@@ -376,44 +393,66 @@
         const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
         const groups = getMuscleGroups();
         const byMuscle = getExercisesByMuscle();
+        const allExercises = getAllExerciseNames();
         
         planDaysEditor.innerHTML = days.map(day => {
             const exercises = plan[day] || [];
             const exercisesHtml = exercises.map((ex, idx) => `<div class="plan-exercise-item"><span>🏋️ ${escapeHtml(ex)}</span><button class="remove-plan-ex small-btn" data-day="${day}" data-ex="${escapeHtml(ex)}" style="background:#ef4444; padding:4px 8px;">✖</button></div>`).join('');
             const groupsHtml = groups.map(group => `<optgroup label="${escapeHtml(group)}">${(byMuscle[group]||[]).map(ex => `<option value="${escapeHtml(ex)}">${escapeHtml(ex)}</option>`).join('')}</optgroup>`).join('');
-            return `<div style="margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 20px; padding: 12px;">
+            return `<div class="plan-editor-day">
                 <h4 style="margin-bottom: 10px;">${day}</h4>
-                <div id="plan-ex-${day.replace(/\s/g,'')}">${exercisesHtml || '<div style="color:#888;">Нет упражнений</div>'}</div>
-                <div class="plan-exercise-add">
-                    <select id="plan-select-${day.replace(/\s/g,'')}" style="flex:1;"><option value="">-- Добавить упражнение --</option>${groupsHtml}</select>
+                <div class="plan-exercise-list" id="plan-ex-${day.replace(/\s/g,'')}">${exercisesHtml || '<div style="color:#888;">Нет упражнений</div>'}</div>
+                <div class="plan-exercise-actions">
+                    <select id="plan-select-${day.replace(/\s/g,'')}" style="flex:1; min-width:150px;"><option value="">-- Добавить упражнение --</option>${groupsHtml}</select>
                     <button class="small-btn add-to-plan-btn" data-day="${day}" style="background:#10b981;">+ Добавить</button>
+                    <button class="small-btn add-all-btn" data-day="${day}" style="background:#8b5cf6;">➕ Добавить все</button>
                 </div>
             </div>`;
         }).join('');
         
+        // Обработчик для добавления одного упражнения
         document.querySelectorAll('.add-to-plan-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const day = btn.dataset.day;
                 const select = document.getElementById(`plan-select-${day.replace(/\s/g,'')}`);
                 const exName = select.value;
                 if (exName) {
-                    const newPlan = { ...getPlan() };
+                    const newPlan = JSON.parse(JSON.stringify(getPlan())); // глубокое копирование
                     if (!newPlan[day]) newPlan[day] = [];
                     if (!newPlan[day].includes(exName)) {
                         newPlan[day].push(exName);
                         savePlan(newPlan);
-                        openPlanEditor(); // перерисовываем
+                        // Перерисовываем редактор, чтобы обновить список
+                        openPlanEditor();
                     }
                     select.value = '';
                 }
             });
         });
         
+        // Обработчик для добавления ВСЕХ упражнений
+        document.querySelectorAll('.add-all-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const day = btn.dataset.day;
+                const newPlan = JSON.parse(JSON.stringify(getPlan()));
+                if (!newPlan[day]) newPlan[day] = [];
+                // Добавляем все упражнения, которых ещё нет в этом дне
+                for (let ex of allExercises) {
+                    if (!newPlan[day].includes(ex)) {
+                        newPlan[day].push(ex);
+                    }
+                }
+                savePlan(newPlan);
+                openPlanEditor();
+            });
+        });
+        
+        // Обработчик для удаления упражнения
         document.querySelectorAll('.remove-plan-ex').forEach(btn => {
             btn.addEventListener('click', () => {
                 const day = btn.dataset.day;
                 const exName = btn.dataset.ex;
-                const newPlan = { ...getPlan() };
+                const newPlan = JSON.parse(JSON.stringify(getPlan()));
                 newPlan[day] = (newPlan[day] || []).filter(e => e !== exName);
                 savePlan(newPlan);
                 openPlanEditor();
@@ -531,7 +570,6 @@
         workoutMuscleGroup.onchange = () => { if(workoutMuscleGroup.value) { updateExerciseSelectByMuscle(workoutMuscleGroup.value); } };
         workoutExerciseSelect.onchange = () => { const ex = workoutExerciseSelect.value; if(ex) { const last = getLastWeightAndReps(ex); if(last.weight>0 && setsContainer.children[0]) { setsContainer.children[0].querySelector('.set-weight').value = last.weight; setsContainer.children[0].querySelector('.set-reps').value = last.reps; } } };
         
-        // Если стоит галочка "Запомнить меня" — сохраняем логин в localStorage
         if (rememberMeCheckbox.checked) {
             localStorage.setItem('fitness_remembered', username);
         } else {
@@ -544,16 +582,13 @@
         currentUser = null; currentUserData = null;
         authPage.classList.remove('hidden'); appPage.classList.add('hidden');
         if (statsChart) { statsChart.destroy(); statsChart = null; }
-        // Не удаляем localStorage — пользователь сам решит, запоминать или нет
     }
     
-    // Проверка сохранённого логина
     function checkRemembered() {
         const remembered = localStorage.getItem('fitness_remembered');
         if (remembered) {
             loginUsernameInput.value = remembered;
             rememberMeCheckbox.checked = true;
-            // Можно автоматически попробовать войти, но пароль не сохраняем, поэтому просто подставляем логин
         }
     }
     
@@ -583,7 +618,7 @@
     periodBtns.forEach(b => b.onclick = () => { periodBtns.forEach(bb=>bb.classList.remove('active')); b.classList.add('active'); currentPeriod = b.dataset.period; updateChart(); });
     statsExerciseSelect.onchange = updateChart;
     editPlanBtn.onclick = openPlanEditor;
-    savePlanBtn.onclick = () => { closePlanEditor(); };
+    savePlanBtn.onclick = closePlanEditor;
     cancelPlanBtn.onclick = closePlanEditor;
     addMeasureBtn.onclick = () => measureForm.classList.remove('hidden');
     saveMeasureBtn.onclick = async () => { const date = measureDate.value; if(!date) return; await addBodyMeasure({ date, chest: parseFloat(measureChest.value)||0, bicepsL: parseFloat(measureBicepsL.value)||0, bicepsR: parseFloat(measureBicepsR.value)||0, waist: parseFloat(measureWaist.value)||0, thighL: parseFloat(measureThighL.value)||0, thighR: parseFloat(measureThighR.value)||0 }); measureForm.classList.add('hidden'); measureChest.value=measureBicepsL.value=measureBicepsR.value=measureWaist.value=measureThighL.value=measureThighR.value=''; };
@@ -591,7 +626,6 @@
     addGroupBtn.onclick = async () => { const name = newGroupName.value.trim(); if(name) { await addMuscleGroup(name); newGroupName.value = ''; } };
     workoutPhoto.onchange = (e) => { if(e.target.files.length) { const reader = new FileReader(); reader.onload = (ev) => photoPreview.innerHTML = `<img src="${ev.target.result}" style="max-width:100px;"><button type="button" id="clearPhoto" style="background:#ef4444; padding:4px 8px; margin-left:8px;">✖</button>`; reader.readAsDataURL(e.target.files[0]); setTimeout(()=>{ const clearBtn=document.getElementById('clearPhoto'); if(clearBtn) clearBtn.onclick=()=>{ workoutPhoto.value=''; photoPreview.innerHTML=''; }; },100); } else photoPreview.innerHTML=''; };
     
-    // Telegram Web App
     if(window.Telegram?.WebApp) { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
     
     // ==================== СТАРТ ====================
