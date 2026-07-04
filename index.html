@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Fitness PRO | Realtime + План с упражнениями</title>
+    <title>Fitness PRO | План + Запомнить меня</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
@@ -21,6 +21,7 @@
         button { background: #3b82f6; border: none; padding: 12px; border-radius: 40px; font-weight: 600; color: white; cursor: pointer; }
         button:hover { background: #2563eb; }
         .btn-outline { background: transparent; border: 1px solid #cbd5e1; color: #1e293b; }
+        .btn-outline:hover { background: #f1f5f9; }
         .btn-add { background: #10b981; width: fit-content; }
         .small-btn { padding: 8px 16px; font-size: 0.9rem; }
         .error-msg { color: #ef4444; text-align: center; }
@@ -54,15 +55,15 @@
         .form-buttons { display: flex; gap: 12px; }
         #photoPreview img { max-width: 100px; border-radius: 12px; }
         .sync-status { display: inline-flex; align-items: center; gap: 6px; font-size: 0.75rem; padding: 4px 12px; background: #dcfce7; color: #166534; border-radius: 40px; }
-        .plan-exercise-add { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
-        .remove-plan-ex { background: #ef4444; padding: 4px 8px; font-size: 0.7rem; }
+        .remember-me { display: flex; align-items: center; gap: 8px; font-size: 0.9rem; color: #475569; cursor: pointer; }
+        .remember-me input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
         @media (max-width: 700px) { .set-row { flex-direction: column; align-items: stretch; } .set-row input { width: 100%; } }
     </style>
 </head>
 <body>
 <div class="container">
     <div id="authPage">
-        <div class="logo"><h1>💪 Fitness PRO</h1><p>План тренировок с упражнениями</p></div>
+        <div class="logo"><h1>💪 Fitness PRO</h1><p>План тренировок + Запомнить меня</p></div>
         <div class="tabs">
             <button id="loginTabBtn" class="tab-btn active">Вход</button>
             <button id="registerTabBtn" class="tab-btn">Регистрация</button>
@@ -70,6 +71,7 @@
         <div id="loginForm" class="form-card">
             <input type="text" id="loginUsername" placeholder="Логин">
             <input type="password" id="loginPassword" placeholder="Пароль">
+            <label class="remember-me"><input type="checkbox" id="rememberMe"> Запомнить меня</label>
             <button id="doLoginBtn">Войти</button>
             <p class="error-msg" id="authError"></p>
         </div>
@@ -105,7 +107,7 @@
                 <input type="date" id="workoutDate">
                 <div id="setsContainer"></div>
                 <button type="button" id="addSetBtn" class="add-set-btn">+ Добавить подход</button>
-                <div><label>📸 Фото</label><input type="file" id="workoutPhoto" accept="image/*"><div id="photoPreview"></div></div>
+                <div><label>📸 Фото упражнения</label><input type="file" id="workoutPhoto" accept="image/*"><div id="photoPreview"></div></div>
                 <div class="form-buttons"><button id="saveWorkoutBtn">Сохранить</button><button id="cancelWorkoutBtn" class="btn-outline">Отмена</button></div>
                 <p id="workoutError" class="error-msg"></p>
             </div>
@@ -124,17 +126,9 @@
             </div>
         </div>
 
-        <!-- ПЛАН ТРЕНИРОВОК С УПРАЖНЕНИЯМИ -->
         <div id="tabPlan" class="tab-content hidden">
-            <div class="card">
-                <h3>📅 Расписание на неделю</h3>
-                <div id="weekPlanContainer"></div>
-                <button id="editPlanBtn" class="btn-outline">✏️ Редактировать план</button>
-                <div id="planEditor" class="hidden" style="margin-top:15px;">
-                    <div id="planDaysEditor"></div>
-                    <button id="savePlanBtn">Сохранить</button>
-                    <button id="cancelPlanBtn" class="btn-outline">Отмена</button>
-                </div>
+            <div class="card"><h3>📅 Расписание на неделю</h3><div id="weekPlanContainer"></div><button id="editPlanBtn" class="btn-outline">✏️ Редактировать план</button>
+                <div id="planEditor" class="hidden" style="margin-top:15px;"><div id="planDaysEditor"></div><button id="savePlanBtn">Сохранить</button><button id="cancelPlanBtn" class="btn-outline">Отмена</button></div>
             </div>
         </div>
 
@@ -167,15 +161,15 @@
 </div>
 
 <script type="module">
-    // ==================== FIREBASE КОНФИГ (ВСТАВЬТЕ ВАШ) ====================
+    // ==================== 🔧 ВСТАВЬТЕ ВАШ ПРАВИЛЬНЫЙ КОНФИГ ====================
     const firebaseConfig = {
-        apiKey: "AIzaSyDLCjDwU0Ja5Urk2vVvpNTlvMJbfNv-oc8",
-        authDomain: "workout-tracker-39036.firebaseapp.com",
-        databaseURL: "https://workout-tracker-39036-default-rtdb.europe-west1.firebasedatabase.app",
-        projectId: "workout-tracker-39036",
-        storageBucket: "workout-tracker-39036.firebasestorage.app",
-        messagingSenderId: "968398348516",
-        appId: "1:968398348516:web:ff046a3d005f5e56198cf1"
+        apiKey: "ВАШ_API_KEY",
+        authDomain: "ВАШ_AUTH_DOMAIN",
+        databaseURL: "https://ВАШ_ПРОЕКТ-default-rtdb.РЕГИОН.firebasedatabase.app/",  // ← ЗАМЕНИТЕ
+        projectId: "ВАШ_PROJECT_ID",
+        storageBucket: "ВАШ_STORAGE_BUCKET",
+        messagingSenderId: "ВАШ_SENDER_ID",
+        appId: "ВАШ_APP_ID"
     };
     // ========================================================================
     
@@ -185,13 +179,14 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     
-    let currentUsername = null;
+    let currentUser = null;
     let currentUserData = null;
     let currentEditIndex = null;
     let statsChart = null;
     let currentPeriod = 'week';
     let isSyncing = false;
-    let unsubscribeRealtime = null;
+    let unsubscribe = null;
+    let isPlanEditorOpen = false;
     
     // DOM элементы
     const authPage = document.getElementById('authPage'), appPage = document.getElementById('appPage');
@@ -221,26 +216,24 @@
     const measureBicepsL = document.getElementById('measureBicepsL'), measureBicepsR = document.getElementById('measureBicepsR');
     const measureWaist = document.getElementById('measureWaist'), measureThighL = document.getElementById('measureThighL');
     const measureThighR = document.getElementById('measureThighR');
+    const rememberMeCheckbox = document.getElementById('rememberMe');
+    const loginUsernameInput = document.getElementById('loginUsername');
+    const loginPasswordInput = document.getElementById('loginPassword');
     
     const tabs = document.querySelectorAll('[data-tab]');
     const tabContents = { exercises: 'tabExercises', stats: 'tabStats', plan: 'tabPlan', body: 'tabBody', muscles: 'tabMuscles', favorites: 'tabFavorites' };
     
     // Вспомогательные функции
     function escapeHtml(s) { if (!s) return ''; return s.replace(/[&<>]/g, m => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;' }[m])); }
+    function getPhotoBase64(file) { return new Promise(r => { if (!file) r(null); const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => r(reader.result); reader.onerror = () => r(null); }); }
+    function formatDate(d=new Date()) { return d.toISOString().slice(0,10); }
     
-    function getPhotoBase64(file) {
-        return new Promise(resolve => { if (!file) resolve(null); const reader = new FileReader(); reader.readAsDataURL(file); reader.onload = () => resolve(reader.result); reader.onerror = () => resolve(null); });
-    }
-    
-    function formatDate(d = new Date()) { return d.toISOString().slice(0,10); }
-    
-    // ==================== РАБОТА С БАЗОЙ ====================
-    async function saveUserDataToCloud() {
-        if (!currentUsername || !currentUserData || isSyncing) return;
+    // Сохранение в облако
+    async function saveToCloud() {
+        if (!currentUser || !currentUserData || isSyncing) return;
         isSyncing = true;
         try {
-            const userRef = ref(db, `users/${currentUsername}`);
-            await set(userRef, {
+            await set(ref(db, `users/${currentUser}`), {
                 username: currentUserData.username,
                 workouts: currentUserData.workouts || [],
                 plan: currentUserData.plan || {},
@@ -252,104 +245,116 @@
                 password: currentUserData.password,
                 lastUpdated: Date.now()
             });
-            syncStatus.className = 'sync-status';
             syncStatus.innerHTML = '☁️ Синхронизировано';
         } catch(e) { console.error(e); syncStatus.innerHTML = '⚠️ Ошибка'; }
         finally { isSyncing = false; }
     }
     
-    function setupRealtimeSync(username) {
-        if (unsubscribeRealtime) unsubscribeRealtime();
-        const userRef = ref(db, `users/${username}`);
-        unsubscribeRealtime = onValue(userRef, (snapshot) => {
-            if (snapshot.exists() && !isSyncing) {
-                const data = snapshot.val();
-                currentUserData = {
-                    username: data.username,
-                    workouts: data.workouts || [],
-                    plan: data.plan || {},
-                    bodyMeasures: data.bodyMeasures || [],
-                    exercisesByMuscle: data.exercisesByMuscle || {},
-                    muscleGroups: data.muscleGroups || [],
-                    favorites: data.favorites || [],
-                    exerciseImages: data.exerciseImages || {},
-                    password: data.password
-                };
-                refreshAllUI();
-                syncStatus.innerHTML = '☁️ Синхронизировано';
+    // Загрузка из облака и подписка на изменения
+    async function loadFromCloud(username) {
+        syncStatus.innerHTML = '🔄 Загрузка...';
+        try {
+            const snapshot = await get(ref(db, `users/${username}`));
+            if (snapshot.exists()) {
+                currentUserData = snapshot.val();
+            } else {
+                initDefaultUserData(username);
+                await saveToCloud();
             }
-        });
+            syncStatus.innerHTML = '☁️ Синхронизировано';
+            refreshAllUI();
+            
+            if (unsubscribe) unsubscribe();
+            unsubscribe = onValue(ref(db, `users/${username}`), (snap) => {
+                if (snap.exists() && !isSyncing) {
+                    currentUserData = snap.val();
+                    refreshAllUI();
+                    syncStatus.innerHTML = '☁️ Синхронизировано';
+                }
+            });
+        } catch(e) { console.error(e); syncStatus.innerHTML = '⚠️ Ошибка'; }
     }
     
-    // ==================== РЕГИСТРАЦИЯ И ВХОД ====================
+    function initDefaultUserData(username) {
+        const defaultGroups = ['Груди', 'Спина', 'Ноги', 'Сідниці', 'Плечі', 'Біцепс', 'Тріцепс', 'Прес'];
+        const exercisesByMuscle = {};
+        for (let g of defaultGroups) exercisesByMuscle[g] = [];
+        exercisesByMuscle['Груди'] = ['Жим лёжа', 'Жим гантелей'];
+        exercisesByMuscle['Спина'] = ['Тяга штанги', 'Подтягивания'];
+        exercisesByMuscle['Ноги'] = ['Приседания', 'Выпады'];
+        exercisesByMuscle['Сідниці'] = ['Румунська тяга', 'Ягодичный мост'];
+        exercisesByMuscle['Плечі'] = ['Жим штанги стоя', 'Махи гантелями'];
+        exercisesByMuscle['Біцепс'] = ['Подъём штанги', 'Молотки'];
+        exercisesByMuscle['Тріцепс'] = ['Французский жим', 'Разгибания'];
+        exercisesByMuscle['Прес'] = ['Скручивания', 'Планка'];
+        const emptyPlan = { 'Понедельник': [], 'Вторник': [], 'Среда': [], 'Четверг': [], 'Пятница': [], 'Суббота': [], 'Воскресенье': [] };
+        currentUserData = {
+            username: username,
+            password: '',
+            workouts: [],
+            plan: emptyPlan,
+            bodyMeasures: [],
+            exercisesByMuscle: exercisesByMuscle,
+            muscleGroups: defaultGroups,
+            favorites: ['Жим лёжа', 'Приседания'],
+            exerciseImages: {}
+        };
+    }
+    
+    // Регистрация и вход
     async function registerUser(username, password) {
         if (username.length < 3) return { success: false, error: 'Логин минимум 3 символа' };
         if (password.length < 3) return { success: false, error: 'Пароль минимум 3 символа' };
-        try {
-            const userRef = ref(db, `users/${username}`);
-            const snapshot = await get(userRef);
-            if (snapshot.exists()) return { success: false, error: 'Пользователь уже существует' };
-            const defaultGroups = ['Груди', 'Спина', 'Ноги', 'Сідниці', 'Плечі', 'Біцепс', 'Тріцепс', 'Прес'];
-            const exercisesByMuscle = {};
-            for (let g of defaultGroups) exercisesByMuscle[g] = [];
-            exercisesByMuscle['Груди'] = ['Жим лёжа', 'Жим гантелей'];
-            exercisesByMuscle['Спина'] = ['Тяга штанги', 'Подтягивания'];
-            exercisesByMuscle['Ноги'] = ['Приседания', 'Выпады'];
-            exercisesByMuscle['Сідниці'] = ['Румунська тяга', 'Ягодичный мост'];
-            exercisesByMuscle['Плечі'] = ['Жим штанги стоя', 'Махи гантелями'];
-            exercisesByMuscle['Біцепс'] = ['Подъём штанги', 'Молотки'];
-            exercisesByMuscle['Тріцепс'] = ['Французский жим', 'Разгибания'];
-            exercisesByMuscle['Прес'] = ['Скручивания', 'Планка'];
-            
-            // Пустой план для каждого дня
-            const emptyPlan = {
-                'Понедельник': [], 'Вторник': [], 'Среда': [], 'Четверг': [], 'Пятница': [], 'Суббота': [], 'Воскресенье': []
-            };
-            
-            await set(userRef, {
-                username, password,
-                workouts: [],
-                plan: emptyPlan,
-                bodyMeasures: [],
-                exercisesByMuscle: exercisesByMuscle,
-                muscleGroups: defaultGroups,
-                favorites: ['Жим лёжа', 'Приседания'],
-                exerciseImages: {},
-                created: Date.now()
-            });
-            return { success: true };
-        } catch(e) { console.error(e); return { success: false, error: 'Ошибка сервера' }; }
+        const snapshot = await get(ref(db, `users/${username}`));
+        if (snapshot.exists()) return { success: false, error: 'Пользователь уже существует' };
+        const defaultGroups = ['Груди', 'Спина', 'Ноги', 'Сідниці', 'Плечі', 'Біцепс', 'Тріцепс', 'Прес'];
+        const exercisesByMuscle = {};
+        for (let g of defaultGroups) exercisesByMuscle[g] = [];
+        exercisesByMuscle['Груди'] = ['Жим лёжа', 'Жим гантелей'];
+        exercisesByMuscle['Спина'] = ['Тяга штанги', 'Подтягивания'];
+        exercisesByMuscle['Ноги'] = ['Приседания', 'Выпады'];
+        exercisesByMuscle['Сідниці'] = ['Румунська тяга', 'Ягодичный мост'];
+        exercisesByMuscle['Плечі'] = ['Жим штанги стоя', 'Махи гантелями'];
+        exercisesByMuscle['Біцепс'] = ['Подъём штанги', 'Молотки'];
+        exercisesByMuscle['Тріцепс'] = ['Французский жим', 'Разгибания'];
+        exercisesByMuscle['Прес'] = ['Скручивания', 'Планка'];
+        const emptyPlan = { 'Понедельник': [], 'Вторник': [], 'Среда': [], 'Четверг': [], 'Пятница': [], 'Суббота': [], 'Воскресенье': [] };
+        await set(ref(db, `users/${username}`), {
+            username, password,
+            workouts: [], plan: emptyPlan, bodyMeasures: [],
+            exercisesByMuscle, muscleGroups: defaultGroups,
+            favorites: ['Жим лёжа', 'Приседания'], exerciseImages: {},
+            created: Date.now()
+        });
+        return { success: true };
     }
     
     async function loginUser(username, password) {
-        try {
-            const userRef = ref(db, `users/${username}`);
-            const snapshot = await get(userRef);
-            if (!snapshot.exists()) return { success: false, error: 'Пользователь не найден' };
-            if (snapshot.val().password !== password) return { success: false, error: 'Неверный пароль' };
-            return { success: true };
-        } catch(e) { return { success: false, error: 'Ошибка сервера' }; }
+        const snapshot = await get(ref(db, `users/${username}`));
+        if (!snapshot.exists()) return { success: false, error: 'Пользователь не найден' };
+        if (snapshot.val().password !== password) return { success: false, error: 'Неверный пароль' };
+        return { success: true };
     }
     
     // ==================== РАБОТА С ДАННЫМИ ====================
     function getWorkouts() { return currentUserData?.workouts || []; }
-    async function addWorkout(w) { currentUserData.workouts.push(w); await saveUserDataToCloud(); refreshAllUI(); }
-    async function updateWorkout(i, w) { currentUserData.workouts[i] = w; await saveUserDataToCloud(); refreshAllUI(); }
-    async function deleteWorkout(i) { currentUserData.workouts.splice(i,1); await saveUserDataToCloud(); refreshAllUI(); }
+    async function addWorkout(w) { currentUserData.workouts.push(w); await saveToCloud(); refreshAllUI(); }
+    async function updateWorkout(i, w) { currentUserData.workouts[i] = w; await saveToCloud(); refreshAllUI(); }
+    async function deleteWorkout(i) { currentUserData.workouts.splice(i,1); await saveToCloud(); refreshAllUI(); }
     function getMuscleGroups() { return currentUserData?.muscleGroups || []; }
     function getExercisesByMuscle() { return currentUserData?.exercisesByMuscle || {}; }
-    async function addMuscleGroup(g) { if (!currentUserData.muscleGroups.includes(g)) { currentUserData.muscleGroups.push(g); currentUserData.exercisesByMuscle[g] = []; await saveUserDataToCloud(); refreshAllUI(); } }
-    async function addExerciseToGroup(g, ex) { if (!currentUserData.exercisesByMuscle[g].includes(ex)) { currentUserData.exercisesByMuscle[g].push(ex); await saveUserDataToCloud(); refreshAllUI(); } }
+    async function addMuscleGroup(g) { if (!currentUserData.muscleGroups.includes(g)) { currentUserData.muscleGroups.push(g); currentUserData.exercisesByMuscle[g] = []; await saveToCloud(); refreshAllUI(); } }
+    async function addExerciseToGroup(g, ex) { if (!currentUserData.exercisesByMuscle[g].includes(ex)) { currentUserData.exercisesByMuscle[g].push(ex); await saveToCloud(); refreshAllUI(); } }
     function getFavorites() { return currentUserData?.favorites || []; }
-    async function toggleFavorite(ex) { let favs = currentUserData.favorites || []; if (favs.includes(ex)) favs = favs.filter(f=>f!==ex); else favs.push(ex); currentUserData.favorites = favs; await saveUserDataToCloud(); refreshAllUI(); }
+    async function toggleFavorite(ex) { let favs = currentUserData.favorites || []; favs.includes(ex) ? favs = favs.filter(f=>f!==ex) : favs.push(ex); currentUserData.favorites = favs; await saveToCloud(); refreshAllUI(); }
     function getAllExerciseNames() { const names=[]; for(let g in currentUserData.exercisesByMuscle) names.push(...currentUserData.exercisesByMuscle[g]); return [...new Set(names)]; }
     function getExerciseImage(ex) { return currentUserData?.exerciseImages?.[ex] || null; }
-    async function setExerciseImage(ex, url) { if(!currentUserData.exerciseImages) currentUserData.exerciseImages={}; currentUserData.exerciseImages[ex]=url; await saveUserDataToCloud(); }
+    async function setExerciseImage(ex, url) { if(!currentUserData.exerciseImages) currentUserData.exerciseImages={}; currentUserData.exerciseImages[ex]=url; await saveToCloud(); }
     function getPlan() { return currentUserData?.plan || { 'Понедельник':[], 'Вторник':[], 'Среда':[], 'Четверг':[], 'Пятница':[], 'Суббота':[], 'Воскресенье':[] }; }
-    async function savePlan(p) { currentUserData.plan = p; await saveUserDataToCloud(); refreshAllUI(); }
+    async function savePlan(p) { currentUserData.plan = p; await saveToCloud(); refreshAllUI(); }
     function getBodyMeasures() { return currentUserData?.bodyMeasures || []; }
-    async function addBodyMeasure(m) { currentUserData.bodyMeasures.push(m); await saveUserDataToCloud(); refreshAllUI(); }
-    async function deleteBodyMeasure(date) { currentUserData.bodyMeasures = currentUserData.bodyMeasures.filter(m=>m.date!==date); await saveUserDataToCloud(); refreshAllUI(); }
+    async function addBodyMeasure(m) { currentUserData.bodyMeasures.push(m); await saveToCloud(); refreshAllUI(); }
+    async function deleteBodyMeasure(date) { currentUserData.bodyMeasures = currentUserData.bodyMeasures.filter(m=>m.date!==date); await saveToCloud(); refreshAllUI(); }
     function getLastWeightAndReps(ex) { const w = getWorkouts().filter(w=>w.exercise===ex).sort((a,b)=>new Date(b.date)-new Date(a.date))[0]; if(w && w.sets.length) { const ls = w.sets[w.sets.length-1]; return { weight: ls.weight, reps: ls.reps }; } return { weight: 0, reps: 8 }; }
     function getStatsForExercise(ex, period) { const ww = getWorkouts().filter(w=>w.exercise===ex); if(!ww.length) return null; const now=new Date(); let from=new Date(); if(period==='week') from.setDate(now.getDate()-7); else if(period==='month') from.setMonth(now.getMonth()-1); else from.setFullYear(now.getFullYear()-1); const data = ww.filter(w=>new Date(w.date)>=from).sort((a,b)=>new Date(a.date)-new Date(b.date)); if(!data.length) return null; return { labels: data.map(d=>d.date), maxWeights: data.map(d=>Math.max(...d.sets.map(s=>s.weight))), totalVolume: data.reduce((s,d)=>s+d.sets.reduce((vol,set)=>vol+set.weight*set.reps,0),0), avgWeight: data.reduce((s,d)=>s+d.sets.reduce((ws,set)=>ws+set.weight,0)/d.sets.length,0)/data.length, maxAll: Math.max(...data.flatMap(d=>d.sets.map(s=>s.weight))), totalSets: data.reduce((s,d)=>s+d.sets.length,0), dataLength: data.length }; }
     
@@ -359,15 +364,14 @@
         const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
         weekPlanContainer.innerHTML = days.map(day => {
             const exercises = plan[day] || [];
-            const exercisesHtml = exercises.length ? exercises.map((ex, idx) => `<div class="plan-exercise-item"><span>🏋️ ${escapeHtml(ex)}</span></div>`).join('') : '<div style="color:#888; padding:8px;">— Нет упражнений —</div>';
-            return `<div class="week-plan-day">
-                <strong>📅 ${day}</strong>
-                <div style="margin-top:8px;">${exercisesHtml}</div>
-            </div>`;
+            const exercisesHtml = exercises.length ? exercises.map(ex => `<div class="plan-exercise-item"><span>🏋️ ${escapeHtml(ex)}</span></div>`).join('') : '<div style="color:#888; padding:8px;">— Нет упражнений —</div>';
+            return `<div class="week-plan-day"><strong>📅 ${day}</strong><div style="margin-top:8px;">${exercisesHtml}</div></div>`;
         }).join('');
     }
     
     function openPlanEditor() {
+        if (isPlanEditorOpen) return;
+        isPlanEditorOpen = true;
         const plan = getPlan();
         const days = ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'];
         const groups = getMuscleGroups();
@@ -375,27 +379,18 @@
         
         planDaysEditor.innerHTML = days.map(day => {
             const exercises = plan[day] || [];
-            const exercisesHtml = exercises.map((ex, idx) => `<div class="plan-exercise-item">
-                <span>🏋️ ${escapeHtml(ex)}</span>
-                <button class="remove-plan-ex small-btn" data-day="${day}" data-ex="${escapeHtml(ex)}" style="background:#ef4444; padding:4px 8px;">✖</button>
-            </div>`).join('');
-            
+            const exercisesHtml = exercises.map((ex, idx) => `<div class="plan-exercise-item"><span>🏋️ ${escapeHtml(ex)}</span><button class="remove-plan-ex small-btn" data-day="${day}" data-ex="${escapeHtml(ex)}" style="background:#ef4444; padding:4px 8px;">✖</button></div>`).join('');
             const groupsHtml = groups.map(group => `<optgroup label="${escapeHtml(group)}">${(byMuscle[group]||[]).map(ex => `<option value="${escapeHtml(ex)}">${escapeHtml(ex)}</option>`).join('')}</optgroup>`).join('');
-            
             return `<div style="margin-bottom: 20px; border: 1px solid #e2e8f0; border-radius: 20px; padding: 12px;">
                 <h4 style="margin-bottom: 10px;">${day}</h4>
                 <div id="plan-ex-${day.replace(/\s/g,'')}">${exercisesHtml || '<div style="color:#888;">Нет упражнений</div>'}</div>
                 <div class="plan-exercise-add">
-                    <select id="plan-select-${day.replace(/\s/g,'')}" style="flex:1;">
-                        <option value="">-- Добавить упражнение --</option>
-                        ${groupsHtml}
-                    </select>
+                    <select id="plan-select-${day.replace(/\s/g,'')}" style="flex:1;"><option value="">-- Добавить упражнение --</option>${groupsHtml}</select>
                     <button class="small-btn add-to-plan-btn" data-day="${day}" style="background:#10b981;">+ Добавить</button>
                 </div>
             </div>`;
         }).join('');
         
-        // Обработчики добавления упражнений
         document.querySelectorAll('.add-to-plan-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 const day = btn.dataset.day;
@@ -414,7 +409,6 @@
             });
         });
         
-        // Обработчики удаления упражнений
         document.querySelectorAll('.remove-plan-ex').forEach(btn => {
             btn.addEventListener('click', () => {
                 const day = btn.dataset.day;
@@ -427,6 +421,11 @@
         });
         
         planEditor.classList.remove('hidden');
+    }
+    
+    function closePlanEditor() {
+        planEditor.classList.add('hidden');
+        isPlanEditorOpen = false;
     }
     
     // ==================== ОТРИСОВКА ====================
@@ -520,43 +519,62 @@
         updateMuscleGroupsSelect(); renderPlanUI(); renderBodyMeasuresUI(); updateChart();
     }
     
-    // ==================== АВТОРИЗАЦИЯ ====================
+    // ==================== АВТОРИЗАЦИЯ С "ЗАПОМНИТЬ МЕНЯ" ====================
     async function onLoginSuccess(username) {
-        currentUsername = username;
+        currentUser = username;
         currentUserSpan.innerText = username;
-        const userRef = ref(db, `users/${username}`);
-        const snapshot = await get(userRef);
-        if(snapshot.exists()) { currentUserData = snapshot.val(); }
-        setupRealtimeSync(username);
-        authPage.classList.add('hidden'); appPage.classList.remove('hidden');
+        await loadFromCloud(username);
+        authPage.classList.add('hidden');
+        appPage.classList.remove('hidden');
         workoutDate.value = formatDate(); measureDate.value = formatDate(); setsContainer.innerHTML = ''; addSetRow();
-        refreshAllUI();
         
         workoutMuscleGroup.onchange = () => { if(workoutMuscleGroup.value) { updateExerciseSelectByMuscle(workoutMuscleGroup.value); } };
         workoutExerciseSelect.onchange = () => { const ex = workoutExerciseSelect.value; if(ex) { const last = getLastWeightAndReps(ex); if(last.weight>0 && setsContainer.children[0]) { setsContainer.children[0].querySelector('.set-weight').value = last.weight; setsContainer.children[0].querySelector('.set-reps').value = last.reps; } } };
+        
+        // Если стоит галочка "Запомнить меня" — сохраняем логин в localStorage
+        if (rememberMeCheckbox.checked) {
+            localStorage.setItem('fitness_remembered', username);
+        } else {
+            localStorage.removeItem('fitness_remembered');
+        }
     }
     
     function logoutUser() {
-        if(unsubscribeRealtime) unsubscribeRealtime();
-        currentUsername = null; currentUserData = null;
+        if (unsubscribe) unsubscribe();
+        currentUser = null; currentUserData = null;
         authPage.classList.remove('hidden'); appPage.classList.add('hidden');
-        if(statsChart) { statsChart.destroy(); statsChart = null; }
+        if (statsChart) { statsChart.destroy(); statsChart = null; }
+        // Не удаляем localStorage — пользователь сам решит, запоминать или нет
+    }
+    
+    // Проверка сохранённого логина
+    function checkRemembered() {
+        const remembered = localStorage.getItem('fitness_remembered');
+        if (remembered) {
+            loginUsernameInput.value = remembered;
+            rememberMeCheckbox.checked = true;
+            // Можно автоматически попробовать войти, но пароль не сохраняем, поэтому просто подставляем логин
+        }
     }
     
     // ==================== СОБЫТИЯ ====================
     doLoginBtn.onclick = async () => {
-        const res = await loginUser(document.getElementById('loginUsername').value.trim(), document.getElementById('loginPassword').value);
-        if(res.success) onLoginSuccess(document.getElementById('loginUsername').value.trim());
+        const username = loginUsernameInput.value.trim();
+        const password = loginPasswordInput.value;
+        const res = await loginUser(username, password);
+        if(res.success) onLoginSuccess(username);
         else authError.innerText = res.error;
     };
     doRegisterBtn.onclick = async () => {
-        const res = await registerUser(document.getElementById('regUsername').value.trim(), document.getElementById('regPassword').value);
-        if(res.success) { regError.innerText = '✅ Аккаунт создан! Войдите.'; loginTabBtn.click(); document.getElementById('loginUsername').value = document.getElementById('regUsername').value; }
+        const username = document.getElementById('regUsername').value.trim();
+        const password = document.getElementById('regPassword').value;
+        const res = await registerUser(username, password);
+        if(res.success) { regError.innerText = '✅ Аккаунт создан! Войдите.'; loginTabBtn.click(); loginUsernameInput.value = username; loginPasswordInput.value = ''; }
         else regError.innerText = res.error;
     };
     logoutBtn.onclick = logoutUser;
-    loginTabBtn.onclick = () => { loginForm.classList.remove('hidden'); registerForm.classList.add('hidden'); loginTabBtn.classList.add('active'); registerTabBtn.classList.remove('active'); };
-    registerTabBtn.onclick = () => { registerForm.classList.remove('hidden'); loginForm.classList.add('hidden'); registerTabBtn.classList.add('active'); loginTabBtn.classList.remove('active'); };
+    loginTabBtn.onclick = () => { loginForm.classList.remove('hidden'); registerForm.classList.add('hidden'); loginTabBtn.classList.add('active'); registerTabBtn.classList.remove('active'); authError.innerText = ''; regError.innerText = ''; checkRemembered(); };
+    registerTabBtn.onclick = () => { registerForm.classList.remove('hidden'); loginForm.classList.add('hidden'); registerTabBtn.classList.add('active'); loginTabBtn.classList.remove('active'); authError.innerText = ''; regError.innerText = ''; };
     tabs.forEach(btn => btn.onclick = () => { for(let t in tabContents) document.getElementById(tabContents[t]).classList.add('hidden'); document.getElementById(tabContents[btn.dataset.tab]).classList.remove('hidden'); tabs.forEach(b=>b.classList.remove('active')); btn.classList.add('active'); });
     showWorkoutFormBtn.onclick = () => { resetWorkoutForm(); workoutForm.classList.remove('hidden'); };
     addSetBtn.onclick = () => addSetRow();
@@ -565,15 +583,19 @@
     periodBtns.forEach(b => b.onclick = () => { periodBtns.forEach(bb=>bb.classList.remove('active')); b.classList.add('active'); currentPeriod = b.dataset.period; updateChart(); });
     statsExerciseSelect.onchange = updateChart;
     editPlanBtn.onclick = openPlanEditor;
-    savePlanBtn.onclick = () => planEditor.classList.add('hidden');
-    cancelPlanBtn.onclick = () => planEditor.classList.add('hidden');
+    savePlanBtn.onclick = () => { closePlanEditor(); };
+    cancelPlanBtn.onclick = closePlanEditor;
     addMeasureBtn.onclick = () => measureForm.classList.remove('hidden');
     saveMeasureBtn.onclick = async () => { const date = measureDate.value; if(!date) return; await addBodyMeasure({ date, chest: parseFloat(measureChest.value)||0, bicepsL: parseFloat(measureBicepsL.value)||0, bicepsR: parseFloat(measureBicepsR.value)||0, waist: parseFloat(measureWaist.value)||0, thighL: parseFloat(measureThighL.value)||0, thighR: parseFloat(measureThighR.value)||0 }); measureForm.classList.add('hidden'); measureChest.value=measureBicepsL.value=measureBicepsR.value=measureWaist.value=measureThighL.value=measureThighR.value=''; };
     cancelMeasureBtn.onclick = () => measureForm.classList.add('hidden');
     addGroupBtn.onclick = async () => { const name = newGroupName.value.trim(); if(name) { await addMuscleGroup(name); newGroupName.value = ''; } };
     workoutPhoto.onchange = (e) => { if(e.target.files.length) { const reader = new FileReader(); reader.onload = (ev) => photoPreview.innerHTML = `<img src="${ev.target.result}" style="max-width:100px;"><button type="button" id="clearPhoto" style="background:#ef4444; padding:4px 8px; margin-left:8px;">✖</button>`; reader.readAsDataURL(e.target.files[0]); setTimeout(()=>{ const clearBtn=document.getElementById('clearPhoto'); if(clearBtn) clearBtn.onclick=()=>{ workoutPhoto.value=''; photoPreview.innerHTML=''; }; },100); } else photoPreview.innerHTML=''; };
     
+    // Telegram Web App
     if(window.Telegram?.WebApp) { window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
+    
+    // ==================== СТАРТ ====================
+    checkRemembered();
     authPage.classList.remove('hidden'); appPage.classList.add('hidden');
 </script>
 </body>
