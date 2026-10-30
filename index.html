@@ -337,22 +337,6 @@
   body[data-design="lux"] .btn-primary{ color:#1a1506; }
   body[data-design="lux"] select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M6 9l6 6 6-6' fill='none' stroke='%239aa3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");}
 
-  /* ---------- NUTRITION / CALORIES ---------- */
-  .nutrition-summary{margin-bottom:6px;}
-  #foodPreview img{max-width:110px;border-radius:var(--radius-sm);display:block;margin-top:8px;border:1px solid var(--border);}
-  .ai-result{background:var(--accent-dim);border:1px solid var(--accent);border-radius:var(--radius-md);padding:12px 14px;font-size:.83rem;line-height:1.5;margin-top:10px;color:var(--text);}
-  .ai-result b{color:var(--accent);}
-  .ai-result.loading{color:var(--accent);}
-  .food-day-group{margin-bottom:14px;}
-  .food-day-head{font-family:'Oswald';font-size:.8rem;text-transform:uppercase;letter-spacing:.03em;color:var(--text-dim);margin-bottom:8px;}
-  .food-day-head b{color:var(--accent-2);}
-  .food-entry{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-md);padding:12px 13px;margin-bottom:8px;display:flex;align-items:center;gap:12px;}
-  .food-entry-main{flex:1;min-width:0;}
-  .food-entry-name{font-weight:600;font-size:.9rem;}
-  .food-entry-macros{color:var(--text-dim);font-size:.78rem;margin-top:3px;}
-  .food-entry-photo{width:54px;height:54px;border-radius:12px;overflow:hidden;border:1px solid var(--border);flex-shrink:0;}
-  .food-entry-photo img{width:100%;height:100%;object-fit:cover;display:block;}
-
   /* ---------- SPLASH SCREEN ---------- */
   .splash-screen{position:fixed;inset:0;z-index:500;background:radial-gradient(circle at 50% 20%, #24262b, var(--bg) 70%);display:flex;flex-direction:column;justify-content:space-between;align-items:center;padding:60px 24px 30px;text-align:center;}
   .splash-top{display:flex;flex-direction:column;align-items:center;margin-top:16vh;}
@@ -365,6 +349,42 @@
   .splash-banner strong{display:block;font-family:'Oswald';font-size:.82rem;text-transform:uppercase;letter-spacing:.03em;}
   .splash-banner span{display:block;color:var(--accent-2);font-size:.78rem;margin-top:3px;}
   .splash-banner:active{background:var(--surface-2);}
+
+  /* ---------- КАЛОРИИ (добавлено) ---------- */
+  .cal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:16px;margin-bottom:16px;}
+  .cal-title{font-family:'Oswald';font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);margin-bottom:12px;}
+  .cal-line{display:flex;justify-content:space-between;font-size:.82rem;color:var(--text-dim);}
+  .cal-line b{font-family:'Oswald';color:var(--text);font-size:.88rem;}
+  .cal-bar{height:9px;border-radius:999px;background:var(--surface-3);overflow:hidden;margin:7px 0 15px;}
+  .cal-bar>i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .3s;}
+  .cal-bar>i.gold{background:var(--accent-2);}
+  .cal-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;}
+  .cal-4 b{display:block;font-family:'Oswald';font-size:1rem;color:var(--text);}
+  .cal-4 span{font-size:.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.03em;}
+  #tabCalories input[type=file]{width:100%;font-size:.76rem;color:var(--text-dim);}
+  .cal-preview img{max-width:112px;border-radius:var(--radius-sm);border:1px solid var(--border);margin-top:8px;display:block;}
+  .cal-chips{display:flex;gap:6px;flex-wrap:wrap;margin:11px 0;}
+  .cal-chips button{background:var(--surface-3);color:var(--text-dim);border:1px solid var(--border);border-radius:999px;padding:7px 12px;font-size:.73rem;font-family:'Oswald';letter-spacing:.03em;}
+  .cal-chips button:active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent);}
+  .cal-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
+  .cal-fields label{display:flex;flex-direction:column;gap:5px;font-size:.66rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);font-weight:600;}
+  .cal-result{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;font-size:.83rem;line-height:1.6;margin:10px 0;color:var(--text);}
+  .cal-result .dish{font-family:'Oswald';font-size:.95rem;text-transform:uppercase;letter-spacing:.02em;}
+  .cal-result .items{font-size:.76rem;color:var(--text-dim);margin-top:7px;line-height:1.6;}
+  .cal-result .verdict{font-size:.76rem;color:var(--text-dim);margin-top:8px;border-top:1px dashed var(--border);padding-top:8px;}
+  .cal-hint{font-size:.7rem;color:var(--text-dim);line-height:1.55;margin-top:10px;}
+  .cal-log{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:10px 12px;margin-bottom:8px;}
+  .cal-log img{width:44px;height:44px;object-fit:cover;border-radius:9px;border:1px solid var(--border);flex-shrink:0;}
+  .cal-log .n{flex:1;min-width:0;}
+  .cal-log .n b{display:block;font-size:.84rem;font-family:'Oswald';text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+  .cal-log .n span{font-size:.69rem;color:var(--text-dim);}
+  .cal-days{display:flex;align-items:flex-end;gap:6px;height:86px;margin-top:8px;}
+  .cal-day{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:4px;}
+  .cal-day i{display:block;width:100%;border-radius:5px 5px 0 0;background:var(--accent);min-height:3px;}
+  .cal-day.today i{background:var(--accent-2);}
+  .cal-day span{font-size:.55rem;color:var(--text-dim);}
+  .cal-key{display:flex;gap:8px;margin-top:8px;}
+  .cal-key input{flex:1;font-size:.8rem;padding:10px 12px;}
 </style>
 </head>
 <body>
@@ -444,7 +464,7 @@
       <button data-tab="body"><span class="icon" data-icon="ruler"></span>Замеры</button>
       <button data-tab="muscles"><span class="icon" data-icon="muscle"></span>Мышцы</button>
       <button data-tab="favorites"><span class="icon" data-icon="bookmark"></span>Избранное</button>
-      <button data-tab="nutrition"><span class="icon" data-icon="food"></span>Калории</button>
+      <button data-tab="calories"><span class="icon" data-icon="food"></span>Калории</button>
     </div>
 
     <!-- Тренировки -->
@@ -453,9 +473,7 @@
       <button id="showWorkoutFormBtn" class="btn-add btn-block" style="margin-bottom:16px;"><span class="icon" data-icon="plus"></span>Записать тренировку</button>
       <div id="workoutForm" class="form-card hidden">
         <h3>Новая тренировка</h3>
-        <div class="input-wrap"><label>Название тренировки</label><input type="text" id="workoutName" placeholder="Например: Тренировка ног" list="workoutNameList"></div>
-        <datalist id="workoutNameList"></datalist>
-        <button type="button" id="reuseWorkoutBtn" class="btn-soft hidden" style="align-self:flex-start;"><span class="icon" data-icon="copy"></span>Заполнить из прошлой тренировки</button>
+        <div class="input-wrap"><label>Название тренировки</label><input type="text" id="workoutName" placeholder="Например: Тренировка ног"></div>
         <div class="input-wrap"><label>Дата</label><input type="date" id="workoutDate"></div>
         <div id="exerciseBlocksContainer" style="display:flex;flex-direction:column;gap:14px;"></div>
         <div style="display:flex;gap:10px;flex-wrap:wrap;">
@@ -480,7 +498,6 @@
     <div id="tabStats" class="tab-content hidden">
       <div class="card">
         <h3><span class="icon" data-icon="chart"></span>Анализ прогресса</h3>
-        <div class="input-wrap"><input type="text" id="statsSearch" placeholder="Поиск упражнения…"></div>
         <div class="input-wrap"><select id="statsExerciseSelect"></select></div>
         <div class="period-buttons">
           <button data-period="week" class="period-stats-btn active">Неделя</button>
@@ -522,10 +539,6 @@
             <div class="input-wrap"><label>Бицепс, правая</label><input type="number" id="measureBicepsR" placeholder="см"></div>
             <div class="input-wrap"><label>Бедро, левая</label><input type="number" id="measureThighL" placeholder="см"></div>
             <div class="input-wrap"><label>Бедро, правая</label><input type="number" id="measureThighR" placeholder="см"></div>
-            <div class="input-wrap"><label>Живот</label><input type="number" id="measureBelly" placeholder="см"></div>
-            <div class="input-wrap"><label>Бёдра</label><input type="number" id="measureHips" placeholder="см"></div>
-            <div class="input-wrap"><label>Голень, левая</label><input type="number" id="measureCalfL" placeholder="см"></div>
-            <div class="input-wrap"><label>Голень, правая</label><input type="number" id="measureCalfR" placeholder="см"></div>
           </div>
           <div class="form-buttons">
             <button id="saveMeasureBtn" class="btn-primary">Сохранить</button>
@@ -556,38 +569,62 @@
       </div>
     </div>
 
-    <!-- Калории / Питание -->
-    <div id="tabNutrition" class="tab-content hidden">
-      <div class="card">
-        <h3><span class="icon" data-icon="food"></span>Калории и питание</h3>
-
-        <div id="nutritionDailySummary" class="streak-bar"></div>
-
-        <div class="form-card">
-          <h3>Добавить приём пищи</h3>
-          <div class="photo-row">
-            <label><span class="icon" data-icon="camera"></span>Фото еды</label>
-            <input type="file" id="foodPhoto" accept="image/*">
-            <div id="foodPreview"></div>
-          </div>
-          <div class="input-wrap"><label>Название блюда (по желанию)</label><input type="text" id="foodName" placeholder="Например: Курица с рисом"></div>
-          <button id="analyzeFoodBtn" class="btn-soft btn-block" type="button"><span class="icon" data-icon="food"></span>Распознать фото (ИИ)</button>
-          <div id="aiResult" class="hidden"></div>
-          <div class="measure-grid" style="margin-top:4px;">
-            <div class="input-wrap"><label>Калории, ккал</label><input type="number" id="foodCalories" placeholder="0"></div>
-            <div class="input-wrap"><label>Белки, г</label><input type="number" id="foodProtein" placeholder="0"></div>
-            <div class="input-wrap"><label>Жиры, г</label><input type="number" id="foodFat" placeholder="0"></div>
-            <div class="input-wrap"><label>Углеводы, г</label><input type="number" id="foodCarbs" placeholder="0"></div>
-            <div class="input-wrap"><label>Вес, г</label><input type="number" id="foodWeight" placeholder="0"></div>
-          </div>
-          <div class="input-wrap"><label>Дата</label><input type="date" id="foodDate"></div>
-          <div class="form-buttons">
-            <button id="saveFoodBtn" class="btn-primary">Сохранить</button>
-          </div>
-          <p id="foodError" class="error-msg"></p>
+    <!-- Калории -->
+    <div id="tabCalories" class="tab-content hidden">
+      <div class="cal-card">
+        <div class="cal-title">Сегодня</div>
+        <div class="cal-line"><span>Калории</span><b id="calKcalTxt">0 / 2200</b></div>
+        <div class="cal-bar"><i id="calKcalBar"></i></div>
+        <div class="cal-line"><span>Белок</span><b id="calProtTxt">0 / 150 г</b></div>
+        <div class="cal-bar"><i id="calProtBar" class="gold"></i></div>
+        <div class="cal-4">
+          <div><b id="calP">0</b><span>белки</span></div>
+          <div><b id="calF">0</b><span>жиры</span></div>
+          <div><b id="calC">0</b><span>углев.</span></div>
+          <div><b id="calWsum">0</b><span>грамм</span></div>
         </div>
+      </div>
 
-        <div id="foodLogList"></div>
+      <div class="cal-card">
+        <div class="cal-title">Добавить еду</div>
+        <input type="file" id="calPhotoInput" accept="image/*">
+        <div id="calPhotoPreview" class="cal-preview"></div>
+        <div class="input-wrap" style="margin-top:12px;">
+          <label>Фото и/или название</label>
+          <input type="text" id="calName" placeholder="напр. шакшука с хлебом или просто «шаурма»">
+        </div>
+        <div class="cal-chips" id="calChips"></div>
+        <button id="calAnalyzeBtn" class="btn-primary btn-block" type="button">🧠 Определить еду</button>
+        <div id="calResult" class="cal-result" style="display:none;"></div>
+        <div class="cal-fields">
+          <label>Вес, г<input type="number" id="calWin" placeholder="0"></label>
+          <label>Ккал<input type="number" id="calKin" placeholder="0"></label>
+          <label>Белки<input type="number" id="calPin" placeholder="0"></label>
+          <label>Жиры<input type="number" id="calFin" placeholder="0"></label>
+          <label>Углеводы<input type="number" id="calCin" placeholder="0"></label>
+        </div>
+        <button id="calSaveBtn" class="btn-add btn-block" type="button">Сохранить в дневник</button>
+        <p id="calErr" class="error-msg"></p>
+        <p class="cal-hint">📏 ИИ оценивает вес по тарелке и приборам — всегда примерно. Кнопки веса пересчитывают БЖУ.</p>
+      </div>
+
+      <div class="cal-card">
+        <div class="cal-title">Дневные цели</div>
+        <div class="cal-key">
+          <input type="number" id="calGoalKcal" placeholder="ккал / день">
+          <input type="number" id="calGoalProt" placeholder="белок / день">
+          <button id="calGoalSave" class="btn-soft" type="button">OK</button>
+        </div>
+      </div>
+
+      <div class="cal-card">
+        <div class="cal-title">Записи за сегодня</div>
+        <div id="calLogList"></div>
+      </div>
+
+      <div class="cal-card">
+        <div class="cal-title">Калории за 7 дней</div>
+        <div class="cal-days" id="calDays"></div>
       </div>
     </div>
   </div>
@@ -758,7 +795,7 @@
 <script type="module">
     // ==================== 🔧 ВСТАВЬТЕ ВАШ ПРАВИЛЬНЫЙ КОНФИГ ====================
     const firebaseConfig = {
-        apiKey: "AQ.Ab8RN6JwniJmvN8Y0Vj1F_Ma8F7VOOZehNtPBqKFYxP-CKVMQQ",
+        apiKey: "AIzaSyDROA4m2O6i66mtWESRRWfrYeWdOtLdlxs",
         authDomain: "workaut-f3637.firebaseapp.com",
         databaseURL: "https://workaut-f3637-default-rtdb.firebaseio.com",
         projectId: "workaut-f3637",
@@ -768,18 +805,12 @@
     };
     // ========================================================================
 
-    // ==================== 🤖 ИИ-РАСПОЗНАВАНИЕ ЕДЫ (НЕОБЯЗАТЕЛЬНО) ====================
-    // Вставьте сюда ваш бесплатный ключ Google Gemini (https://aistudio.google.com/apikey),
-    // чтобы кнопка «Распознать фото» определяла калории и БЖУ по фотографии еды.
-    // Без ключа раздел «Калории» всё равно работает: цифры можно вносить вручную.
-    const nutritionAI = {
-        apiKey: "AQ.Ab8RN6JwniJmvN8Y0Vj1F_Ma8F7VOOZehNtPBqKFYxP-CKVMQQ",   // ← ваш Gemini API key (ВАШ_КЛЮЧ)
-        model: "gemini-1.5-flash"
-    };
-    // ========================================================================
+    // ▼▼▼ КЛЮЧ GEMINI ДЛЯ РАЗДЕЛА КАЛОРИЙ (необязательно — без него ИИ тоже работает) ▼▼▼
+    const GEMINI_API_KEY = "";
+    // ▲▲▲ КЛЮЧ GEMINI ▲▲▲
 
     import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-    import { getDatabase, ref, get, set, update, onValue, push } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
+    import { getDatabase, ref, get, set, update, onValue, push, remove } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
 
     // ==================== ИКОНКИ ====================
     const ICONS = {
@@ -806,7 +837,7 @@
         send:'<svg viewBox="0 0 24 24" fill="none"><path stroke-linecap="round" stroke-linejoin="round" d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5" stroke="currentColor" stroke-width="1.5"/></svg>',
         attach:'<svg viewBox="0 0 24 24" fill="none"><path stroke-linecap="round" stroke-linejoin="round" d="m18.375 12.739-7.693 7.693a4.5 4.5 0 0 1-6.364-6.364l10.94-10.94A3 3 0 1 1 19.5 7.372L8.552 18.32m.009-.01-.01.01m5.699-9.941-7.81 7.81a1.5 1.5 0 0 0 2.112 2.13" stroke="currentColor" stroke-width="1.5"/></svg>',
         copy:'<svg viewBox="0 0 24 24" fill="none"><rect x="9" y="9" width="11" height="11" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M5 15V6a2 2 0 0 1 2-2h9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>',
-        food:'<svg viewBox="0 0 24 24" fill="none"><path d="M4 3v7a3 3 0 0 0 3 3h2a3 3 0 0 0 3-3V3M7 13v8M4 21h6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/><path d="M17 3c-1.5 2.5-1.5 5 0 7.5s1.5 5 0 7.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
+        food:'<svg viewBox="0 0 24 24" fill="none"><path d="M6 3v8a3 3 0 0 0 6 0V3M9 11v10" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M17 3c-1.5 2-2 4-2 6 0 1.6.8 2.6 2 3v9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>'
     };
     function paintIcons(root=document){ root.querySelectorAll('[data-icon]').forEach(el=>{ const n=el.dataset.icon; if(ICONS[n] && !el.dataset.painted){ el.innerHTML=ICONS[n]; el.dataset.painted='1'; } }); }
 
@@ -887,19 +918,19 @@
     // User-entered content (exercise names, group names, messages) is never translated.
     const I18N = {
         ru: {
-            nav_exercises:'Тренировки', nav_stats:'Статистика', nav_plan:'План', nav_body:'Замеры', nav_muscles:'Мышцы', nav_favorites:'Избранное',
+            nav_exercises:'Тренировки', nav_stats:'Статистика', nav_plan:'План', nav_body:'Замеры', nav_muscles:'Мышцы', nav_favorites:'Избранное', nav_calories:'Калории',
             h_workouts:'Новая тренировка', h_stats:'Анализ прогресса', h_plan:'Расписание на неделю', h_body:'Измерения тела, см', h_muscles:'Группы мышц', h_favorites:'Избранные упражнения',
             btn_add_workout:'Записать тренировку', btn_save:'Сохранить', btn_cancel:'Отмена', btn_edit_plan:'Редактировать план', btn_add_measure:'Добавить замер', btn_add_group:'Добавить',
             empty_workouts:'Пока нет тренировок — добавьте первую!', empty_favorites:'Пока нет избранных упражнений', empty_measures:'Пока нет замеров тела'
         },
         uk: {
-            nav_exercises:'Тренування', nav_stats:'Статистика', nav_plan:'План', nav_body:'Заміри', nav_muscles:'М’язи', nav_favorites:'Обране',
+            nav_exercises:'Тренування', nav_stats:'Статистика', nav_plan:'План', nav_body:'Заміри', nav_muscles:'М’язи', nav_favorites:'Обране', nav_calories:'Калорії',
             h_workouts:'Нове тренування', h_stats:'Аналіз прогресу', h_plan:'Розклад на тиждень', h_body:'Виміри тіла, см', h_muscles:'Групи м’язів', h_favorites:'Обрані вправи',
             btn_add_workout:'Записати тренування', btn_save:'Зберегти', btn_cancel:'Скасувати', btn_edit_plan:'Редагувати план', btn_add_measure:'Додати замір', btn_add_group:'Додати',
             empty_workouts:'Поки немає тренувань — додайте перше!', empty_favorites:'Поки немає обраних вправ', empty_measures:'Поки немає вимірів тіла'
         },
         en: {
-            nav_exercises:'Workouts', nav_stats:'Stats', nav_plan:'Plan', nav_body:'Measures', nav_muscles:'Muscles', nav_favorites:'Favorites',
+            nav_exercises:'Workouts', nav_stats:'Stats', nav_plan:'Plan', nav_body:'Measures', nav_muscles:'Muscles', nav_favorites:'Favorites', nav_calories:'Calories',
             h_workouts:'New workout', h_stats:'Progress analysis', h_plan:'Weekly schedule', h_body:'Body measurements, cm', h_muscles:'Muscle groups', h_favorites:'Favorite exercises',
             btn_add_workout:'Log a workout', btn_save:'Save', btn_cancel:'Cancel', btn_edit_plan:'Edit plan', btn_add_measure:'Add measurement', btn_add_group:'Add',
             empty_workouts:'No workouts yet — add your first!', empty_favorites:'No favorite exercises yet', empty_measures:'No body measurements yet'
@@ -949,8 +980,6 @@
     const cancelWorkoutBtn = document.getElementById('cancelWorkoutBtn');
     const workoutName = document.getElementById('workoutName');
     const workoutDate = document.getElementById('workoutDate');
-    const reuseWorkoutBtn = document.getElementById('reuseWorkoutBtn');
-    const workoutNameList = document.getElementById('workoutNameList');
     const exerciseBlocksContainer = document.getElementById('exerciseBlocksContainer');
     const addExerciseBlockBtn = document.getElementById('addExerciseBlockBtn');
     const pasteExercisesBtn = document.getElementById('pasteExercisesBtn');
@@ -960,26 +989,10 @@
     const workoutPhoto = document.getElementById('workoutPhoto');
     const photoPreview = document.getElementById('photoPreview');
     const workoutError = document.getElementById('workoutError');
-    const statsSearch = document.getElementById('statsSearch');
     const statsExerciseSelect = document.getElementById('statsExerciseSelect');
     const periodBtns = document.querySelectorAll('.period-stats-btn');
     const statsChartCanvas = document.getElementById('statsChart');
     const statsNumbers = document.getElementById('statsNumbers');
-    const nutritionDailySummary = document.getElementById('nutritionDailySummary');
-    const foodPhoto = document.getElementById('foodPhoto');
-    const foodPreview = document.getElementById('foodPreview');
-    const foodNameInput = document.getElementById('foodName');
-    const analyzeFoodBtn = document.getElementById('analyzeFoodBtn');
-    const aiResult = document.getElementById('aiResult');
-    const foodCalories = document.getElementById('foodCalories');
-    const foodProtein = document.getElementById('foodProtein');
-    const foodFat = document.getElementById('foodFat');
-    const foodCarbs = document.getElementById('foodCarbs');
-    const foodWeight = document.getElementById('foodWeight');
-    const foodDate = document.getElementById('foodDate');
-    const saveFoodBtn = document.getElementById('saveFoodBtn');
-    const foodError = document.getElementById('foodError');
-    const foodLogList = document.getElementById('foodLogList');
     const musclesContainer = document.getElementById('musclesContainer');
     const addGroupBtn = document.getElementById('addGroupBtn');
     const newGroupName = document.getElementById('newGroupName');
@@ -1002,10 +1015,6 @@
     const measureWaist = document.getElementById('measureWaist');
     const measureThighL = document.getElementById('measureThighL');
     const measureThighR = document.getElementById('measureThighR');
-    const measureBelly = document.getElementById('measureBelly');
-    const measureHips = document.getElementById('measureHips');
-    const measureCalfL = document.getElementById('measureCalfL');
-    const measureCalfR = document.getElementById('measureCalfR');
     const rememberMeCheckbox = document.getElementById('rememberMe');
     const loginUsernameInput = document.getElementById('loginUsername');
     const loginPasswordInput = document.getElementById('loginPassword');
@@ -1061,7 +1070,7 @@
 
 
     const tabs = document.querySelectorAll('[data-tab]');
-    const tabContents = { exercises:'tabExercises', stats:'tabStats', plan:'tabPlan', body:'tabBody', muscles:'tabMuscles', favorites:'tabFavorites', nutrition:'tabNutrition' };
+    const tabContents = { exercises:'tabExercises', stats:'tabStats', plan:'tabPlan', body:'tabBody', muscles:'tabMuscles', favorites:'tabFavorites', calories:'tabCalories' };
 
     // ==================== UI HELPERS ====================
     function escapeHtml(s){ if(!s) return ''; return String(s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m])); }
@@ -1122,7 +1131,6 @@
                 muscleGroups: currentUserData.muscleGroups || [],
                 favorites: currentUserData.favorites || [],
                 exerciseImages: currentUserData.exerciseImages || {},
-                foodLog: currentUserData.foodLog || [],
                 password: currentUserData.password,
                 lastUpdated: Date.now()
             });
@@ -1163,7 +1171,6 @@
         if(!Array.isArray(data.favorites)) data.favorites = [];
         if(!data.exercisesByMuscle || typeof data.exercisesByMuscle !== 'object') data.exercisesByMuscle = {};
         if(!data.exerciseImages || typeof data.exerciseImages !== 'object') data.exerciseImages = {};
-        if(!Array.isArray(data.foodLog)) data.foodLog = [];
         return data;
     }
 
@@ -1187,7 +1194,6 @@
             workouts: [], plan: emptyPlan, bodyMeasures: [],
             exercisesByMuscle, muscleGroups: defaultGroups,
             favorites: ['Жим лёжа','Приседания'], exerciseImages: {},
-            foodLog: [],
             created: Date.now()
         };
     }
@@ -1224,7 +1230,7 @@
     async function registerUser(username, password){
         if(!isConfigured) return { success:false, error:'Firebase не настроен в коде приложения' };
         if(username.length < 1) return { success:false, error:'Введите логин' };
-        if(/[.#$\[\]\/\x00-\x1F\x7F]/.test(username)) return { success:false, error:'Логин не должен содержать символы . # $ [ ] /' };
+        if(/[.#$\[\]/\x00-\x1F\x7F]/.test(username)) return { success:false, error:'Логин не должен содержать символы . # $ [ ] /' };
         if(new TextEncoder().encode(username).length > 700) return { success:false, error:'Логин слишком длинный' };
         if(password.length < 1) return { success:false, error:'Введите пароль' };
         const snapshot = await get(ref(db, `users/${username}`));
@@ -1292,9 +1298,6 @@
     function getBodyMeasures(){ return currentUserData?.bodyMeasures || []; }
     async function addBodyMeasure(m){ if(!Array.isArray(currentUserData.bodyMeasures)) currentUserData.bodyMeasures = []; currentUserData.bodyMeasures.push(m); await saveToCloud(); refreshAllUI(); }
     async function deleteBodyMeasure(date){ currentUserData.bodyMeasures = currentUserData.bodyMeasures.filter(m=>m.date!==date); await saveToCloud(); refreshAllUI(); }
-    function getFoodLog(){ return currentUserData?.foodLog || []; }
-    async function addFoodEntry(entry){ if(!Array.isArray(currentUserData.foodLog)) currentUserData.foodLog=[]; currentUserData.foodLog.push(entry); await saveToCloud(); refreshAllUI(); }
-    async function deleteFoodEntry(id){ currentUserData.foodLog = currentUserData.foodLog.filter(f=>f.id!==id); await saveToCloud(); refreshAllUI(); }
 
     // Finds every logged occurrence of a given exercise name across all workout sessions.
     function findExerciseEntries(ex){
@@ -1573,87 +1576,10 @@
     }
 
     function refreshStatsSelect(){
-        const query = (statsSearch.value || '').trim().toLowerCase();
-        const groups = getExercisesByMuscle();
-        const groupNames = Object.keys(groups).filter(g => {
-            if(!query) return true;
-            return (groups[g]||[]).some(ex => ex.toLowerCase().includes(query)) || g.toLowerCase().includes(query);
-        });
+        const all = getAllExerciseNames();
         const prev = statsExerciseSelect.value;
-        statsExerciseSelect.innerHTML = '<option value="">— выберите упражнение —</option>' + groupNames.map(g=>{
-            const exs = (groups[g]||[]).filter(ex=>!query || ex.toLowerCase().includes(query));
-            if(!exs.length) return '';
-            return `<optgroup label="${escapeHtml(trName(g))}">${exs.map(ex=>`<option value="${escapeHtml(ex)}">${escapeHtml(trName(ex))}</option>`).join('')}</optgroup>`;
-        }).join('');
-        statsExerciseSelect.value = prev;
-    }
-    statsSearch.addEventListener('input', refreshStatsSelect);
-
-    function renderNutritionUI(){
-        const log = getFoodLog();
-        // Daily summary
-        const today = formatDate();
-        const todays = log.filter(f=>f.date===today);
-        const kcal = todays.reduce((s,f)=>s+(f.calories||0),0);
-        const prot = todays.reduce((s,f)=>s+(f.protein||0),0);
-        const fat = todays.reduce((s,f)=>s+(f.fat||0),0);
-        const carbs = todays.reduce((s,f)=>s+(f.carbs||0),0);
-        nutritionDailySummary.innerHTML = `
-            <div class="streak-item"><span class="streak-value">${Math.round(kcal)}</span><span class="streak-label">ккал сегодня</span></div>
-            <div class="streak-item"><span class="streak-value">${Math.round(prot)} г</span><span class="streak-label">белки</span></div>
-            <div class="streak-item"><span class="streak-value">${Math.round(fat)} г</span><span class="streak-label">жиры</span></div>
-            <div class="streak-item"><span class="streak-value">${Math.round(carbs)} г</span><span class="streak-label">углеводы</span></div>
-        `;
-
-        if(!log.length){ foodLogList.innerHTML = '<div class="empty-state">Пока нет записей о питании — добавьте первый приём пищи!</div>'; return; }
-
-        // group by date (newest first)
-        const byDate = {};
-        log.forEach(f => { (byDate[f.date] = byDate[f.date] || []).push(f); });
-        const dates = Object.keys(byDate).sort((a,b)=>b.localeCompare(a));
-        foodLogList.innerHTML = dates.map(date=>{
-            const items = byDate[date].slice().sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-            const dayKcal = items.reduce((s,f)=>s+(f.calories||0),0);
-            const itemsHtml = items.map(f=>`
-                <div class="food-entry">
-                    <div class="food-entry-main">
-                        <div class="food-entry-name">${escapeHtml(f.name || 'Приём пищи')}</div>
-                        <div class="food-entry-macros">${Math.round(f.calories||0)} ккал · Б ${Math.round(f.protein||0)} · Ж ${Math.round(f.fat||0)} · У ${Math.round(f.carbs||0)} · ${Math.round(f.weight||0)} г</div>
-                    </div>
-                    ${f.photo ? `<div class="food-entry-photo"><img src="${f.photo}"></div>` : ''}
-                    <button class="btn-icon danger delete-food" data-id="${f.id}"><span class="icon" data-icon="trash"></span></button>
-                </div>`).join('');
-            return `<div class="food-day-group"><div class="food-day-head">${date} · <b>${Math.round(dayKcal)} ккал</b></div>${itemsHtml}</div>`;
-        }).join('');
-        paintIcons(foodLogList);
-        foodLogList.querySelectorAll('.delete-food').forEach(btn=>btn.addEventListener('click', async ()=>{ if(await showConfirm('Удалить этот приём пищи?')) deleteFoodEntry(btn.dataset.id); }));
-    }
-
-    async function analyzeFoodWithAI(base64Url){
-        if(!nutritionAI.apiKey || nutritionAI.apiKey.trim()===''){
-            throw new Error('Не указан API-ключ ИИ. Впишите ваш Gemini API key в объект nutritionAI в начале скрипта.');
-        }
-        const mime = base64Url.split(';')[0].split(':')[1] || 'image/jpeg';
-        const data = base64Url.split(',')[1];
-        const prompt = 'На фото изображена еда. Определи ПРИМЕРНО (оценочно) пищевую ценность: калории (ккал), белки (г), жиры (г), углеводы (г) и примерный вес порции (г). Ответ дай СТРОГО в JSON без пояснений в формате: {"calories":0,"protein":0,"fat":0,"carbs":0,"weight":0}, где все значения — числа.';
-        const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${nutritionAI.model}:generateContent?key=${encodeURIComponent(nutritionAI.apiKey)}`, {
-            method:'POST',
-            headers:{ 'Content-Type':'application/json' },
-            body: JSON.stringify({ contents:[{ parts:[ { text: prompt }, { inline_data:{ mime_type:mime, data } } ] }] })
-        });
-        if(!res.ok){ const err = await res.text(); throw new Error('Ошибка ИИ: ' + res.status + ' ' + (err||'').slice(0,120)); }
-        const json = await res.json();
-        const text = json?.candidates?.[0]?.content?.parts?.map(p=>p.text||'').join('') || '';
-        const match = text.match(/\{[\s\S]*\}/);
-        if(!match) throw new Error('Не удалось распознать состав пищи на фото');
-        const parsed = JSON.parse(match[0]);
-        return {
-            calories: Math.round(parsed.calories||0),
-            protein: Math.round(parsed.protein||0),
-            fat: Math.round(parsed.fat||0),
-            carbs: Math.round(parsed.carbs||0),
-            weight: Math.round(parsed.weight||0)
-        };
+        statsExerciseSelect.innerHTML = '<option value="">— выберите упражнение —</option>' + all.map(ex=>`<option value="${escapeHtml(ex)}">${escapeHtml(trName(ex))}</option>`).join('');
+        if(all.includes(prev)) statsExerciseSelect.value = prev;
     }
 
     function renderBodyMeasuresUI(){
@@ -1668,9 +1594,6 @@
                         <span class="set-chip">Талия <b>${m.waist}</b></span>
                         <span class="set-chip">Бицепс Л/П <b>${m.bicepsL}/${m.bicepsR}</b></span>
                         <span class="set-chip">Бедро Л/П <b>${m.thighL}/${m.thighR}</b></span>
-                        ${m.belly ? `<span class="set-chip">Живот <b>${m.belly}</b></span>` : ''}
-                        ${m.hips ? `<span class="set-chip">Бёдра <b>${m.hips}</b></span>` : ''}
-                        ${(m.calfL || m.calfR) ? `<span class="set-chip">Голень Л/П <b>${m.calfL||'—'}/${m.calfR||'—'}</b></span>` : ''}
                     </div>
                 </div>
                 <button class="btn-icon danger delete-measure" data-date="${m.date}"><span class="icon" data-icon="trash"></span></button>
@@ -1828,7 +1751,6 @@
         workoutDate.value = formatDate();
         createExerciseBlock();
         updatePasteButtonState();
-        reuseWorkoutBtn.classList.add('hidden');
     }
 
     async function saveWorkout(){
@@ -1913,41 +1835,12 @@
         showToast('Упражнения вставлены');
     });
 
-    // Быстрое заполнение тренировки по названию (повтор прошлой тренировки с тем же именем)
-    function updateReuseWorkoutUi(){
-        const name = workoutName.value.trim();
-        workoutNameList.innerHTML = getAllWorkoutNames().map(n=>`<option value="${escapeHtml(n)}"></option>`).join('');
-        if(!name){
-            reuseWorkoutBtn.classList.add('hidden');
-            return;
-        }
-        const prev = getWorkouts().filter(w => (w.name||'').toLowerCase() === name.toLowerCase());
-        const hasBlocks = Array.from(exerciseBlocksContainer.querySelectorAll('.exercise-block')).some(b => b.dataset.exercise);
-        if(prev.length && !hasBlocks && currentEditIndex === null){
-            reuseWorkoutBtn.classList.remove('hidden');
-        } else {
-            reuseWorkoutBtn.classList.add('hidden');
-        }
-    }
-    workoutName.addEventListener('input', updateReuseWorkoutUi);
-    workoutName.addEventListener('change', updateReuseWorkoutUi);
-    reuseWorkoutBtn.addEventListener('click', () => {
-        const name = workoutName.value.trim();
-        const prev = getWorkouts().filter(w => (w.name||'').toLowerCase() === name.toLowerCase()).sort((a,b)=>new Date(b.date)-new Date(a.date));
-        if(!prev.length) return;
-        const src = prev[0];
-        exerciseBlocksContainer.innerHTML = '';
-        (src.exercises || []).forEach(e => createExerciseBlock({ muscleGroup: e.muscleGroup, exercise: e.exercise, sets: e.sets }));
-        if(!exerciseBlocksContainer.children.length) createExerciseBlock();
-        showToast('Упражнения подставлены из прошлой тренировки');
-        reuseWorkoutBtn.classList.add('hidden');
-    });
-
     function refreshAllUI(){
         if(!currentUserData) return;
         applyStaticTranslations();
         renderWorkoutsList(); renderStreakBar(); renderMuscleGroups(); renderFavoritesList(); refreshStatsSelect();
-        renderPlanUI(); renderBodyMeasuresUI(); renderNutritionUI(); updateChart();
+        renderPlanUI(); renderBodyMeasuresUI(); updateChart();
+        renderNutrition();
     }
 
     // ==================== АВТОРИЗАЦИЯ ====================
@@ -1964,7 +1857,6 @@
             appPage.classList.remove('hidden');
             workoutDate.value = formatDate();
             measureDate.value = formatDate();
-            foodDate.value = formatDate();
             exerciseBlocksContainer.innerHTML = '';
             createExerciseBlock();
 
@@ -2062,11 +1954,12 @@
     registerTabBtn.onclick = () => { registerForm.classList.remove('hidden'); loginForm.classList.add('hidden'); registerTabBtn.classList.add('active'); loginTabBtn.classList.remove('active'); authError.innerText=''; regError.innerText=''; };
 
     tabs.forEach(btn => btn.onclick = () => {
-        for(const t in tabContents) document.getElementById(tabContents[t]).classList.add('hidden');
+        for(const tn in tabContents) document.getElementById(tabContents[tn]).classList.add('hidden');
         document.getElementById(tabContents[btn.dataset.tab]).classList.remove('hidden');
         tabs.forEach(b=>b.classList.remove('active'));
         btn.classList.add('active');
         window.scrollTo({top:0, behavior:'smooth'});
+        if(btn.dataset.tab === 'calories') renderNutrition();
     });
 
     showWorkoutFormBtn.onclick = () => { resetWorkoutForm(); workoutForm.classList.remove('hidden'); workoutForm.scrollIntoView({behavior:'smooth'}); };
@@ -2107,88 +2000,15 @@
             bicepsR: parseFloat(measureBicepsR.value)||0,
             waist: parseFloat(measureWaist.value)||0,
             thighL: parseFloat(measureThighL.value)||0,
-            thighR: parseFloat(measureThighR.value)||0,
-            belly: parseFloat(measureBelly.value)||0,
-            hips: parseFloat(measureHips.value)||0,
-            calfL: parseFloat(measureCalfL.value)||0,
-            calfR: parseFloat(measureCalfR.value)||0
+            thighR: parseFloat(measureThighR.value)||0
         });
         measureForm.classList.add('hidden');
         measureChest.value = measureBicepsL.value = measureBicepsR.value = measureWaist.value = measureThighL.value = measureThighR.value = '';
-        measureBelly.value = measureHips.value = measureCalfL.value = measureCalfR.value = '';
         showToast('Замер сохранён');
     };
     cancelMeasureBtn.onclick = () => measureForm.classList.add('hidden');
 
     addGroupBtn.onclick = async () => { const name = newGroupName.value.trim(); if(name){ await addMuscleGroup(name); newGroupName.value=''; } };
-
-    // ==================== КАЛОРИИ / ПИТАНИЕ ====================
-    let pendingFoodPhotoUrl = null;
-
-    foodDate.value = formatDate();
-
-    foodPhoto.onchange = (e) => {
-        if(e.target.files && e.target.files.length){
-            const reader = new FileReader();
-            reader.onload = (ev) => {
-                pendingFoodPhotoUrl = ev.target.result;
-                foodPreview.innerHTML = `<img src="${ev.target.result}"><button type="button" id="clearFoodPhoto" class="btn-icon danger" style="margin-top:6px;"><span class="icon" data-icon="close"></span></button>`;
-                paintIcons(foodPreview);
-                document.getElementById('clearFoodPhoto').onclick = () => { foodPhoto.value=''; foodPreview.innerHTML=''; pendingFoodPhotoUrl=null; };
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        } else { foodPreview.innerHTML=''; pendingFoodPhotoUrl=null; }
-    };
-
-    analyzeFoodBtn.onclick = async () => {
-        foodError.innerText = '';
-        if(!pendingFoodPhotoUrl){ foodError.innerText = 'Сначала прикрепите фото еды'; return; }
-        if(!nutritionAI.apiKey || !nutritionAI.apiKey.trim()){
-            foodError.innerText = 'API-ключ ИИ не настроен. Впишите Gemini API key в nutritionAI в начале файла.';
-            return;
-        }
-        analyzeFoodBtn.disabled = true;
-        analyzeFoodBtn.innerHTML = '<span class="icon" data-icon="food"></span>Анализирую…';
-        aiResult.classList.remove('hidden');
-        aiResult.innerHTML = '<div class="empty-state">🤖 ИИ анализирует фото… (значения примерные)</div>';
-        try {
-            const r = await analyzeFoodWithAI(pendingFoodPhotoUrl);
-            foodCalories.value = r.calories;
-            foodProtein.value = r.protein;
-            foodFat.value = r.fat;
-            foodCarbs.value = r.carbs;
-            foodWeight.value = r.weight;
-            aiResult.innerHTML = `<div class="ai-result">✅ Распознано (примерно): <b>${r.calories} ккал</b>, белки ${r.protein} г, жиры ${r.fat} г, углеводы ${r.carbs} г, вес ~${r.weight} г. Проверьте и исправьте при необходимости.</div>`;
-        } catch(err){
-            console.error(err);
-            aiResult.innerHTML = `<div class="ai-result">⚠️ ${escapeHtml(err.message)}</div>`;
-        } finally {
-            analyzeFoodBtn.disabled = false;
-            analyzeFoodBtn.innerHTML = '<span class="icon" data-icon="food"></span>Распознать фото (ИИ)';
-        }
-    };
-
-    saveFoodBtn.onclick = () => {
-        foodError.innerText = '';
-        const calories = parseFloat(foodCalories.value);
-        if(isNaN(calories)){ foodError.innerText = 'Укажите калории'; return; }
-        const entry = {
-            id: 'f' + Date.now() + Math.random().toString(36).slice(2,7),
-            name: foodNameInput.value.trim(),
-            calories,
-            protein: parseFloat(foodProtein.value)||0,
-            fat: parseFloat(foodFat.value)||0,
-            carbs: parseFloat(foodCarbs.value)||0,
-            weight: parseFloat(foodWeight.value)||0,
-            photo: pendingFoodPhotoUrl || null,
-            date: foodDate.value || formatDate(),
-            createdAt: Date.now()
-        };
-        addFoodEntry(entry);
-        foodNameInput.value=''; foodCalories.value=''; foodProtein.value=''; foodFat.value=''; foodCarbs.value=''; foodWeight.value='';
-        foodPhoto.value=''; foodPreview.innerHTML=''; pendingFoodPhotoUrl=null; aiResult.classList.add('hidden'); foodDate.value = formatDate();
-        showToast('Приём пищи сохранён');
-    };
 
     workoutPhoto.onchange = (e) => {
         if(e.target.files.length){
@@ -2201,8 +2021,6 @@
             reader.readAsDataURL(e.target.files[0]);
         } else photoPreview.innerHTML = '';
     };
-
-    if(window.Telegram?.WebApp){ window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
 
     // ==================== НАСТРОЙКИ ====================
     let uiZoom = parseInt(localStorage.getItem('fitness_ui_zoom') || '100', 10);
@@ -2442,12 +2260,360 @@
         finally { supportSendBtn.disabled = false; }
     };
 
+    // ==================== КАЛОРИИ (ИИ по фото и названию) ====================
+    let nutritionData = { logs:{}, goals:{ kcal:2200, protein:150 } };
+    let nutritionUnsub = null;
+    let nutritionUser = null;
+    let calPhoto = null;
+    let calBase100 = null;
+
+    function calErr(msg){ const el = document.getElementById('calErr'); if(el) el.innerText = msg || ''; }
+    function calResHtml(html){ const el = document.getElementById('calResult'); if(!el) return; el.style.display = html ? 'block' : 'none'; el.innerHTML = html || ''; }
+
+    function compressImage(dataUrl, maxSide=900, q=0.7){
+        return new Promise(res=>{
+            const img = new Image();
+            img.onload = ()=>{
+                const s = Math.min(1, maxSide/Math.max(img.width, img.height));
+                const c = document.createElement('canvas');
+                c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
+                c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+                res(c.toDataURL('image/jpeg', q));
+            };
+            img.onerror = ()=>res(dataUrl);
+            img.src = dataUrl;
+        });
+    }
+
+    // аварийная база продуктов (используется только если ни один ИИ не ответил)
+    const FOOD_DB = [
+        {n:'Куриная грудка', w:['куриц','курка','грудка'], k:165,p:31,f:3.6,c:0,g:200},
+        {n:'Говядина', w:['говяд','стейк'], k:250,p:26,f:15,c:0,g:200},
+        {n:'Свинина', w:['свинин'], k:263,p:27,f:16,c:0,g:200},
+        {n:'Рыба', w:['рыб','лосос','семга','тунец'], k:180,p:22,f:10,c:0,g:180},
+        {n:'Яйцо', w:['яйц','яиц'], k:155,p:13,f:11,c:1.1,g:110},
+        {n:'Рис', w:['рис'], k:130,p:2.7,f:0.3,c:28,g:200},
+        {n:'Гречка', w:['греч'], k:110,p:4,f:1.1,c:21,g:200},
+        {n:'Овсянка', w:['овсян','геркул'], k:88,p:3,f:1.7,c:15,g:250},
+        {n:'Паста', w:['паста','макарон','спагет'], k:158,p:5.8,f:0.9,c:31,g:220},
+        {n:'Картофель', w:['картош','картоф'], k:87,p:2,f:0.1,c:20,g:200},
+        {n:'Хлеб', w:['хлеб','тост','булк'], k:265,p:9,f:3.2,c:49,g:60},
+        {n:'Творог', w:['творог'], k:121,p:17,f:5,c:3,g:150},
+        {n:'Сыр', w:['сыр'], k:364,p:25,f:29,c:2,g:50},
+        {n:'Молочное', w:['молок','кефир','йогурт'], k:60,p:3.2,f:3.2,c:4.7,g:250},
+        {n:'Протеин', w:['протеин','whey'], k:380,p:75,f:5,c:8,g:30},
+        {n:'Банан', w:['банан'], k:89,p:1.1,f:0.3,c:23,g:120},
+        {n:'Яблоко', w:['яблок'], k:52,p:0.3,f:0.2,c:14,g:180},
+        {n:'Овощи / салат', w:['салат','овощ'], k:60,p:1.5,f:4,c:5,g:200},
+        {n:'Масло', w:['масло'], k:884,p:0,f:100,c:0,g:15},
+        {n:'Орехи', w:['орех','миндал'], k:600,p:20,f:52,c:20,g:40},
+        {n:'Шоколад', w:['шоколад'], k:546,p:5,f:31,c:61,g:50},
+        {n:'Пицца', w:['пицц'], k:266,p:11,f:10,c:33,g:300},
+        {n:'Бургер', w:['бургер'], k:295,p:15,f:14,c:27,g:250},
+        {n:'Шаурма', w:['шаурм','шаверм','донер'], k:215,p:12,f:11,c:17,g:300},
+        {n:'Суши', w:['суши','ролл'], k:150,p:6,f:4,c:22,g:250},
+        {n:'Суп', w:['борщ','суп'], k:45,p:2,f:2,c:5,g:350},
+        {n:'Пельмени', w:['пельмен','вареник'], k:250,p:10,f:12,c:25,g:250}
+    ];
+
+    function buildFoodPrompt(desc){
+        return [
+            'Ты опытный нутрициолог и повар. Определи еду по фотографии и/или описанию.',
+            'Правила:',
+            '1) Не опирайся ни на какие готовые списки — рассуждай сам, узнавай блюдо по виду, соусу, гарниру, упаковке.',
+            '2) Назови блюдо так, как его назвал бы человек (например «шаурма с курицей», «гречка с котлетой»).',
+            '3) Перечисли все продукты, которые видишь/подразумеваются, и оцени граммы каждого.',
+            '4) Вес определяй по размеру тарелки, приборов, ладони, толщине куска — правдоподобная примерная оценка.',
+            '5) Посчитай калории, белки, жиры, углеводы, клетчатку на ВСЮ порцию.',
+            '6) В verdict напиши 1–2 предложения по делу: что это за еда, много ли белка/сахара/жира, короткий совет.',
+            'Если данных мало — всё равно дай лучшую догадку, не отказывайся.',
+            'Ответь СТРОГО JSON без markdown:',
+            '{"dish":"название","items":[{"name":"продукт","grams":0}],"weight":0,"calories":0,"protein":0,"fat":0,"carbs":0,"fiber":0,"verdict":"..."}',
+            desc ? ('Пользователь написал: ' + desc) : 'Пользователь дал только фото.'
+        ].join('\n');
+    }
+
+    function parseFoodAnswer(txt){
+        const m = String(txt||'').match(/\{[\s\S]*\}/);
+        if(!m) throw new Error('ИИ не узнал еду');
+        const r = JSON.parse(m[0]);
+        const out = {
+            dish: String(r.dish||'').trim(),
+            items: Array.isArray(r.items) ? r.items.slice(0,14).map(i=>({ name:String(i.name||'').trim(), grams:Math.round(Number(i.grams)||0) })).filter(i=>i.name) : [],
+            weight: Math.round(Number(r.weight)||0),
+            calories: Math.round(Number(r.calories)||0),
+            protein: Math.round(Number(r.protein)||0),
+            fat: Math.round(Number(r.fat)||0),
+            carbs: Math.round(Number(r.carbs)||0),
+            fiber: Math.round(Number(r.fiber)||0),
+            verdict: String(r.verdict||'').trim()
+        };
+        if(!out.weight && out.items.length) out.weight = out.items.reduce((a,i)=>a+i.grams,0);
+        if(!out.calories) throw new Error('ИИ не смог оценить калории');
+        return out;
+    }
+
+    function withTimeout(p, ms){ return Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('таймаут')), ms))]); }
+
+    async function askGeminiFood(photo, desc){
+        const parts = [{ text: buildFoodPrompt(desc) }];
+        if(photo){ const mime = photo.split(';')[0].split(':')[1] || 'image/jpeg'; parts.push({ inline_data:{ mime_type: mime, data: photo.split(',')[1] } }); }
+        const models = ['gemini-2.0-flash','gemini-1.5-flash'];
+        let lastErr = 'Gemini недоступен';
+        for(const model of models){
+            const res = await withTimeout(fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + encodeURIComponent(GEMINI_API_KEY), {
+                method:'POST', headers:{ 'Content-Type':'application/json' },
+                body: JSON.stringify({ contents:[{ parts }] })
+            }), 25000);
+            if(!res.ok){ lastErr = 'Gemini ' + res.status; continue; }
+            const json = await res.json();
+            const txt = (json?.candidates?.[0]?.content?.parts || []).map(x=>x.text||'').join('');
+            return parseFoodAnswer(txt);
+        }
+        throw new Error(lastErr);
+    }
+
+    async function askFreeFoodAI(photo, desc){
+        const content = [{ type:'text', text: buildFoodPrompt(desc) }];
+        if(photo) content.push({ type:'image_url', image_url:{ url: photo } });
+        const res = await withTimeout(fetch('https://text.pollinations.ai/openai', {
+            method:'POST', headers:{ 'Content-Type':'application/json' },
+            body: JSON.stringify({ model:'openai', messages:[{ role:'user', content }], temperature:0.35 })
+        }), 25000);
+        if(!res.ok) throw new Error('Free AI ' + res.status);
+        const j = await res.json();
+        const txt = j?.choices?.[0]?.message?.content || '';
+        return parseFoodAnswer(typeof txt === 'string' ? txt : JSON.stringify(txt));
+    }
+
+    function askLocalFood(desc){
+        const text = (desc||'').toLowerCase().replace(/ё/g,' ');
+        const parts = text.split(/,|\s+и\s+|\+/).map(s=>s.trim()).filter(Boolean);
+        let k=0,p=0,f=0,c=0,w=0; const items=[];
+        for(const part of parts){
+            const item = FOOD_DB.find(x => x.w.some(word => part.includes(word)));
+            if(!item) continue;
+            let grams = item.g;
+            const gm = part.match(/(\d{2,4})\s*(г|гр)/); if(gm) grams = +gm[1];
+            const eg = part.match(/(\d+)\s*(яйц|шт)/); if(eg && /яйц/.test(part)) grams = (+eg[1])*55;
+            const m = grams/100;
+            k += item.k*m; p += item.p*m; f += item.f*m; c += item.c*m; w += grams;
+            items.push({ name:item.n, grams:Math.round(grams) });
+        }
+        if(!items.length) throw new Error('нет данных');
+        return { dish: desc, items, weight:Math.round(w), calories:Math.round(k), protein:Math.round(p), fat:Math.round(f), carbs:Math.round(c), fiber:0, verdict:'Оценка без ИИ (нет сети) — приблизительно.' };
+    }
+
+    function calFillFields(r){
+        document.getElementById('calWin').value = r.weight || 0;
+        document.getElementById('calKin').value = r.calories || 0;
+        document.getElementById('calPin').value = r.protein || 0;
+        document.getElementById('calFin').value = r.fat || 0;
+        document.getElementById('calCin').value = r.carbs || 0;
+        calBase100 = r.weight > 0 ? { k:r.calories/r.weight*100, p:r.protein/r.weight*100, f:r.fat/r.weight*100, c:r.carbs/r.weight*100 } : null;
+    }
+
+    function calSetPortion(grams){
+        const ids = ['calKin','calPin','calFin','calCin'];
+        if(calBase100){
+            const m = grams/100;
+            document.getElementById('calWin').value = grams;
+            document.getElementById('calKin').value = Math.round(calBase100.k*m);
+            document.getElementById('calPin').value = Math.round(calBase100.p*m);
+            document.getElementById('calFin').value = Math.round(calBase100.f*m);
+            document.getElementById('calCin').value = Math.round(calBase100.c*m);
+            return true;
+        }
+        const w = Number(document.getElementById('calWin').value) || 0;
+        if(w > 0){
+            const k = grams/w;
+            ids.forEach(id => { const el = document.getElementById(id); el.value = Math.round((Number(el.value)||0)*k); });
+            document.getElementById('calWin').value = grams;
+            return true;
+        }
+        return false;
+    }
+
+    function showFoodResult(r){
+        calFillFields(r);
+        if(r.dish) document.getElementById('calName').value = r.dish;
+        const items = r.items && r.items.length ? '<div class="items">' + r.items.map(i => '• ' + escapeHtml(i.name) + ' — ~' + i.grams + ' г').join('<br>') + '</div>' : '';
+        const verdict = r.verdict ? '<div class="verdict">💬 ' + escapeHtml(r.verdict) + '</div>' : '';
+        calResHtml('<div class="dish">🍽 ' + escapeHtml(r.dish || 'Блюдо') + ' · ~' + r.weight + ' г</div>'
+            + '<div style="margin-top:6px"><b>' + r.calories + ' ккал</b> · Б ' + r.protein + ' · Ж ' + r.fat + ' · У ' + r.carbs
+            + (r.fiber ? ' · клетчатка ' + r.fiber + ' г' : '') + '</div>' + items + verdict);
+    }
+
+    function renderNutrition(){
+        const kcalTxt = document.getElementById('calKcalTxt');
+        if(!kcalTxt) return;
+        const today = formatDate();
+        const all = Object.entries(nutritionData.logs || {}).map(([id,v]) => ({ id, ...v }));
+        const todays = all.filter(l => l.date === today).sort((a,b) => (b.ts||0)-(a.ts||0));
+        const sum = key => todays.reduce((a,l) => a + (Number(l[key])||0), 0);
+        const kcal = sum('calories'), prot = sum('protein');
+        const goalK = Number(nutritionData.goals?.kcal) || 2200;
+        const goalP = Number(nutritionData.goals?.protein) || 150;
+
+        kcalTxt.textContent = Math.round(kcal) + ' / ' + goalK;
+        document.getElementById('calProtTxt').textContent = Math.round(prot) + ' / ' + goalP + ' г';
+        document.getElementById('calKcalBar').style.width = Math.min(100, kcal/goalK*100) + '%';
+        document.getElementById('calProtBar').style.width = Math.min(100, prot/goalP*100) + '%';
+        document.getElementById('calP').textContent = Math.round(prot);
+        document.getElementById('calF').textContent = Math.round(sum('fat'));
+        document.getElementById('calC').textContent = Math.round(sum('carbs'));
+        document.getElementById('calWsum').textContent = Math.round(sum('weight'));
+        document.getElementById('calGoalKcal').placeholder = 'ккал: ' + goalK;
+        document.getElementById('calGoalProt').placeholder = 'белок: ' + goalP;
+
+        const list = document.getElementById('calLogList');
+        if(!todays.length){
+            list.innerHTML = '<div class="empty-state">Сегодня ещё ничего не записано</div>';
+        } else {
+            list.innerHTML = todays.map(l => `
+                <div class="cal-log">
+                    ${l.photo ? '<img src="' + l.photo + '">' : ''}
+                    <div class="n">
+                        <b>${escapeHtml(l.name || 'Еда')}</b>
+                        <span>${Math.round(l.calories||0)} ккал · Б ${Math.round(l.protein||0)} · Ж ${Math.round(l.fat||0)} · У ${Math.round(l.carbs||0)} · ${Math.round(l.weight||0)} г</span>
+                    </div>
+                    <button class="btn-icon danger cal-del" data-id="${l.id}" type="button"><span class="icon" data-icon="close"></span></button>
+                </div>`).join('');
+            paintIcons(list);
+            list.querySelectorAll('.cal-del').forEach(b => b.addEventListener('click', async () => {
+                if(!db || !currentUser) return;
+                try { await remove(ref(db, 'nutrition/' + currentUser + '/logs/' + b.dataset.id)); } catch(e){ console.warn(e); }
+            }));
+        }
+
+        const days = [];
+        for(let i=6;i>=0;i--){
+            const d = new Date(); d.setDate(d.getDate()-i);
+            const key = d.toISOString().slice(0,10);
+            const v = all.filter(l => l.date === key).reduce((a,l)=>a+(Number(l.calories)||0),0);
+            days.push({ v, label:String(d.getDate()), today:key===today });
+        }
+        const maxV = Math.max(goalK, ...days.map(d=>d.v)) || 1;
+        document.getElementById('calDays').innerHTML = days.map(d => `
+            <div class="cal-day ${d.today?'today':''}">
+                <i style="height:${Math.max(3, d.v/maxV*100)}%"></i>
+                <span>${d.label}</span>
+            </div>`).join('');
+    }
+
+    function subscribeNutrition(username){
+        if(nutritionUnsub){ nutritionUnsub(); nutritionUnsub = null; }
+        nutritionUser = username;
+        nutritionData = { logs:{}, goals:{ kcal:2200, protein:150 } };
+        if(!username || !db){ renderNutrition(); return; }
+        nutritionUnsub = onValue(ref(db, 'nutrition/' + username), snap => {
+            nutritionData = snap.exists() ? snap.val() : { logs:{}, goals:{ kcal:2200, protein:150 } };
+            if(!nutritionData.logs) nutritionData.logs = {};
+            renderNutrition();
+        }, err => { console.warn('nutrition read', err); renderNutrition(); });
+    }
+    setInterval(() => { if(currentUser !== nutritionUser) subscribeNutrition(currentUser); }, 1200);
+
+    (function initCaloriesUI(){
+        const chips = document.getElementById('calChips');
+        if(!chips) return;
+        [100,150,200,250,300,400].forEach(g=>{
+            const b = document.createElement('button');
+            b.type = 'button'; b.textContent = g + ' г';
+            b.onclick = () => { calErr(''); if(!calSetPortion(g)) calErr('Сначала определите еду — потом пересчитаем вес'); };
+            chips.appendChild(b);
+        });
+
+        document.getElementById('calPhotoInput').onchange = (e) => {
+            const file = e.target.files && e.target.files[0];
+            if(!file){ calPhoto = null; document.getElementById('calPhotoPreview').innerHTML = ''; return; }
+            const r = new FileReader();
+            r.onload = async (ev) => {
+                calPhoto = await compressImage(ev.target.result);
+                document.getElementById('calPhotoPreview').innerHTML = '<img src="' + calPhoto + '">';
+                calResHtml('');
+            };
+            r.readAsDataURL(file);
+        };
+
+        document.getElementById('calGoalSave').onclick = async () => {
+            const k = parseFloat(document.getElementById('calGoalKcal').value);
+            const p = parseFloat(document.getElementById('calGoalProt').value);
+            if(!k && !p){ calErr('Введите цель по ккал или белку'); return; }
+            const goals = { kcal: k || (Number(nutritionData.goals?.kcal)||2200), protein: p || (Number(nutritionData.goals?.protein)||150) };
+            nutritionData.goals = goals;
+            renderNutrition();
+            if(db && currentUser){ try { await set(ref(db, 'nutrition/' + currentUser + '/goals'), goals); } catch(e){ console.warn(e); } }
+            document.getElementById('calGoalKcal').value = ''; document.getElementById('calGoalProt').value = '';
+            calErr('');
+        };
+
+        document.getElementById('calAnalyzeBtn').onclick = async () => {
+            calErr(''); calResHtml('');
+            const desc = (document.getElementById('calName').value || '').trim();
+            if(!calPhoto && !desc){ calErr('Прикрепите фото еды или напишите название — хотя бы одно'); return; }
+
+            const btn = document.getElementById('calAnalyzeBtn');
+            btn.disabled = true; btn.textContent = '🤖 Анализирую…';
+            calResHtml('<div style="color:var(--text-dim)">🤖 ИИ разглядывает еду и считает…</div>');
+
+            const chain = [];
+            if(GEMINI_API_KEY && GEMINI_API_KEY.trim()) chain.push(['Gemini', askGeminiFood]);
+            chain.push(['FreeAI', askFreeFoodAI]);
+            chain.push(['Local', (p,d) => Promise.resolve(askLocalFood(d))]);
+
+            const errors = [];
+            let done = null;
+            for(const [nm, fn] of chain){
+                try { done = await fn(calPhoto, desc); if(done) break; }
+                catch(e){ errors.push(nm + ': ' + (e.message||e)); }
+            }
+            btn.disabled = false; btn.textContent = '🧠 Определить еду';
+
+            if(done) showFoodResult(done);
+            else { calResHtml(''); calErr('Не получилось: ' + errors.join(' | ')); }
+        };
+
+        document.getElementById('calSaveBtn').onclick = async () => {
+            calErr('');
+            if(!currentUser){ calErr('Войдите в аккаунт'); return; }
+            if(!db){ calErr('Нет подключения к базе'); return; }
+            const calories = Math.round(Number(document.getElementById('calKin').value) || 0);
+            if(!calories){ calErr('Сначала определите еду (кнопка выше)'); return; }
+            const entry = {
+                date: formatDate(),
+                ts: Date.now(),
+                name: (document.getElementById('calName').value || '').trim() || 'Еда',
+                calories,
+                protein: Math.round(Number(document.getElementById('calPin').value) || 0),
+                fat: Math.round(Number(document.getElementById('calFin').value) || 0),
+                carbs: Math.round(Number(document.getElementById('calCin').value) || 0),
+                weight: Math.round(Number(document.getElementById('calWin').value) || 0),
+                photo: calPhoto || null
+            };
+            const id = Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+            try {
+                await set(ref(db, 'nutrition/' + currentUser + '/logs/' + id), entry);
+                calPhoto = null; calBase100 = null;
+                document.getElementById('calPhotoInput').value = '';
+                document.getElementById('calPhotoPreview').innerHTML = '';
+                document.getElementById('calName').value = '';
+                ['calWin','calKin','calPin','calFin','calCin'].forEach(i => document.getElementById(i).value = '');
+                calResHtml(''); calErr('Сохранено ✓');
+            } catch(e){
+                console.warn(e);
+                calErr('Не удалось сохранить: ' + e.message);
+            }
+        };
+    })();
+
     // ==================== СТАРТ ====================
     ICONS.dumbbell && (document.getElementById('brandIcon').innerHTML = ICONS.dumbbell);
     paintIcons(document);
     if(!isConfigured) configWarning.classList.remove('hidden');
     checkRemembered();
     applyZoom();
+    if(window.Telegram?.WebApp){ window.Telegram.WebApp.ready(); window.Telegram.WebApp.expand(); }
 
     const splashScreen = document.getElementById('splashScreen');
     const splashProgressBar = document.getElementById('splashProgressBar');
@@ -2473,695 +2639,5 @@
         }
     })();
 </script>
-</body>
-<!-- ==================== ДОБАВЛЕНО: КАЛОРИИ (ИИ по фото) ==================== -->
-<style>
-#calFab{position:fixed;right:16px;bottom:calc(88px + var(--safe-bottom));z-index:60;display:flex;align-items:center;gap:8px;
-  background:var(--accent);color:#fff;border:none;border-radius:999px;padding:12px 17px;font-family:'Oswald';font-size:.76rem;
-  text-transform:uppercase;letter-spacing:.05em;box-shadow:0 12px 28px -10px rgba(255,90,54,.85);}
-#calFab:active{filter:brightness(.92);}
-@media(min-width:680px){#calFab{bottom:24px;}}
-#calPanel{position:fixed;inset:0;z-index:90;background:var(--bg);overflow-y:auto;display:none;}
-#calPanel.open{display:block;}
-.cal-box{max-width:640px;margin:0 auto;padding:0 0 44px;}
-.cal-head{position:sticky;top:0;background:var(--bg);display:flex;align-items:center;justify-content:space-between;padding:18px;z-index:2;}
-.cal-head h3{font-size:1rem;display:flex;align-items:center;gap:9px;color:var(--text);}
-.cal-body{padding:0 18px;}
-.cal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;margin-bottom:14px;}
-.cal-title{font-family:'Oswald';font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);margin-bottom:12px;}
-.cal-line{display:flex;justify-content:space-between;font-size:.82rem;color:var(--text-dim);}
-.cal-line b{font-family:'Oswald';color:var(--text);font-size:.88rem;}
-.cal-bar{height:9px;border-radius:999px;background:var(--surface-3);overflow:hidden;margin:7px 0 15px;}
-.cal-bar>i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .3s;}
-.cal-bar>i.gold{background:var(--accent-2);}
-.cal-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;}
-.cal-4 b{display:block;font-family:'Oswald';font-size:1rem;color:var(--text);}
-.cal-4 span{font-size:.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.03em;}
-.cal-preview img{max-width:112px;border-radius:10px;border:1px solid var(--border);margin-top:8px;display:block;}
-.cal-chips{display:flex;gap:6px;flex-wrap:wrap;margin:11px 0;}
-.cal-chips button{background:var(--surface-3);color:var(--text-dim);border:1px solid var(--border);border-radius:999px;padding:7px 12px;font-size:.73rem;font-family:'Oswald';letter-spacing:.03em;}
-.cal-chips button:active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent);}
-.cal-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
-.cal-fields label{display:flex;flex-direction:column;gap:5px;font-size:.66rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);font-weight:600;}
-.cal-result{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:11px 13px;font-size:.83rem;line-height:1.55;margin:10px 0;color:var(--text);}
-.cal-hint{font-size:.7rem;color:var(--text-dim);line-height:1.55;margin-top:10px;}
-.cal-log{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;}
-.cal-log img{width:44px;height:44px;object-fit:cover;border-radius:9px;border:1px solid var(--border);flex-shrink:0;}
-.cal-log .n{flex:1;min-width:0;}
-.cal-log .n b{display:block;font-size:.84rem;font-family:'Oswald';text-transform:uppercase;letter-spacing:.01em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.cal-log .n span{font-size:.69rem;color:var(--text-dim);}
-.cal-days{display:flex;align-items:flex-end;gap:6px;height:86px;margin-top:8px;}
-.cal-day{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:4px;}
-.cal-day i{display:block;width:100%;border-radius:5px 5px 0 0;background:var(--accent);min-height:3px;}
-.cal-day.today i{background:var(--accent-2);}
-.cal-day span{font-size:.55rem;color:var(--text-dim);}
-.cal-key{display:flex;gap:8px;margin-top:10px;}
-.cal-key input{flex:1;font-size:.8rem;padding:10px 12px;}
-</style>
-
-<button id="calFab" type="button">🍎 Калории</button>
-
-<div id="calPanel">
-  <div class="cal-box">
-    <div class="cal-head">
-      <h3>🍎 Калории и БЖУ</h3>
-      <button id="calClose" class="btn-icon" type="button">✕</button>
-    </div>
-    <div class="cal-body">
-
-      <div class="cal-card">
-        <div class="cal-title">Сегодня</div>
-        <div class="cal-line"><span>Калории</span><b id="calKcalTxt">0 / 2200</b></div>
-        <div class="cal-bar"><i id="calKcalBar"></i></div>
-        <div class="cal-line"><span>Белок</span><b id="calProtTxt">0 / 150 г</b></div>
-        <div class="cal-bar"><i id="calProtBar" class="gold"></i></div>
-        <div class="cal-4">
-          <div><b id="calP">0</b><span>белки</span></div>
-          <div><b id="calF">0</b><span>жиры</span></div>
-          <div><b id="calC">0</b><span>углев.</span></div>
-          <div><b id="calWsum">0</b><span>грамм</span></div>
-        </div>
-      </div>
-
-      <div class="cal-card">
-        <div class="cal-title">Добавить еду</div>
-        <div class="photo-row">
-          <input type="file" id="calPhotoInput" accept="image/*">
-          <div id="calPhotoPreview" class="cal-preview"></div>
-        </div>
-        <div class="input-wrap" style="margin-top:12px;">
-          <label>Что съел</label>
-          <input type="text" id="calName" placeholder="напр. курица 200 г, рис 150 г">
-        </div>
-        <div class="cal-chips" id="calChips"></div>
-        <button id="calAnalyzeBtn" class="btn-primary btn-block" type="button">🧠 Посчитать калории</button>
-        <div id="calResult" class="cal-result" style="display:none;"></div>
-        <div class="cal-fields">
-          <label>Вес, г<input type="number" id="calWin" placeholder="0"></label>
-          <label>Ккал<input type="number" id="calKin" placeholder="0"></label>
-          <label>Белки<input type="number" id="calPin" placeholder="0"></label>
-          <label>Жиры<input type="number" id="calFin" placeholder="0"></label>
-          <label>Углеводы<input type="number" id="calCin" placeholder="0"></label>
-        </div>
-        <button id="calSaveBtn" class="btn-add btn-block" type="button">Сохранить в дневник</button>
-        <p id="calErr" class="error-msg"></p>
-        <p class="cal-hint">📏 Нет веса? Ладонь мяса ≈ 100 г · кулак гарнира ≈ 200 г · стакан ≈ 250 г · яйцо ≈ 55 г.
-        Кнопки веса пересчитывают БЖУ автоматически.</p>
-      </div>
-
-      <div class="cal-card">
-        <div class="cal-title">Дневные цели</div>
-        <div class="cal-key">
-          <input type="number" id="calGoalKcal" placeholder="ккал / день">
-          <input type="number" id="calGoalProt" placeholder="белок / день">
-          <button id="calGoalSave" class="btn-soft" type="button">OK</button>
-        </div>
-        <p class="cal-hint">Ключ Gemini (необязательно) — тогда ИИ считает по фото:</p>
-        <div class="cal-key">
-          <input type="password" id="calApiKey" placeholder="AIza... (ключ Gemini)">
-          <button id="calApiSave" class="btn-soft" type="button">OK</button>
-        </div>
-        <p class="cal-hint">Ключ берётся бесплатно на aistudio.google.com/apikey. Без ключа подсчёт идёт по названию блюда.</p>
-      </div>
-
-      <div class="cal-card">
-        <div class="cal-title">Записи за сегодня</div>
-        <div id="calLogList"></div>
-      </div>
-
-      <div class="cal-card">
-        <div class="cal-title">Калории за 7 дней</div>
-        <div class="cal-days" id="calDays"></div>
-      </div>
-
-    </div>
-  </div>
-</div>
-
-<script type="module">
-</script>
-<!-- ==================== КАЛОРИИ (умный ИИ) ==================== -->
-<style>
-#nutritionTab{padding:18px;max-width:640px;margin:0 auto;}
-.cal-h2{font-family:'Oswald';font-size:1.15rem;text-transform:uppercase;letter-spacing:.03em;margin-bottom:14px;color:var(--text);}
-.cal-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-md);padding:16px;margin-bottom:14px;}
-.cal-title{font-family:'Oswald';font-size:.78rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);margin-bottom:12px;}
-.cal-line{display:flex;justify-content:space-between;font-size:.82rem;color:var(--text-dim);}
-.cal-line b{font-family:'Oswald';color:var(--text);font-size:.88rem;}
-.cal-bar{height:9px;border-radius:999px;background:var(--surface-3);overflow:hidden;margin:7px 0 15px;}
-.cal-bar>i{display:block;height:100%;width:0;background:var(--accent);border-radius:999px;transition:width .3s;}
-.cal-bar>i.gold{background:var(--accent-2);}
-.cal-4{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;text-align:center;}
-.cal-4 b{display:block;font-family:'Oswald';font-size:1rem;color:var(--text);}
-.cal-4 span{font-size:.6rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:.03em;}
-#nutritionTab input[type="file"]{width:100%;font-size:.76rem;color:var(--text-dim);}
-.cal-preview img{max-width:112px;border-radius:10px;border:1px solid var(--border);margin-top:8px;display:block;}
-.cal-chips{display:flex;gap:6px;flex-wrap:wrap;margin:11px 0;}
-.cal-chips button{background:var(--surface-3);color:var(--text-dim);border:1px solid var(--border);border-radius:999px;padding:7px 12px;font-size:.73rem;font-family:'Oswald';letter-spacing:.03em;}
-.cal-chips button:active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent);}
-.cal-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:12px 0;}
-.cal-fields label{display:flex;flex-direction:column;gap:5px;font-size:.66rem;text-transform:uppercase;letter-spacing:.04em;color:var(--text-dim);font-weight:600;}
-.cal-result{background:var(--surface-2);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:.83rem;line-height:1.6;margin:10px 0;color:var(--text);}
-.cal-result .dish{font-family:'Oswald';font-size:.95rem;text-transform:uppercase;letter-spacing:.02em;}
-.cal-result .items{font-size:.76rem;color:var(--text-dim);margin-top:7px;line-height:1.6;}
-.cal-result .verdict{font-size:.76rem;color:var(--text-dim);margin-top:8px;border-top:1px dashed var(--border);padding-top:8px;}
-.cal-hint{font-size:.7rem;color:var(--text-dim);line-height:1.55;margin-top:10px;}
-.cal-log{display:flex;align-items:center;gap:10px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:10px 12px;margin-bottom:8px;}
-.cal-log img{width:44px;height:44px;object-fit:cover;border-radius:9px;border:1px solid var(--border);flex-shrink:0;}
-.cal-log .n{flex:1;min-width:0;}
-.cal-log .n b{display:block;font-size:.84rem;font-family:'Oswald';text-transform:uppercase;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.cal-log .n span{font-size:.69rem;color:var(--text-dim);}
-.cal-days{display:flex;align-items:flex-end;gap:6px;height:86px;margin-top:8px;}
-.cal-day{flex:1;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;height:100%;gap:4px;}
-.cal-day i{display:block;width:100%;border-radius:5px 5px 0 0;background:var(--accent);min-height:3px;}
-.cal-day.today i{background:var(--accent-2);}
-.cal-day span{font-size:.55rem;color:var(--text-dim);}
-.cal-key{display:flex;gap:8px;margin-top:8px;}
-.cal-key input{flex:1;font-size:.8rem;padding:10px 12px;}
-</style>
-
-<div id="nutritionTabSource" class="hidden">
-  <h2 class="cal-h2">🍎 Калории и БЖУ</h2>
-
-  <div class="cal-card">
-    <div class="cal-title">Сегодня</div>
-    <div class="cal-line"><span>Калории</span><b id="calKcalTxt">0 / 2200</b></div>
-    <div class="cal-bar"><i id="calKcalBar"></i></div>
-    <div class="cal-line"><span>Белок</span><b id="calProtTxt">0 / 150 г</b></div>
-    <div class="cal-bar"><i id="calProtBar" class="gold"></i></div>
-    <div class="cal-4">
-      <div><b id="calP">0</b><span>белки</span></div>
-      <div><b id="calF">0</b><span>жиры</span></div>
-      <div><b id="calC">0</b><span>углев.</span></div>
-      <div><b id="calWsum">0</b><span>грамм</span></div>
-    </div>
-  </div>
-
-  <div class="cal-card">
-    <div class="cal-title">Добавить еду</div>
-    <input type="file" id="calPhotoInput" accept="image/*">
-    <div id="calPhotoPreview" class="cal-preview"></div>
-    <div class="input-wrap" style="margin-top:12px;">
-      <label>Фото и/или название</label>
-      <input type="text" id="calName" placeholder="напр. шакшука с хлебом, или просто «шаурма»">
-    </div>
-    <div class="cal-chips" id="calChips"></div>
-    <button id="calAnalyzeBtn" class="btn-primary" style="width:100%;" type="button">🧠 Определить еду</button>
-    <div id="calResult" class="cal-result" style="display:none;"></div>
-    <div class="cal-fields">
-      <label>Вес, г<input type="number" id="calWin" placeholder="0"></label>
-      <label>Ккал<input type="number" id="calKin" placeholder="0"></label>
-      <label>Белки<input type="number" id="calPin" placeholder="0"></label>
-      <label>Жиры<input type="number" id="calFin" placeholder="0"></label>
-      <label>Углеводы<input type="number" id="calCin" placeholder="0"></label>
-    </div>
-    <button id="calSaveBtn" class="btn-add" style="width:100%;" type="button">Сохранить в дневник</button>
-    <p id="calErr" class="error-msg"></p>
-    <p class="cal-hint">📏 ИИ оценивает вес по тарелке и приборам — всегда примерно. Кнопки веса ниже пересчитывают БЖУ.</p>
-  </div>
-
-  <div class="cal-card">
-    <div class="cal-title">Дневные цели</div>
-    <div class="cal-key">
-      <input type="number" id="calGoalKcal" placeholder="ккал / день">
-      <input type="number" id="calGoalProt" placeholder="белок / день">
-      <button id="calGoalSave" class="btn-soft" type="button">OK</button>
-    </div>
-  </div>
-
-  <div class="cal-card">
-    <div class="cal-title">Записи за сегодня</div>
-    <div id="calLogList"></div>
-  </div>
-
-  <div class="cal-card">
-    <div class="cal-title">Калории за 7 дней</div>
-    <div class="cal-days" id="calDays"></div>
-  </div>
-</div>
-
-<script type="module">
-/* ==========================================================
-   КАЛОРИИ — УМНЫЙ ИИ (сам определяет еду)
-   ========================================================== */
-
-/* ▼▼▼ КЛЮЧ GEMINI (необязательно, для максимальной точности) ▼▼▼ */
-const GEMINI_API_KEY = "AQ.Ab8RN6JwniJmvN8Y0Vj1F_Ma8F7VOOZehNtPBqKFYxP-CKVMQQ";
-/* ▲▲▲ КЛЮЧ GEMINI ▲▲▲ */
-
-import { initializeApp, getApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-import { getDatabase, ref, set, remove, onValue } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js';
-
-const CFG = {
-  apiKey: "AQ.Ab8RN6JwniJmvN8Y0Vj1F_Ma8F7VOOZehNtPBqKFYxP-CKVMQQ",
-  authDomain: "workaut-f3637.firebaseapp.com",
-  databaseURL: "https://workaut-f3637-default-rtdb.firebaseio.com",
-  projectId: "workaut-f3637",
-  storageBucket: "workaut-f3637.firebasestorage.app",
-  messagingSenderId: "957755819219",
-  appId: "1:957755819219:web:12ce432baa67e6c7e38026"
-};
-
-let db = null;
-try { let a; try { a = getApp(); } catch(e){ a = initializeApp(CFG); } db = getDatabase(a); }
-catch(e){ console.warn('cal: firebase', e); }
-
-const $ = id => document.getElementById(id);
-const errEl = $('calErr');
-const resEl = $('calResult');
-
-let uname = null, lastUname = null;
-let data = { logs:{}, goals:{ kcal:2200, protein:150 } };
-let unsubData = null, pendingPhoto = null, base100 = null;
-
-const fmtDate = (d=new Date()) => {
-  const z = n => String(n).padStart(2,'0');
-  return `${d.getFullYear()}-${z(d.getMonth()+1)}-${z(d.getDate())}`;
-};
-const esc = s => String(s==null?'':s).replace(/[&<>"]/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]));
-const withTimeout = (p, ms) => Promise.race([p, new Promise((_,rej)=>setTimeout(()=>rej(new Error('таймаут')), ms))]);
-
-/* ---------------- аварийный справочник (только если ИИ вообще недоступен) ---------------- */
-const FOOD_DB = [
- {n:'Куриная грудка', w:['куриц','курка','грудка'], k:165,p:31,f:3.6,c:0,g:200},
- {n:'Говядина', w:['говяд','стейк'], k:250,p:26,f:15,c:0,g:200},
- {n:'Свинина', w:['свинин'], k:263,p:27,f:16,c:0,g:200},
- {n:'Рыба', w:['рыб','лосос','семга','тунец'], k:180,p:22,f:10,c:0,g:180},
- {n:'Яйцо', w:['яйц','яиц'], k:155,p:13,f:11,c:1.1,g:110},
- {n:'Рис', w:['рис'], k:130,p:2.7,f:0.3,c:28,g:200},
- {n:'Гречка', w:['греч'], k:110,p:4,f:1.1,c:21,g:200},
- {n:'Овсянка', w:['овсян','геркул'], k:88,p:3,f:1.7,c:15,g:250},
- {n:'Паста', w:['паста','макарон','спагет'], k:158,p:5.8,f:0.9,c:31,g:220},
- {n:'Картофель', w:['картош','картоф'], k:87,p:2,f:0.1,c:20,g:200},
- {n:'Хлеб', w:['хлеб','тост','булк'], k:265,p:9,f:3.2,c:49,g:60},
- {n:'Творог', w:['творог'], k:121,p:17,f:5,c:3,g:150},
- {n:'Сыр', w:['сыр'], k:364,p:25,f:29,c:2,g:50},
- {n:'Молоко', w:['молок','кефир','йогурт'], k:60,p:3.2,f:3.2,c:4.7,g:250},
- {n:'Протеин', w:['протеин','whey'], k:380,p:75,f:5,c:8,g:30},
- {n:'Банан', w:['банан'], k:89,p:1.1,f:0.3,c:23,g:120},
- {n:'Яблоко', w:['яблок'], k:52,p:0.3,f:0.2,c:14,g:180},
- {n:'Овощи / салат', w:['салат','овощ'], k:60,p:1.5,f:4,c:5,g:200},
- {n:'Масло', w:['масло'], k:884,p:0,f:100,c:0,g:15},
- {n:'Орехи', w:['орех','миндал'], k:600,p:20,f:52,c:20,g:40},
- {n:'Шоколад', w:['шоколад'], k:546,p:5,f:31,c:61,g:50},
- {n:'Пицца', w:['пицц'], k:266,p:11,f:10,c:33,g:300},
- {n:'Бургер', w:['бургер'], k:295,p:15,f:14,c:27,g:250},
- {n:'Шаурма', w:['шаурм','шаверм','донер'], k:215,p:12,f:11,c:17,g:300},
- {n:'Суши', w:['суши','ролл'], k:150,p:6,f:4,c:22,g:250},
- {n:'Суп', w:['борщ','суп'], k:45,p:2,f:2,c:5,g:350},
- {n:'Пельмени', w:['пельмен','вареник'], k:250,p:10,f:12,c:25,g:250}
-];
-
-/* ---------------- вкладка в нижнем меню ---------------- */
-const src = $('nutritionTabSource');
-const section = document.createElement('div');
-section.id = 'nutritionTab';
-section.className = 'tab-content hidden';
-while(src.firstChild) section.appendChild(src.firstChild);
-src.remove();
-
-const firstTabContent = document.querySelector('.tab-content');
-(firstTabContent ? firstTabContent.parentNode : document.body).appendChild(section);
-
-const anyTabBtn = document.querySelector('[data-tab]');
-const nav = anyTabBtn ? anyTabBtn.parentElement : null;
-const navBtn = document.createElement('button');
-navBtn.type = 'button';
-navBtn.setAttribute('data-tab','nutrition');
-navBtn.innerHTML = '<span style="font-size:19px;line-height:1;">🍎</span><span>КАЛОРИИ</span>';
-navBtn.className = anyTabBtn ? anyTabBtn.className.replace(/\bactive\b/g,'').trim() : '';
-
-if(nav){
-  const favBtn = document.querySelector('[data-tab="favorites"]');
-  if(favBtn && favBtn.nextSibling) nav.insertBefore(navBtn, favBtn.nextSibling);
-  else nav.appendChild(navBtn);
-}
-
-function openNutrition(){
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.add('hidden'));
-  section.classList.remove('hidden');
-  document.querySelectorAll('[data-tab]').forEach(b => b.classList.toggle('active', b === navBtn));
-  window.scrollTo({ top:0, behavior:'smooth' });
-  render();
-}
-navBtn.addEventListener('click', openNutrition);
-document.querySelectorAll('[data-tab]').forEach(b => {
-  if(b !== navBtn) b.addEventListener('click', () => section.classList.add('hidden'));
-});
-
-/* ---------------- сжатие фото ---------------- */
-function compressImage(dataUrl, maxSide=900, q=0.7){
-  return new Promise(res=>{
-    const img = new Image();
-    img.onload = ()=>{
-      const s = Math.min(1, maxSide/Math.max(img.width, img.height));
-      const c = document.createElement('canvas');
-      c.width = Math.round(img.width*s); c.height = Math.round(img.height*s);
-      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
-      res(c.toDataURL('image/jpeg', q));
-    };
-    img.onerror = ()=>res(dataUrl);
-    img.src = dataUrl;
-  });
-}
-
-/* ---------------- ПРОМПТ: ИИ сам определяет еду ---------------- */
-function buildPrompt(desc){
-  return [
-    'Ты опытный нутрициолог и повар. Определи еду по фотографии и/или описанию.',
-    'Правила:',
-    '1) Не опирайся ни на какие готовые списки — рассуждай сам, узнавай блюдо по виду, соусу, гарниру, упаковке.',
-    '2) Назови блюдо так, как его назвал бы человек (например «шаурма с курицей», «гречка с котлетой»).',
-    '3) Перечисли все продукты, которые видишь/подразумеваются, и оцени граммы каждого.',
-    '4) Вес определяй по размеру тарелки, приборов, ладони, толщине куска. Это примерная оценка, но правдоподобная.',
-    '5) Посчитай калории, белки, жиры, углеводы, клетчатку на ВСЮ порцию.',
-    '6) В verdict напиши 1–2 предложения по делу: что это за еда, много ли белка/сахара/жира, короткий совет.',
-    'Если данных мало — всё равно дай лучшую догадку, не отказывайся.',
-    'Ответь СТРОГО JSON без markdown и пояснений:',
-    '{"dish":"название","items":[{"name":"продукт","grams":0}],"weight":0,"calories":0,"protein":0,"fat":0,"carbs":0,"fiber":0,"verdict":"..."}',
-    desc ? ('Пользователь написал: ' + desc) : 'Пользователь фото без описания.'
-  ].join('\n');
-}
-
-/* ---------------- разбор ответа ИИ ---------------- */
-function parseAnswer(txt){
-  const m = String(txt||'').match(/\{[\s\S]*\}/);
-  if(!m) throw new Error('ИИ не узнал еду');
-  const r = JSON.parse(m[0]);
-  const out = {
-    dish: String(r.dish||'').trim(),
-    items: Array.isArray(r.items) ? r.items.slice(0,14).map(i=>({
-      name: String(i.name||'').trim(), grams: Math.round(Number(i.grams)||0)
-    })).filter(i=>i.name) : [],
-    weight: Math.round(Number(r.weight)||0),
-    calories: Math.round(Number(r.calories)||0),
-    protein: Math.round(Number(r.protein)||0),
-    fat: Math.round(Number(r.fat)||0),
-    carbs: Math.round(Number(r.carbs)||0),
-    fiber: Math.round(Number(r.fiber)||0),
-    verdict: String(r.verdict||'').trim()
-  };
-  if(!out.weight && out.items.length) out.weight = out.items.reduce((a,i)=>a+i.grams,0);
-  if(!out.calories) throw new Error('ИИ не смог оценить калории');
-  return out;
-}
-
-/* ---------------- Провайдер 1: Gemini ---------------- */
-async function callGemini(photo, desc){
-  const parts = [{ text: buildPrompt(desc) }];
-  if(photo){
-    const mime = photo.split(';')[0].split(':')[1] || 'image/jpeg';
-    parts.push({ inline_data:{ mime_type: mime, data: photo.split(',')[1] } });
-  }
-  const models = ['gemini-2.0-flash','gemini-1.5-flash'];
-  let lastErr = 'Gemini недоступен';
-  for(const model of models){
-    const res = await withTimeout(fetch('https://generativelanguage.googleapis.com/v1beta/models/' + model
-      + ':generateContent?key=' + encodeURIComponent(GEMINI_API_KEY), {
-      method:'POST', headers:{ 'Content-Type':'application/json' },
-      body: JSON.stringify({ contents:[{ parts }] })
-    }), 25000);
-    if(!res.ok){ lastErr = 'Gemini ' + res.status + ': ' + (await res.text()).slice(0,140); continue; }
-    const json = await res.json();
-    const txt = (json?.candidates?.[0]?.content?.parts || []).map(x=>x.text||'').join('');
-    return parseAnswer(txt);
-  }
-  throw new Error(lastErr);
-}
-
-/* ---------------- Провайдер 2: бесплатный ИИ без ключа ---------------- */
-async function callFreeAI(photo, desc){
-  const content = [{ type:'text', text: buildPrompt(desc) }];
-  if(photo) content.push({ type:'image_url', image_url:{ url: photo } });
-  const res = await withTimeout(fetch('https://text.pollinations.ai/openai', {
-    method:'POST', headers:{ 'Content-Type':'application/json' },
-    body: JSON.stringify({ model:'openai', messages:[{ role:'user', content }], temperature:0.35 })
-  }), 25000);
-  if(!res.ok) throw new Error('Free AI ' + res.status);
-  const j = await res.json();
-  const txt = j?.choices?.[0]?.message?.content
-    || (j?.choices?.[0]?.message?.content?.[0]?.text)
-    || (typeof j === 'string' ? j : '');
-  return parseAnswer(txt);
-}
-
-/* ---------------- Провайдер 3: аварийный локальный ---------------- */
-function callLocal(desc){
-  const text = (desc||'').toLowerCase().replace(/ё/g,' ');
-  const parts = text.split(/,|\s+и\s+|\+/).map(s=>s.trim()).filter(Boolean);
-  let k=0,p=0,f=0,c=0,w=0; const items=[];
-  for(const part of parts){
-    const item = FOOD_DB.find(x => x.w.some(word => part.includes(word)));
-    if(!item) continue;
-    let grams = item.g;
-    const gm = part.match(/(\d{2,4})\s*(г|гр)/); if(gm) grams = +gm[1];
-    const eg = part.match(/(\d+)\s*(яйц|шт)/); if(eg && /яйц/.test(part)) grams = (+eg[1])*55;
-    const m = grams/100;
-    k += item.k*m; p += item.p*m; f += item.f*m; c += item.c*m; w += grams;
-    items.push({ name:item.n, grams:Math.round(grams) });
-  }
-  if(!items.length) throw new Error('Нет сети — впишите БЖУ вручную');
-  return {
-    dish: desc || 'Еда', items, weight:Math.round(w),
-    calories:Math.round(k), protein:Math.round(p), fat:Math.round(f), carbs:Math.round(c), fiber:0,
-    verdict:'Оценка без ИИ (нет сети) — это приблизительно.'
-  };
-}
-
-/* ---------------- поля / порции ---------------- */
-function fillFields(r){
-  $('calWin').value = r.weight || 0;
-  $('calKin').value = r.calories || 0;
-  $('calPin').value = r.protein || 0;
-  $('calFin').value = r.fat || 0;
-  $('calCin').value = r.carbs || 0;
-  base100 = (r.weight > 0)
-    ? { k:r.calories/r.weight*100, p:r.protein/r.weight*100, f:r.fat/r.weight*100, c:r.carbs/r.weight*100 }
-    : null;
-}
-function setPortion(grams){
-  if(base100){
-    const m = grams/100;
-    $('calWin').value = grams;
-    $('calKin').value = Math.round(base100.k*m);
-    $('calPin').value = Math.round(base100.p*m);
-    $('calFin').value = Math.round(base100.f*m);
-    $('calCin').value = Math.round(base100.c*m);
-    return true;
-  }
-  const w = Number($('calWin').value) || 0;
-  if(w > 0){
-    const k = grams/w;
-    ['calKin','calPin','calFin','calCin'].forEach(id => { $(id).value = Math.round((Number($(id).value)||0)*k); });
-    $('calWin').value = grams;
-    return true;
-  }
-  return false;
-}
-
-/* ---------------- показ результата ---------------- */
-function showResult(r, srcName){
-  fillFields(r);
-  if(r.dish) $('calName').value = r.dish;
-  const items = r.items.length
-    ? '<div class="items">' + r.items.map(i => '• ' + esc(i.name) + ' — ~' + i.grams + ' г').join('<br>') + '</div>'
-    : '';
-  const verdict = r.verdict ? '<div class="verdict">💬 ' + esc(r.verdict) + '</div>' : '';
-  resEl.style.display = 'block';
-  resEl.innerHTML =
-      '<div class="dish">🍽 ' + esc(r.dish || 'Блюдо') + ' · ~' + r.weight + ' г</div>'
-    + '<div style="margin-top:6px"><b>' + r.calories + ' ккал</b> · Б ' + r.protein + ' · Ж ' + r.fat + ' · У ' + r.carbs
-    + (r.fiber ? ' · клетчатка ' + r.fiber + ' г' : '') + '</div>'
-    + items + verdict;
-  if(srcName) resEl.dataset.src = srcName;
-}
-
-/* ---------------- отрисовка дневника ---------------- */
-function render(){
-  const today = fmtDate();
-  const all = Object.entries(data.logs || {}).map(([id,v]) => ({ id, ...v }));
-  const todays = all.filter(l => l.date === today).sort((a,b) => (b.ts||0)-(a.ts||0));
-  const sum = key => todays.reduce((a,l) => a + (Number(l[key])||0), 0);
-  const kcal = sum('calories'), prot = sum('protein');
-  const goalK = Number(data.goals?.kcal) || 2200;
-  const goalP = Number(data.goals?.protein) || 150;
-
-  $('calKcalTxt').textContent = Math.round(kcal) + ' / ' + goalK;
-  $('calProtTxt').textContent = Math.round(prot) + ' / ' + goalP + ' г';
-  $('calKcalBar').style.width = Math.min(100, kcal/goalK*100) + '%';
-  $('calProtBar').style.width = Math.min(100, prot/goalP*100) + '%';
-  $('calP').textContent = Math.round(prot);
-  $('calF').textContent = Math.round(sum('fat'));
-  $('calC').textContent = Math.round(sum('carbs'));
-  $('calWsum').textContent = Math.round(sum('weight'));
-  $('calGoalKcal').placeholder = 'ккал: ' + goalK;
-  $('calGoalProt').placeholder = 'белок: ' + goalP;
-
-  const list = $('calLogList');
-  if(!todays.length){
-    list.innerHTML = '<div class="empty-state">Сегодня ещё ничего не записано</div>';
-  } else {
-    list.innerHTML = todays.map(l => `
-      <div class="cal-log">
-        ${l.photo ? '<img src="' + l.photo + '">' : ''}
-        <div class="n">
-          <b>${esc(l.name || 'Еда')}</b>
-          <span>${Math.round(l.calories||0)} ккал · Б ${Math.round(l.protein||0)} · Ж ${Math.round(l.fat||0)} · У ${Math.round(l.carbs||0)} · ${Math.round(l.weight||0)} г</span>
-        </div>
-        <button class="btn-icon danger cal-del" data-id="${l.id}" type="button">✕</button>
-      </div>`).join('');
-    list.querySelectorAll('.cal-del').forEach(b => b.addEventListener('click', async () => {
-      if(!db || !uname) return;
-      try { await remove(ref(db, 'nutrition/' + uname + '/logs/' + b.dataset.id)); } catch(e){ console.warn(e); }
-    }));
-  }
-
-  const days = [];
-  for(let i=6;i>=0;i--){
-    const d = new Date(); d.setDate(d.getDate()-i);
-    const key = fmtDate(d);
-    const v = all.filter(l => l.date === key).reduce((a,l)=>a+(Number(l.calories)||0),0);
-    days.push({ v, label:String(d.getDate()), today:key===today });
-  }
-  const maxV = Math.max(goalK, ...days.map(d=>d.v)) || 1;
-  $('calDays').innerHTML = days.map(d => `
-    <div class="cal-day ${d.today?'today':''}">
-      <i style="height:${Math.max(3, d.v/maxV*100)}%"></i>
-      <span>${d.label}</span>
-    </div>`).join('');
-}
-
-/* ---------------- привязка к пользователю ---------------- */
-function attachUser(u){
-  if(unsubData){ unsubData(); unsubData = null; }
-  uname = u;
-  data = { logs:{}, goals:{ kcal:2200, protein:150 } };
-  if(!u || !db){ render(); return; }
-  unsubData = onValue(ref(db, 'nutrition/' + u), snap => {
-    data = snap.exists() ? snap.val() : { logs:{}, goals:{ kcal:2200, protein:150 } };
-    if(!data.logs) data.logs = {};
-    render();
-  }, err => { console.warn('cal read', err); render(); });
-}
-setInterval(() => {
-  const el = $('currentUser');
-  const u = (el && el.textContent || '').trim();
-  if(u !== lastUname){ lastUname = u; attachUser(u); }
-}, 900);
-
-/* ---------------- обработчики ---------------- */
-$('calPhotoInput').onchange = (e) => {
-  const file = e.target.files && e.target.files[0];
-  if(!file){ pendingPhoto = null; $('calPhotoPreview').innerHTML = ''; return; }
-  const r = new FileReader();
-  r.onload = async (ev) => {
-    pendingPhoto = await compressImage(ev.target.result);
-    $('calPhotoPreview').innerHTML = '<img src="' + pendingPhoto + '">';
-    resEl.style.display = 'none';
-  };
-  r.readAsDataURL(file);
-};
-
-(function(){
-  const wrap = $('calChips');
-  [100,150,200,250,300,400].forEach(g=>{
-    const b = document.createElement('button');
-    b.type = 'button'; b.textContent = g + ' г';
-    b.onclick = () => {
-      errEl.textContent = '';
-      if(!setPortion(g)) errEl.textContent = 'Сначала определите еду — потом пересчитаем вес';
-    };
-    wrap.appendChild(b);
-  });
-})();
-
-$('calGoalSave').onclick = async () => {
-  const k = parseFloat($('calGoalKcal').value);
-  const p = parseFloat($('calGoalProt').value);
-  if(!k && !p){ errEl.textContent = 'Введите цель по ккал или белку'; return; }
-  const goals = { kcal: k || (Number(data.goals?.kcal)||2200), protein: p || (Number(data.goals?.protein)||150) };
-  data.goals = goals;
-  render();
-  if(db && uname){ try { await set(ref(db, 'nutrition/' + uname + '/goals'), goals); } catch(e){ console.warn(e); } }
-  $('calGoalKcal').value = ''; $('calGoalProt').value = '';
-  errEl.textContent = '';
-};
-
-$('calAnalyzeBtn').onclick = async () => {
-  errEl.textContent = '';
-  resEl.style.display = 'none';
-  const desc = ($('calName').value || '').trim();
-
-  if(!pendingPhoto && !desc){
-    errEl.textContent = 'Прикрепите фото еды или напишите название — хотя бы одно';
-    return;
-  }
-
-  const btn = $('calAnalyzeBtn');
-  btn.disabled = true;
-  resEl.style.display = 'block';
-  resEl.innerHTML = '<div style="color:var(--text-dim)">🤖 ИИ разглядывает еду и считает…</div>';
-
-  // цепочка: Gemini (если есть ключ) → бесплатный ИИ → аварийный расчёт
-  const chain = [];
-  if(GEMINI_API_KEY && GEMINI_API_KEY.trim()) chain.push(['Gemini', callGemini]);
-  chain.push(['FreeAI', callFreeAI]);
-  chain.push(['Local', (p,d) => Promise.resolve(callLocal(d))]);
-
-  const errors = [];
-  let done = null;
-  for(const [name, fn] of chain){
-    try { done = await fn(pendingPhoto, desc); if(done) break; }
-    catch(e){ errors.push(name + ': ' + (e.message||e)); }
-  }
-
-  btn.disabled = false;
-  btn.textContent = '🧠 Определить еду';
-
-  if(done){
-    showResult(done);
-  } else {
-    resEl.style.display = 'none';
-    errEl.textContent = 'Не получилось: ' + errors.join(' | ');
-  }
-};
-
-$('calSaveBtn').onclick = async () => {
-  errEl.textContent = '';
-  if(!uname){ errEl.textContent = 'Войдите в аккаунт'; return; }
-  if(!db){ errEl.textContent = 'Нет подключения к базе'; return; }
-  const calories = Math.round(Number($('calKin').value) || 0);
-  if(!calories){ errEl.textContent = 'Сначала определите еду (кнопка выше)'; return; }
-  const entry = {
-    date: fmtDate(),
-    ts: Date.now(),
-    name: ($('calName').value || '').trim() || 'Еда',
-    calories,
-    protein: Math.round(Number($('calPin').value) || 0),
-    fat: Math.round(Number($('calFin').value) || 0),
-    carbs: Math.round(Number($('calCin').value) || 0),
-    weight: Math.round(Number($('calWin').value) || 0),
-    photo: pendingPhoto || null
-  };
-  const id = Date.now().toString(36) + Math.random().toString(36).slice(2,7);
-  try {
-    await set(ref(db, 'nutrition/' + uname + '/logs/' + id), entry);
-    pendingPhoto = null;
-    $('calPhotoInput').value = '';
-    $('calPhotoPreview').innerHTML = '';
-    $('calName').value = '';
-    ['calWin','calKin','calPin','calFin','calCin'].forEach(i => $(i).value = '');
-    resEl.style.display = 'none';
-    base100 = null;
-    errEl.textContent = 'Сохранено ✓';
-  } catch(e){
-    console.warn(e);
-    errEl.textContent = 'Не удалось сохранить: ' + e.message;
-  }
-};
-
-render();
-</script>
-<!-- ==================== /КАЛОРИИ ==================== -->
 </body>
 </html>
